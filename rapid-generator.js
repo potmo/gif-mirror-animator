@@ -1,7 +1,8 @@
 'use strict';
-const Quaternion = require('quaternion');
-const vector = require('./vector');
-const colors = require('colors');
+import Quaternion from 'quaternion';
+import colors from 'colors';
+import vector from './vector.js';
+
 
 /*
 • The origin is situated at the intersection of axis 1 and the base mountingsurface.
@@ -126,6 +127,6 @@ Quaternion.prototype.string = function(precision) {
 }
 
 
-module.exports = {
+export {
 	generate,
 }

@@ -1,9 +1,12 @@
 'use strict';
-const color_convert = require('./color-convert');
-const colors = require('colors');
-const PNGImage = require('pngjs-image');
-const fs = require('fs-extra');
-const path = require('path');
+
+import colors from 'colors';
+import PNGImage from 'pngjs-image';
+import fs from 'fs-extra';
+import path from 'path';
+
+import * as color_convert from './color-convert.js';
+
 
 
 async function load(color_map, folder) {
@@ -74,6 +77,6 @@ async function readImage(path) {
 }
 
 
-module.exports = {
+export {
 	load,
 }

@@ -1,18 +1,13 @@
 "use strict";
 
-const { createCanvas, loadImage } = require('canvas')
-const fs = require('fs-extra');
-const path = require('path');
-const colors = require('colors');
+import canvas from 'canvas';
+const { createCanvas, loadImage } = canvas;
+import fs from 'fs-extra';
+import path from 'path';
+import colors from 'colors';
 
-module.exports = {
-	load,
-	writeImage,
-  writeImageSilent,
-  getOutputImage,
-}
 
-async function load(settings) {
+export async function load(settings) {
   var images = []
 	if (settings.input.atlas) {
 		images = await readImageAsFrameAtlas(settings.input.atlas.path, 
@@ -37,7 +32,7 @@ async function load(settings) {
 
 }
 
-async function readImage(path) {
+export async function readImage(path) {
 	console.log(`loading image: ${path}`.yellow);
 
 	let image = await loadImage(path);
@@ -63,7 +58,7 @@ async function readImageAndRotate(path, angle) {
 	return output;
 }
 
-function getOutputImage(width, height, color) {
+export function getOutputImage(width, height, color) {
 	color = color || {r:255, g: 255, b: 255, a: 0};
   const output = createCanvas(width, height)
   const context = output.getContext("2d")
@@ -91,14 +86,14 @@ async function readImageAsFrameAtlas(path, columns, rows) {
 	return outputs;
 }
 
-async function writeImage(file, canvas) {
+export async function writeImage(file, canvas) {
   console.log(`saved ${file}`.yellow);
   writeImageSilent(file, canvas);
 }
 
-async function writeImageSilent(file, canvas) {
+export async function writeImageSilent(file, canvas) {
   const buffer = await toBuffer(canvas);
-  await fs.writeFile(path.join(__dirname, file), buffer);
+  await fs.writeFile(path.join(path.resolve(), file), buffer);
 }
 
 async function toBuffer(canvas) {

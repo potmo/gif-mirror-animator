@@ -1,15 +1,18 @@
 'use strict';
 
-const path = require('path');
+import path from 'path';
+import colors from 'colors';
+import fs from 'fs-extra';
 
-const colors = require('colors');
-const disc_mapper = require('./disc-mapper');
-const vector = require('./vector');
+import vector from './vector.js';
+import * as disc_mapper from './disc-mapper.js';
+import * as image_loader from './image-loader.js';
+import * as hex_converter from './hex-converter.js';
+import * as sequence_builder from './sequence-builder.js';
+import * as three_dee_generator from './3d-generator.js';
 
-const image_loader = require('./image-loader');
-const hex_converter = require('./hex-converter');
-const sequence_builder = require('./sequence-builder');
-const three_dee_generator = require('./3d-generator');
+
+
 
 run()
   .then(()=>{

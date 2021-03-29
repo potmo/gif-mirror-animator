@@ -1,9 +1,9 @@
 'use strict';
 
-const colors = require('colors');
-const vector = require('./vector');
+import colors from 'colors';
+import vector from './vector.js';
 
-module.exports = {
+export {
 	generate,
 }
 

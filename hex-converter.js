@@ -1,13 +1,13 @@
 "use strict";
 
-const Hex = require('./hex');
-const fs = require('fs-extra');
-const path = require('path');
-const colors = require('colors');
-const color_convert = require('./color-convert');
-const {writeImage, getOutputImage} = require('./image-loader');
+import fs from 'fs-extra';
+import path from 'path';
+import colors from 'colors';
+import * as Hex from './hex.js';
+import * as color_convert from './color-convert.js';
+import {writeImage, getOutputImage} from './image-loader.js';
 
-module.exports = {
+export {
 	convert,
 }
 

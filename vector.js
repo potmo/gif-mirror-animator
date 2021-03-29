@@ -1,13 +1,14 @@
-const add = require('vectors/add')(3)
-const copy = require('vectors/copy')(3)
-const cross = require('vectors/cross')(3)
-const dist = require('vectors/dist')(3)
-const div = require('vectors/div')(3)
-const dot = require('vectors/dot')(3)
-const mag = require('vectors/mag')(3)
-const mult = require('vectors/mult')(3)
-const normalize = require('vectors/normalize')(3)
-const sub = require('vectors/sub')(3)
+import vectors from 'vectors';
+const add = vectors.add(3);
+const copy = vectors.copy(3);
+const cross = vectors.cross(3);
+const dist = vectors.dist(3);
+const div = vectors.div(3);
+const dot = vectors.dot(3);
+const mag = vectors.mag(3);
+const mult = vectors.mult(3);
+const normalize = vectors.normalize(3);
+const sub = vectors.sub(3);
 
 'use strict'
 class Vector {
@@ -17,6 +18,9 @@ class Vector {
 		this.z = z || 0;
 	}
 }
+
+export default vector;
+
 
 Vector.prototype.print = function() {
 	return `{x: ${this.x}, y: ${this.y}, z: ${this.z}}`;
@@ -160,7 +164,3 @@ Vector.prototype.string = function(precision, scale) {
 	return `${(this.x * scale).toFixed(precision)}, ${(this.y * scale).toFixed(precision)}, ${(this.z * scale).toFixed(precision)}`;
 }
 
-
-
-
-module.exports = vector;

@@ -303,49 +303,52 @@ function polygon_corners(layout, h) {
   return corners;
 }
 
-// Exports for node/browserify modules:
 
-exports.Point = Point;
+export {
 
-exports.Hex = Hex;
-exports.add = add;
-exports.subtract = subtract;
-exports.scale = scale;
-exports.rotate_left = rotate_left;
-exports.rotate_right = rotate_right;
-exports.directions = directions;
-exports.direction = direction;
-exports.neighbor = neighbor;
-exports.diagonals = diagonals;
-exports.diagonal_neighbor = diagonal_neighbor;
-exports.length = length;
-exports.distance = distance;
-exports.round = round;
-exports.lerp = lerp;
-exports.linedraw = linedraw;
-exports.move = move;
+  Point,
 
-exports.ring = ring;
-exports.spiral_fill = spiral_fill;
-exports.spiral_fill_circle = spiral_fill_circle;
-exports.spiral = spiral;
-exports.wedge = wedge;
-exports.zoom = zoom;
+  Hex,
+  add,
+  subtract,
+  scale,
+  rotate_left,
+  rotate_right,
+  directions,
+  direction,
+  neighbor,
+  diagonals,
+  diagonal_neighbor,
+  length,
+  distance,
+  round,
+  lerp,
+  linedraw,
+  move,
 
-exports.OffsetCoord = OffsetCoord;
-exports.EVEN = EVEN;
-exports.ODD = ODD;
-exports.qoffset_from_cube = qoffset_from_cube;
-exports.qoffset_to_cube = qoffset_to_cube;
-exports.roffset_from_cube = roffset_from_cube;
-exports.roffset_to_cube = roffset_to_cube;
+  ring,
+  spiral_fill,
+  spiral_fill_circle,
+  spiral,
+  wedge,
+  zoom,
 
-exports.Orientation = Orientation;
+  OffsetCoord,
+  EVEN,
+  ODD,
+  qoffset_from_cube,
+  qoffset_to_cube,
+  roffset_from_cube,
+  roffset_to_cube,
 
-exports.Layout = Layout;
-exports.layout_pointy = layout_pointy;
-exports.layout_flat = layout_flat;
-exports.to_pixel = to_pixel;
-exports.pixel_to_hex = pixel_to_hex;
-exports.corner_offset = corner_offset;
-exports.polygon_corners = polygon_corners;
+  Orientation,
+
+  Layout,
+  layout_pointy,
+  layout_flat,
+  to_pixel,
+  pixel_to_hex,
+  corner_offset,
+  polygon_corners,
+
+}

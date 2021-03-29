@@ -1,13 +1,14 @@
 'use strict';
 
-const entropy = require('binary-shannon-entropy');
+import entropy from 'binary-shannon-entropy';
+import cliProgress from 'cli-progress';
 const shannon_entropy = (string) => entropy(Buffer.from(string));
-const color_convert = require('./color-convert');
-const color_distance = require('./color-distance');
-const debruijn = require('./debruijn');
-const cliProgress = require('cli-progress');
+import * as color_convert from './color-convert.js';
+import * as color_distance from './color-distance.js';
+import * as debruijn from './debruijn.js';
 
-module.exports = {
+
+export {
 	build,
 }
 

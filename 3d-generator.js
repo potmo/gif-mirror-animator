@@ -1,12 +1,12 @@
-const fs = require('fs-extra')
-const path = require('path');
-const colors = require('colors');
-const vector = require('./vector');
-const rapid = require('./rapid-generator');
-const gcode = require('./gcode-generator');
-const objcode = require('./obj-generator');
+import fs from 'fs-extra';
+import path from 'path';
+import colors from 'colors';
+import vector from './vector.js';
+import * as rapid from './rapid-generator.js';
+import * as gcode from './gcode-generator.js';
+import * as objcode from './obj-generator.js';
 
-module.exports = {
+export {
   generate,
 }
 
@@ -175,11 +175,11 @@ function createMirrorLookingAt(id, mirrorPos, eye, target, size) {
 
 async function saveFile(file, string) {
   console.log(colors.yellow(`saved ${file}`));
-  await fs.writeFile(path.join(__dirname, file), string);
+  await fs.writeFile(path.join(path.resolve(), file), string);
 }
 
 async function loadJSONFile(file) {
-  const content = await fs.readFile(path.join(__dirname, file));
+  const content = await fs.readFile(path.join(path.resolve(), file));
   return JSON.parse(content);
 }
 

@@ -31,6 +31,6 @@ function* deBruijn(t, p, lookup, alphabet, subsequence_length) {
   }
 }
 
-module.exports = {
-  sequence: deBruijnSequence,
+export {
+  deBruijnSequence as sequence
 }

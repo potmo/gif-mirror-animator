@@ -1,6 +1,6 @@
 "use strict";
 
-const color_convert = require('./color-convert');
+import * as color_convert from './color-convert.js';
 
 // using DeltaE on CIELab internally
 //https://stackoverflow.com/questions/13586999/color-difference-similarity-between-two-values-with-js
@@ -32,6 +32,6 @@ function distance(rgbA, rgbB) {
 
 
 
-module.exports = {
+export {
 	distance
 };

@@ -1,16 +1,17 @@
 'use strict';
 
-const Canvas = require('canvas');
+import Canvas from 'canvas';
 const Image = Canvas.Image;
-const fs = require('fs-extra');
-const path = require('path');
-const colors = require('colors');
-const color_convert = require('./color-convert');
-const GIFEncoder = require('gifencoder');
-const cliProgress = require('cli-progress');
-const {writeImage, writeImageSilent, getOutputImage} = require('./image-loader');
+import fs from  'fs-extra';
+import path from  'path';
+import colors from  'colors';
+import GIFEncoder from  'gifencoder';
+import cliProgress from  'cli-progress';
 
-module.exports = {
+import * as color_convert from  './color-convert.js';
+import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
+
+export {
   map,
 }
 
@@ -454,7 +455,7 @@ function drawCircle(context, position, color) {
 
 
 async function saveText(file, string) {
-  await fs.writeFile(path.join(__dirname, file), string);
+  await fs.writeFile(path.join(path.resolve(), file), string);
   console.log(`saved ${file}`.yellow);
 }
 

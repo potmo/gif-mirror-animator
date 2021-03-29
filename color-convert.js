@@ -78,7 +78,7 @@ function toConsoleString(color, string) {
   return "\x1B[48;2;"+obj.r+";"+obj.g+";"+obj.b+"m" + string + '\x1B[49m';
 }
 
-module.exports = {
+export {
   toConsoleString,
   toHexString,
   ABGRtoARGB,

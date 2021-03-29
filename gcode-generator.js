@@ -1,6 +1,7 @@
 'use strict';
-const vector = require('./vector');
-const colors = require('colors');
+import colors from 'colors';
+import vector from './vector.js';
+
 
 function generate(mirrors, reflections, photowall, eye, dimentions) {
 	const program = Array.from(generateModule(mirrors)).join('\n');
@@ -188,7 +189,7 @@ function* indent(indentation, generator) {
 	}
 }
 
-module.exports = {
+export {
 	generate,
 }
 

@@ -1,0 +1,83 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/fruits/potato-tomato.png",
+      "columns": 2,
+      "rows": 1
+    },
+    "duplicate_frames": 3
+  },
+  "output": {
+    "path": "output/potato-tomato",
+    "simulation": {
+      "gif": {
+        "width": 500,
+        "height": 500,
+        "frame_delay": 300,
+        "rotate": false
+      },
+      "discs": false,
+      "frames": true,
+      "hex": {
+        "enabled": true,
+        "width": 500,
+        "height": 500,
+        "mirror_size": 2.5
+      },
+      "max_deviation_from_optimal": 0,
+      "frame_number_scaling": 1
+    },
+    "disc_mappings": true,
+    "disc_image": {
+      "width": 2048,
+      "height": 2048,
+      "helix_shift": 1.2,
+      "hole_size": 0
+    },
+    "svg": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true
+  },
+  "three_dee": {
+    "scale": 0.01,
+    "width_mirror_units": 90,
+    "height_mirror_units": 90,
+    "mirror_thickness": 0.2,
+    "mirror_size": 1.05,
+    "mirror_padding": 0.25,
+    "disc_offset": {
+      "x": 150,
+      "y": 0,
+      "z": 200
+    },
+    "disc_rotation_scalar": -0.25,
+    "disc_diameter": 249,
+    "eye_offset": {
+      "x": -250,
+      "y": 0,
+      "z": 200
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "shannon",
+      "acending": true
+    },
+    "prune": {
+      "max_sequences": 10,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": true
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}
