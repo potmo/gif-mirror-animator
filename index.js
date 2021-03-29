@@ -13,6 +13,10 @@ import * as three_dee_generator from './3d-generator.js';
 
 
 
+async function saveFile(file, string) {
+  console.log(colors.yellow(`saved ${file}`));
+  await fs.writeFile(path.join(path.resolve(), file), string);
+}
 
 run()
   .then(()=>{
@@ -43,6 +47,8 @@ run()
 
   console.log('Generate 3d files'.brightBlue);
   await three_dee_generator.generate(settings, mapping_conf);
+
+  await saveFile(path.join(settings.output.path, 'settings.json'), JSON.stringify(settings, null, '  '));
 
   var hole_size_measurement = settings.three_dee.disc_diameter * (settings.output.disc_image.hole_size / settings.output.disc_image.width);
   console.log(`Disc section thickness: ${(settings.three_dee.disc_diameter - hole_size_measurement) / sequence_keys.length / 2}`.green);
