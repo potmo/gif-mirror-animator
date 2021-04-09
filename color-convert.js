@@ -1,3 +1,16 @@
+function imageDataToARGBObjectArray(imageData) {
+  let output = [];
+
+  for (var i = 0; i < imageData.length; i += 4) {
+    let r = imageData[i + 0];
+    let g = imageData[i + 1];
+    let b = imageData[i + 2];
+    let a = imageData[i + 3];
+    output.push({a, r, g, b});
+  }
+  return output;
+}
+
 function toHexString(color) {
 	  color >>>= 0;
 	  return '0x' + `00000000${color.toString(16)}`.slice(-8);
@@ -79,6 +92,7 @@ function toConsoleString(color, string) {
 }
 
 export {
+  imageDataToARGBObjectArray,
   toConsoleString,
   toHexString,
   ABGRtoARGB,

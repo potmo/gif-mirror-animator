@@ -1,0 +1,13 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/nisse.png"
+      ]
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-stipple/nisse"
+  }
+}

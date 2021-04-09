@@ -88,7 +88,7 @@ async function readImageAsFrameAtlas(path, columns, rows) {
 
 export async function writeImage(file, canvas) {
   console.log(`saved ${file}`.yellow);
-  writeImageSilent(file, canvas);
+  await writeImageSilent(file, canvas);
 }
 
 export async function writeImageSilent(file, canvas) {

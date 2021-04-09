@@ -21,9 +21,39 @@ class Vector {
 
 export default vector;
 
+Vector.prototype.globalUp = vector(0,1,0);
+Vector.prototype.globalRight = vector(1,0,0);
+Vector.prototype.globalDown = vector(0,0,1);
+
 
 Vector.prototype.print = function() {
 	return `{x: ${this.x}, y: ${this.y}, z: ${this.z}}`;
+}
+
+Vector.prototype.reflect = function(normal) {
+	const n = normal.normalized()
+	// 𝑟=𝑑−2(𝑑⋅𝑛)𝑛
+	return this.add(n.scale(-2 * this.dot(n)))
+	//return this.sub(this.dot(n).scale(2).mult(n));
+}
+
+Vector.prototype.instesectsPlane = function(lineDirection, planePoint, planeNormal) {
+	const linePoint = this;
+ 	if (planeNormal.dot(lineDirection.normalized()) == 0) {
+ 		throw new Error(`dot is zero between ${planeNormal.string()} and ${lineDirection.string()}`);
+		return null;
+	}
+	//const t = (planeNormal.dot(planePoint).sub(planeNormal.dot(linePoint))).div(planeNormal.dot(lineDirection.normalized()));
+	const t = (planeNormal.dot(planePoint) - planeNormal.dot(linePoint)) / planeNormal.dot(lineDirection.normalized());
+  return linePoint.add(lineDirection.normalized().scale(t));
+}
+
+Vector.prototype.normalReflectingBetweenPoints = function(start, end) {
+	const mirror_pos = this;
+	let mirror_to_start = start.sub(mirror_pos).normalized();
+  let mirror_to_end = end.sub(mirror_pos).normalized();
+  let normal = mirror_to_start.add(mirror_to_end).normalized();
+  return normal;
 }
 
 

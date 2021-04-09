@@ -21,6 +21,7 @@
     "lodash": "^4.17.20",
     "pngjs-image": "^0.11.7",
     "quaternion": "^1.0.4",
+    "seedrandom": "^3.0.5",
     "stipple": "^0.1.4",
     "vectors": "^0.1.0"
   }

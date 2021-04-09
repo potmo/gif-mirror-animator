@@ -12,12 +12,6 @@ import * as sequence_builder from './sequence-builder.js';
 import * as three_dee_generator from './3d-generator.js';
 
 
-
-async function saveFile(file, string) {
-  console.log(colors.yellow(`saved ${file}`));
-  await fs.writeFile(path.join(path.resolve(), file), string);
-}
-
 run()
   .then(()=>{
     console.log('done'.green);
@@ -32,6 +26,9 @@ run()
  async function run() {
   
   const settings = getSettings();
+
+  await fs.writeFile(path.join(path.resolve(), path.join(settings.output.path, 'settings.json')), JSON.stringify(settings, null, '  '));
+  console.log(colors.yellow(`saved settings.js`));
 
   console.log('Load images'.brightBlue);
   let images = await image_loader.load(settings);
@@ -48,8 +45,6 @@ run()
   console.log('Generate 3d files'.brightBlue);
   await three_dee_generator.generate(settings, mapping_conf);
 
-  await saveFile(path.join(settings.output.path, 'settings.json'), JSON.stringify(settings, null, '  '));
-
   var hole_size_measurement = settings.three_dee.disc_diameter * (settings.output.disc_image.hole_size / settings.output.disc_image.width);
   console.log(`Disc section thickness: ${(settings.three_dee.disc_diameter - hole_size_measurement) / sequence_keys.length / 2}`.green);
   console.log(`Hole size radius: ${hole_size_measurement / 2}`.green)
@@ -58,6 +53,7 @@ run()
   console.log(`Colors: ${Object.keys(reverse_color_map).length}`.green);
 
  }
+
 
 
  function getSettings() {

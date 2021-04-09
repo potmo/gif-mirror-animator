@@ -25,7 +25,7 @@ const fromBottom = new Quaternion.fromBetweenVectors(referenceVector, [0, 0, 1])
 
 const middle = [1000, 1000, 1000];
 
-function generate(mirrors, reflections, photowall, eye, dimentions) {
+function generate(mirrors, reflections, photowall, eye) {
 	const program = Array.from(generateModule(mirrors)).join('\n');
 	console.log(colors.green(`created rapid (.mod) file`));
 	return program;

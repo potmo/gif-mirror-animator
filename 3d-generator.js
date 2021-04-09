@@ -6,6 +6,7 @@ import * as rapid from './rapid-generator.js';
 import * as gcode from './gcode-generator.js';
 import * as objcode from './obj-generator.js';
 
+
 export {
   generate,
 }
@@ -38,8 +39,6 @@ async function generate(settings, mappings) {
   console.log(` mirror_thickness: ${settings.three_dee.mirror_thickness}`.gray);
   console.log(` mirror_size: ${settings.three_dee.mirror_size}`.gray);
   console.log(` mirror_padding: ${settings.three_dee.mirror_padding}`.gray);
-  console.log(` disc_distance: ${settings.three_dee.disc_distance}`.gray);
-  console.log(` eye_distance: ${settings.three_dee.eye_distance}`.gray);
   console.log(` disc_diameter: ${settings.three_dee.disc_diameter}`.gray);
 
   const scale = settings.three_dee.scale; //0.01;
@@ -49,7 +48,7 @@ async function generate(settings, mappings) {
   const mirror_size = settings.three_dee.mirror_size * scale;
   const mirror_padding = settings.three_dee.mirror_padding * scale;
   
-  const sectionSize = mappings.mirror.width; // can be less. Is the number of pixels per section
+
 
 
   //TODO:
@@ -77,6 +76,8 @@ async function generate(settings, mappings) {
   const photowall_height_vector = vector(0, photowallHeight, 0)
                                     .rotatedAroundY(Math.PI * 2 * settings.three_dee.disc_rotation_scalar, vector(0, 0, 0));
 
+  const photowall_normal = photowall_width_vector.normalized().cross(photowall_height_vector.normalized());                                                                      
+
   const photowall = {
     upperLeft: photowall_position.add(photowall_width_vector.scale(-0.5)).add(photowall_height_vector.scale(-0.5)),
     upperRight: photowall_position.add(photowall_width_vector.scale(0.5)).add(photowall_height_vector.scale(-0.5)),
@@ -84,6 +85,8 @@ async function generate(settings, mappings) {
     lowerLeft: photowall_position.add(photowall_width_vector.scale(-0.5)).add(photowall_height_vector.scale(0.5)),
     widthVector: photowall_width_vector,
     heightVector:  photowall_height_vector,
+    center: photowall_position,
+    normal: photowall_normal,
   };
 
   const mirror = {
@@ -127,9 +130,12 @@ async function createSection(settings, photowall, mirror, dimentions, eye, mappi
                                       .add(mirror.widthVector.scale(-0.5))
                                       .add(mirror.heightVector.scale(-0.5))
 
-    const mirrorObj = createMirrorLookingAt(id++, mirrorPos, eye, target, dimentions.mirror_size);
+    const mirrorObj = createMirrorLookingAt(id++, mirrorPos, eye, target, dimentions.mirror_size, dimentions.thickness);
+
+    const ellipse_points = createReflectanceEllipsePoints(mirrorObj, eye.pos, target, photowall.center, photowall.normal);
+
     mirrors.push(mirrorObj);
-    reflections.push({mirror: mirrorObj, target, eye});
+    reflections.push({mirror: mirrorObj, target, eye, ellipse_points});
   }
 
   const rapidString = rapid.generate(mirrors, reflections, photowall, eye, dimentions);
@@ -153,9 +159,31 @@ async function createSection(settings, photowall, mirror, dimentions, eye, mappi
 
 }
 
+function createReflectanceEllipsePoints(mirror, eye_pos, target_pos, wall_pos, wall_normal) {
+  
+  const right = vector().globalUp.cross(mirror.normal).normalized().scale(mirror.width/2);
+  const down = right.cross(mirror.normal).normalized().scale(mirror.height/2);
 
 
-function createMirrorLookingAt(id, mirrorPos, eye, target, size) {
+  const edges = 10;
+  const mirror_points = enumerate(0, edges - 1)
+    .map(i => Math.PI * 2 / edges * i - Math.PI / 2)
+    .map(a => ({x: Math.cos(a) * 1, y: Math.sin(a) * 1}))
+    .map(local_pos => mirror.pos.add(right.scale(local_pos.x)).add(down.scale(local_pos.y)))
+
+  // reflect the ray at all the edge of the mirror
+  const ellipse_points = mirror_points.concat([mirror_points[0]]).map( pos => {
+    let vector_to_mirror_edge = pos.sub(eye_pos).normalized();
+    let approaching_vector = vector_to_mirror_edge.reflect(mirror.normal);
+    let point_of_hit = pos.instesectsPlane(approaching_vector, wall_pos, wall_normal);
+    return point_of_hit;
+  });
+
+  return ellipse_points;
+}
+
+
+function createMirrorLookingAt(id, mirrorPos, eye, target, size, thickness) {
 
   let mirrorToEye = eye.pos.sub(mirrorPos).normalized();
   let mirrorToTarget = target.sub(mirrorPos).normalized();
@@ -169,6 +197,7 @@ function createMirrorLookingAt(id, mirrorPos, eye, target, size) {
     normal: normal,
     width: size,
     height: size,
+    thickness: thickness,
     id: id
   }
 }
@@ -181,5 +210,11 @@ async function saveFile(file, string) {
 async function loadJSONFile(file) {
   const content = await fs.readFile(path.join(path.resolve(), file));
   return JSON.parse(content);
+}
+
+function enumerate(from, to) {
+  return Array(Math.abs(Math.max(to) - Math.min(from)) + 1)
+        .fill()
+        .map( (_, i , a) => from + (to - from) * (i / (a.length - 1)))
 }
 

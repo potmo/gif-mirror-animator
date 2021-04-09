@@ -3,7 +3,7 @@ import colors from 'colors';
 import vector from './vector.js';
 
 
-function generate(mirrors, reflections, photowall, eye, dimentions) {
+function generate(mirrors, reflections, photowall, eye) {
 	const program = Array.from(generateModule(mirrors)).join('\n');
 	console.log(colors.green(`created gcode (.nc) file`));
 	return program;

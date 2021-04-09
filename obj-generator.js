@@ -7,12 +7,12 @@ export {
 	generate,
 }
 
-function generate(mirrors, reflections, photowall, eye, dimentions) {
-	const program = Array.from(createObjFile(mirrors, reflections, photowall, eye, dimentions)).join('\n');
+function generate(mirrors, reflections, photowall, eye) {
+	const program = Array.from(createObjFile(mirrors, reflections, photowall, eye)).join('\n');
 	return program;
 }
 
-function * createObjFile(mirrors, reflections, photowall, eye, dimentions) {
+function * createObjFile(mirrors, reflections, photowall, eye) {
 
   console.log('mirrors', mirrors.length);
 
@@ -42,7 +42,7 @@ function * createObjFile(mirrors, reflections, photowall, eye, dimentions) {
   yield 'vt 0 0'
 
 
-  yield * convertMirrorsToObj(mirrors, vertex, dimentions);
+  yield * convertMirrorsToObj(mirrors, vertex);
 
   yield * convertPhotoWallToObj(photowall, vertex);
 
@@ -50,15 +50,17 @@ function * createObjFile(mirrors, reflections, photowall, eye, dimentions) {
 
   yield * convertReflectionsToObj(reflections, vertex);
 
+  yield * convertReflectionEllipsesToObj(reflections, vertex);
+
   yield * convertMirrorNormalsToObj(mirrors, vertex);
 
   console.log(colors.green(`created mesh (.obj) file`));
 }
 
-function * convertMirrorsToObj(mirrors, vertex, dimentions) {
+function * convertMirrorsToObj(mirrors, vertex) {
   
   //#yield `usemtl mirror_face`;
-  const mirrorFaces = mirrors.map( mirror => getMirrorPolygons(mirror, vertex, dimentions));
+  const mirrorFaces = mirrors.map( mirror => getMirrorPolygons(mirror, vertex));
 
   // create vertices for the mirror
   for (const face of mirrorFaces) {
@@ -76,11 +78,11 @@ function * convertMirrorsToObj(mirrors, vertex, dimentions) {
   }
 }
 
-function getMirrorPolygons(mirror, vertex, dimentions) {
+function getMirrorPolygons(mirror, vertex) {
 
-  const globalUp = vector(0,1,0);
-  const globalRight = vector(1,0,0);
-  const globalDown = vector(0,0,1);
+  const globalUp = vector().globalUp;
+  const globalRight = vector().globalRight;
+  const globalDown = vector().globalDown;
   const right = globalUp.cross(mirror.normal).normalized().scale(mirror.width/2);
   const down = right.cross(mirror.normal).normalized().scale(mirror.height/2);
 
@@ -97,7 +99,7 @@ function getMirrorPolygons(mirror, vertex, dimentions) {
     .map(a => ({x: Math.cos(a) * 1, y: Math.sin(a) * 1}))
     .map(local_pos => mirror.pos.add(right.scale(local_pos.x)).add(down.scale(local_pos.y)))
     // THE NORMALS ARE INVERTED SOMEHOW. THIS SHOULD NOT BE NEGATIVE TO GET TO THE TOP
-    .map(pos => pos.add(mirror.normal.scale(dimentions.thickness))) // TODO: THIS SHOULD BE PARAMETERIZED FROM SETTINGS. 
+    .map(pos => pos.add(mirror.normal.scale(mirror.thickness))) // TODO: THIS SHOULD BE PARAMETERIZED FROM SETTINGS. 
     .map(pos => ({id: vertex.current++, pos}));
 
 
@@ -165,11 +167,8 @@ function * convertMirrorNormalToObj(mirror, vertex) {
   yield vertice(mirror.pos.add(normal));
   yield `l ${vertex.current++} ${vertex.current++}`;
 
-
-
-  
-  const globalUp = vector(0,1,0);
-  const globalRight = vector(1,0,0);
+  const globalUp = vector().globalUp;
+  const globalRight = vector().globalRight;
   const right = globalUp.cross(mirror.normal).normalized().scale(0.01);
   const up = globalRight.cross(mirror.normal).normalized().scale(0.01).negated();
   
@@ -230,6 +229,13 @@ function * convertReflectionsToObj(reflections, vertex) {
   }
 }
 
+function * convertReflectionEllipsesToObj(reflections, vertex) {
+  yield `g debug_mirrorreflectionellipses`;
+  for (const reflection of reflections) {
+    yield * convertEyeReflectionEllipseToObj(reflection, vertex);
+  }
+}
+
 function * convertMirrorReflectionToObj(reflection, vertex) {
   //yield `v ${reflection.mirror.pos.x} ${reflection.mirror.pos.y} ${reflection.mirror.pos.z}`;
   yield vertice(reflection.mirror.pos);
@@ -244,6 +250,17 @@ function * convertEyeReflectionToObj(reflection, vertex) {
   //yield `v ${reflection.mirror.pos.x} ${reflection.mirror.pos.y} ${reflection.mirror.pos.z}`;
   yield vertice(reflection.mirror.pos);
   yield `l ${vertex.current++} ${vertex.current++}`;
+}
+
+function * convertEyeReflectionEllipseToObj(reflection, vertex) {
+  if (!reflection.ellipse_points) {
+    throw new Error('The ellipse points are missing so they need to be implemented. Probably for the disc version');
+  }
+  for (var point of reflection.ellipse_points) {
+    yield vertice(point);
+  }
+  let verts = reflection.ellipse_points.map( _ => `${vertex.current++}`).join(' ');
+  yield `l ${verts}`;
 }
 
 function enumerate(from, to) {
