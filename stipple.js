@@ -4,7 +4,7 @@
 
 import { Voronoi } from './voronoi.js';
 // Adapted from https://observablehq.com/@mbostock/voronoi-stippling
-export function stipple(imageDataBuffer, width, height, pointCount, iterations, callback) {
+export function stipple(imageDataBuffer, width, height, pointCount, iterations, invert_colors, callback) {
     const n = pointCount || (width * height / 50);
     iterations = iterations || [80];
     const highestIteration = Math.max(...iterations);
@@ -16,7 +16,7 @@ export function stipple(imageDataBuffer, width, height, pointCount, iterations, 
         for (let j = 0; j < 60; ++j) {
             const x = points[i * 2] = Math.floor(Math.random() * width);
             const y = points[i * 2 + 1] = Math.floor(Math.random() * height);
-            if (Math.random() < grayValue(y * width + x, rgba))
+            if (Math.random() < grayValue(y * width + x, rgba, invert_colors))
                 break;
         }
     }
@@ -26,7 +26,7 @@ export function stipple(imageDataBuffer, width, height, pointCount, iterations, 
         s.fill(0);
         for (let y = 0, i = 0; y < height; ++y) {
             for (let x = 0; x < width; ++x) {
-                const w = grayValue(y * width + x, rgba);
+                const w = grayValue(y * width + x, rgba, invert_colors);
                 i = voronoi.find(x + 0.5, y + 0.5, i);
                 s[i] += w;
                 c[i * 2] += w * (x + 0.5);
@@ -49,7 +49,11 @@ export function stipple(imageDataBuffer, width, height, pointCount, iterations, 
     }
     return { points, width, height, iteration: highestIteration };
 }
-function grayValue(i, rgba) {
+function grayValue(i, rgba, invert_colors) {
     const offset = i * 4;
-    return 1 - (0.299 * rgba[offset] + 0.587 * rgba[offset + 1] + 0.114 * rgba[offset + 2]) / 254;
+    let gray = 1 - (0.299 * rgba[offset] + 0.587 * rgba[offset + 1] + 0.114 * rgba[offset + 2]) / 254;
+    if (invert_colors) {
+        gray = 1 - gray;
+    }
+    return gray;
 }

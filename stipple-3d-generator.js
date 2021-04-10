@@ -5,13 +5,14 @@ import vector from './vector.js';
 import * as rapid from './rapid-generator.js';
 import * as gcode from './gcode-generator.js';
 import * as objcode from './obj-generator.js';
+import * as reflection_visualizer from './reflection-simulation-visualizer.js'
 
 
 export {
   generate,
 }
 
-async function generate(settings, mappings) {
+async function generate(settings, mappings, mirrors_across) {
 
   const eye_offset = settings.three_dee.eye_offset;
 
@@ -40,7 +41,7 @@ async function generate(settings, mappings) {
   const mirror_diameter = settings.three_dee.mirror_diameter;
   const mirror_padding = settings.three_dee.mirror_padding;
   const mirror_thickness = settings.three_dee.mirror_thickness;
-  const mirror_board_diameter = settings.three_dee.mirror_board_diameter;
+  const mirror_board_diameter = mirrors_across * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
 
   const mirror = {
     widthVector: vector(mirror_diameter + mirror_padding, 0, 0),
@@ -91,6 +92,8 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
   const objString = objcode.generate(mirrors, reflections, wall, eye);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
+
+  await reflection_visualizer.visualize(settings, reflections, wall);
 
 
 

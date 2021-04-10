@@ -13,6 +13,7 @@ import vector from './vector.js';
 run()
   .then(()=>{
     console.log('done'.green);
+    alertTerminal();
     return process.exit(0);
   })
   .catch((err)=>{
@@ -20,6 +21,9 @@ run()
     return process.exit(1);
   });
 
+function alertTerminal(){
+  console.log("\x07");
+}
 
 
 async function run() {
@@ -39,12 +43,15 @@ async function run() {
   const input_context = reflection_image.getContext('2d');
   const input_data = input_context.getImageData(0, 0, reflection_image.width, reflection_image.height);
 
+  let reflection_size = Math.max(reflection_image.width, reflection_image.height);
+  let arrangement_size = Math.max(arrangement_image.width, arrangement_image.height);
+
   const point_count = mirror_arrangement.pixels.length;
   const iterations = [settings.output.simulation.iterations];
   const scale = settings.output.simulation.scale;
   const point_size = settings.output.simulation.point_size;
 
-  let stipled_points = stipple(input_data.data, reflection_image.width, reflection_image.height, point_count, iterations)
+  let stipled_points = stipple(input_data.data, reflection_image.width, reflection_image.height, point_count, iterations, settings.input.image.invert)
     .points
     .reduce( (list, current, index) => {
       if (index % 2 == 0) {
@@ -58,10 +65,10 @@ async function run() {
   //console.log(stipled_points)
 
 
-  let reflection_output = await image_loader.getOutputImage(reflection_image.width * scale, reflection_image.height * scale, {r:255, g:255, b: 255, a: 255});
+  let reflection_output = await image_loader.getOutputImage(reflection_image.width * scale, reflection_image.height * scale, {r:0, g:0, b: 0, a: 255});
   const reflection_context = reflection_output.getContext("2d");
 
-  const color = {r: 0, g: 0, b:0, a: 255};
+  const color = {r: 255, g: 255, b:255, a: 255};
   reflection_context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
   reflection_context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
 
@@ -70,7 +77,7 @@ async function run() {
   await image_loader.writeImage(path.join(settings.output.path, 'simulation', 'reflection.png'), reflection_output);
 
 
-  let arrangement_output = await image_loader.getOutputImage(arrangement_image.width * scale, arrangement_image.height * scale, {r:255, g:255, b: 255, a: 255});
+  let arrangement_output = await image_loader.getOutputImage(arrangement_image.width * scale, arrangement_image.height * scale, {r:0, g:0, b: 0, a: 255});
   const arrangement_context = arrangement_output.getContext("2d");
 
   arrangement_context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
@@ -84,7 +91,7 @@ async function run() {
   await image_loader.writeImage(path.join(settings.output.path, settings.output.simulation.path, 'arrangement.png'), arrangement_output);
 
   // normalize size
-  let reflection_size = Math.max(reflection_image.width, reflection_image.height);
+
   let scaled_stipled_points = stipled_points.map(point => {
     return {
       x: (point.x - reflection_image.width / 2) / reflection_size, 
@@ -92,7 +99,7 @@ async function run() {
     }
   });
 
-  let arrangement_size = Math.max(arrangement_image.width, arrangement_image.height);
+  
   let scaled_arrangement_points = mirror_arrangement.pixels.map(point => {
     return {
       x: (point.x - arrangement_image.width / 2) / arrangement_size, 
@@ -100,10 +107,12 @@ async function run() {
     }
   });
 
+
   let mapping_conf = await stipple_mapper.map(settings, scaled_arrangement_points, scaled_stipled_points);
 
   console.log('Generate 3d files'.brightBlue);
-  await three_dee_generator.generate(settings, mapping_conf);
+
+  await three_dee_generator.generate(settings, mapping_conf, arrangement_size);
   
 }
 
@@ -156,11 +165,12 @@ function getSettings() {
       */
       image: {
         paths: [
-          './images/nisse_contrast_2.png', 
+          './images/crab.png', 
         ],
+        invert: true,
       },
       arrangement: {
-        image: './images/hello.png',
+        image: './images/crab-text.png',
       },
       /*image_and_rotate: {
         images: [
@@ -174,9 +184,10 @@ function getSettings() {
       path: './output-stipple', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
-        iterations: 8000,
-        scale: 10.0,
+        iterations: 5000,
+        scale: 3.0,
         point_size: 2,
+        size: {width: 1000, height: 1000},
       },
       obj: true,
       mod: true,
@@ -186,7 +197,6 @@ function getSettings() {
       mirror_thickness: 0.002, 
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
-      mirror_board_diameter: 1.0,
       wall_offset: vector(1.50, 0, 2.0),
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
       wall_diameter: 3.00, 
@@ -199,10 +209,12 @@ function getSettings() {
   if (settings.input.image) input = settings.input.image.paths[0];
   if (settings.input.image_and_rotate) input = settings.input.image_and_rotate.images[0].path;
 
-  let project_name = path.basename(input, path.extname(input));
-  console.log(`adding ${project_name} to ${settings.output.path}`.gray)
+  let image_name = path.basename(input, path.extname(input));
+  let arrangement_name = path.basename(settings.input.arrangement.image, path.extname(settings.input.arrangement.image));
 
-  settings.output.path = path.join(settings.output.path, project_name);
+  console.log(`adding ${image_name}_${arrangement_name} to ${settings.output.path}`.gray)
+
+  settings.output.path = path.join(settings.output.path, image_name + '_' + arrangement_name);
   console.log(`modified output to ${settings.output.path}`.gray)
 
   return settings;

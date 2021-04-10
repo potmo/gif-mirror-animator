@@ -5,6 +5,7 @@ import vector from './vector.js';
 import * as rapid from './rapid-generator.js';
 import * as gcode from './gcode-generator.js';
 import * as objcode from './obj-generator.js';
+import * as reflection_visualizer from './reflection-simulation-visualizer.js'
 
 
 export {
@@ -146,6 +147,9 @@ async function createSection(settings, photowall, mirror, dimentions, eye, mappi
 
   const objString = objcode.generate(mirrors, reflections, photowall, eye, dimentions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
+
+  // TODO: Add this in?
+  //await reflection_visualizer.visualize(settings, reflections.map(a => a.ellipse_points));
 
   
   let l = mirrors.length;

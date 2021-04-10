@@ -1,0 +1,43 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/diamond.png"
+      ]
+    },
+    "arrangement": {
+      "image": "./images/diamond-hands.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-stipple/diamond",
+    "simulation": {
+      "path": "simulation",
+      "iterations": 5000,
+      "scale": 10,
+      "point_size": 2
+    },
+    "obj": true,
+    "mod": true,
+    "cnc": true
+  },
+  "three_dee": {
+    "mirror_thickness": 0.002,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "mirror_board_diameter": 1,
+    "wall_offset": {
+      "x": 1.5,
+      "y": 0,
+      "z": 2
+    },
+    "wall_rotation_scalar": -0.25,
+    "wall_diameter": 3,
+    "eye_offset": {
+      "x": -2.5,
+      "y": 0,
+      "z": 2
+    }
+  }
+}

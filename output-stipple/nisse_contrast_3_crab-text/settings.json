@@ -1,0 +1,47 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/nisse_contrast_3.png"
+      ],
+      "invert": true
+    },
+    "arrangement": {
+      "image": "./images/crab-text.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-stipple/nisse_contrast_3_crab-text",
+    "simulation": {
+      "path": "simulation",
+      "iterations": 5000,
+      "scale": 3,
+      "point_size": 2,
+      "size": {
+        "width": 1000,
+        "height": 1000
+      }
+    },
+    "obj": true,
+    "mod": true,
+    "cnc": true
+  },
+  "three_dee": {
+    "mirror_thickness": 0.002,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 1.5,
+      "y": 0,
+      "z": 2
+    },
+    "wall_rotation_scalar": -0.25,
+    "wall_diameter": 3,
+    "eye_offset": {
+      "x": -2.5,
+      "y": 0,
+      "z": 2
+    }
+  }
+}

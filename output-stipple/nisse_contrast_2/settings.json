@@ -6,7 +6,7 @@
       ]
     },
     "arrangement": {
-      "image": "./images/hello.png"
+      "image": "./images/diamond-hands.png"
     },
     "duplicate_frames": 1
   },
@@ -14,7 +14,7 @@
     "path": "output-stipple/nisse_contrast_2",
     "simulation": {
       "path": "simulation",
-      "iterations": 8000,
+      "iterations": 2000,
       "scale": 10,
       "point_size": 2
     },
