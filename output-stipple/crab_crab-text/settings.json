@@ -18,7 +18,11 @@
       "iterations": 5000,
       "scale": 3,
       "point_size": 2,
-      "size": {
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
         "width": 1000,
         "height": 1000
       }

@@ -149,7 +149,7 @@ async function createSection(settings, photowall, mirror, dimentions, eye, mappi
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
   // TODO: Add this in?
-  //await reflection_visualizer.visualize(settings, reflections.map(a => a.ellipse_points));
+  await reflection_visualizer.visualize(settings, reflections, photowall);
 
   
   let l = mirrors.length;

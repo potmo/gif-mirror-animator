@@ -41,17 +41,19 @@ async function generate(settings, mappings, mirrors_across) {
   const mirror_diameter = settings.three_dee.mirror_diameter;
   const mirror_padding = settings.three_dee.mirror_padding;
   const mirror_thickness = settings.three_dee.mirror_thickness;
-  const mirror_board_diameter = mirrors_across * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
+  const mirror_board_diameter = mirrors_across * (mirror_diameter + mirror_padding);
+  console.log( mirrors_across, (mirror_diameter + mirror_padding), mirror_board_diameter)
 
   const mirror = {
-    widthVector: vector(mirror_diameter + mirror_padding, 0, 0),
-    heightVector: vector(0, mirror_diameter + mirror_padding, 0),
+    widthVector: vector(mirror_diameter, 0, 0),
+    heightVector: vector(0, mirror_diameter, 0),
     thicknessVector: vector(0, 0, -mirror_thickness)
   }
 
   const mirror_board = {
     widthVector: vector(mirror_board_diameter, 0, 0),
     heightVector: vector(0, mirror_board_diameter, 0),
+    center: vector(0,0,0),
   }
 
   const eye_position = vector(0,0,0).add(eye_offset);
@@ -95,6 +97,8 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
   await reflection_visualizer.visualize(settings, reflections, wall);
 
+  await reflection_visualizer.visualizeArrangement(settings, reflections, mirror_board);
+
 
 
 }
@@ -105,7 +109,7 @@ function createReflectanceEllipsePoints(mirror, eye_pos, target_pos, wall_pos, w
   const down = right.cross(mirror.normal).normalized().scale(mirror.height/2);
 
 
-  const edges = 10;
+  const edges = 50;
   const mirror_points = enumerate(0, edges - 1)
     .map(i => Math.PI * 2 / edges * i - Math.PI / 2)
     .map(a => ({x: Math.cos(a) * 1, y: Math.sin(a) * 1}))

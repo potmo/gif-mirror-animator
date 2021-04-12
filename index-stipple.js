@@ -103,7 +103,7 @@ async function run() {
   let scaled_arrangement_points = mirror_arrangement.pixels.map(point => {
     return {
       x: (point.x - arrangement_image.width / 2) / arrangement_size, 
-      y: (point.y - arrangement_image.height / 2) / arrangement_size
+      y: (point.y - arrangement_image.height / 2) / arrangement_size,
     }
   });
 
@@ -187,7 +187,8 @@ function getSettings() {
         iterations: 5000,
         scale: 3.0,
         point_size: 2,
-        size: {width: 1000, height: 1000},
+        ellipse_image_size: {width: 1000, height: 1000},
+        mirror_image_size: {width: 1000, height: 1000},
       },
       obj: true,
       mod: true,

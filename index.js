@@ -95,6 +95,10 @@ run()
           height: 500,
           mirror_size: 2.5,
         },
+        ellipse_image_size: { 
+          width: 1000,
+          height: 1000,
+        },
         max_deviation_from_optimal: 0,
         frame_number_scaling: 1,
       },
