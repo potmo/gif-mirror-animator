@@ -1,0 +1,54 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/bone-big.png"
+      ],
+      "invert": true,
+      "iterations": 1000
+    },
+    "arrangement": {
+      "stippling": {
+        "path": "./images/bone-big.png",
+        "invert": true,
+        "iterations": 1000,
+        "points": 1000
+      }
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-stipple/bone-big_default",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      }
+    },
+    "obj": true,
+    "mod": true,
+    "cnc": true
+  },
+  "three_dee": {
+    "mirror_thickness": 0.002,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 1.5,
+      "y": 0,
+      "z": 2
+    },
+    "wall_rotation_scalar": -0.25,
+    "wall_diameter": 1.5,
+    "eye_offset": {
+      "x": -2.5,
+      "y": 0,
+      "z": 2
+    }
+  }
+}

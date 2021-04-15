@@ -1,8 +1,12 @@
 'use strict';
 
 // Copied from https://github.com/pshihn/stipple
-
+import cliProgress from  'cli-progress';
 import { Voronoi } from './voronoi.js';
+import seedrandom  from 'seedrandom';
+
+const rnd = seedrandom('This is the seed');
+
 // Adapted from https://observablehq.com/@mbostock/voronoi-stippling
 export function stipple(imageDataBuffer, width, height, pointCount, iterations, invert_colors, callback) {
     const n = pointCount || (width * height / 50);
@@ -14,12 +18,17 @@ export function stipple(imageDataBuffer, width, height, pointCount, iterations, 
     const s = new Float64Array(n);
     for (let i = 0; i < n; ++i) {
         for (let j = 0; j < 60; ++j) {
-            const x = points[i * 2] = Math.floor(Math.random() * width);
-            const y = points[i * 2 + 1] = Math.floor(Math.random() * height);
-            if (Math.random() < grayValue(y * width + x, rgba, invert_colors))
+            const x = points[i * 2] = Math.floor(rnd() * width);
+            const y = points[i * 2 + 1] = Math.floor(rnd() * height);
+            if (rnd() < grayValue(y * width + x, rgba, invert_colors))
                 break;
         }
     }
+
+    const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+
+    bar1.start(highestIteration, 0);
+
     const voronoi = new Voronoi(points, [0, 0, width, height]);
     for (let k = 0; k <= highestIteration; ++k) {
         c.fill(0);
@@ -39,14 +48,17 @@ export function stipple(imageDataBuffer, width, height, pointCount, iterations, 
         for (let i = 0; i < n; ++i) {
             const x0 = points[i * 2], y0 = points[i * 2 + 1];
             const x1 = s[i] ? c[i * 2] / s[i] : x0, y1 = s[i] ? c[i * 2 + 1] / s[i] : y0;
-            points[i * 2] = x0 + (x1 - x0) * 1.8 + (Math.random() - 0.5) * w;
-            points[i * 2 + 1] = y0 + (y1 - y0) * 1.8 + (Math.random() - 0.5) * w;
+            points[i * 2] = x0 + (x1 - x0) * 1.8 + (rnd() - 0.5) * w;
+            points[i * 2 + 1] = y0 + (y1 - y0) * 1.8 + (rnd() - 0.5) * w;
         }
         voronoi.update();
         if (callback && (iterations.indexOf(k) >= 0)) {
             callback({ points, width, height, iteration: k });
         }
+
+        bar1.update(k);
     }
+    bar1.stop();
     return { points, width, height, iteration: highestIteration };
 }
 function grayValue(i, rgba, invert_colors) {
@@ -54,6 +66,11 @@ function grayValue(i, rgba, invert_colors) {
     let gray = 1 - (0.299 * rgba[offset] + 0.587 * rgba[offset + 1] + 0.114 * rgba[offset + 2]) / 254;
     if (invert_colors) {
         gray = 1 - gray;
+    }
+
+    // check alpha
+    if (rgba[offset + 3] == 0) {
+        return 0;
     }
     return gray;
 }

@@ -12,7 +12,7 @@ export {
   generate,
 }
 
-async function generate(settings, mappings, mirrors_across) {
+async function generate(settings, mappings) {
 
   const eye_offset = settings.three_dee.eye_offset;
 
@@ -41,8 +41,8 @@ async function generate(settings, mappings, mirrors_across) {
   const mirror_diameter = settings.three_dee.mirror_diameter;
   const mirror_padding = settings.three_dee.mirror_padding;
   const mirror_thickness = settings.three_dee.mirror_thickness;
-  const mirror_board_diameter = mirrors_across * (mirror_diameter + mirror_padding);
-  console.log( mirrors_across, (mirror_diameter + mirror_padding), mirror_board_diameter)
+  const mirror_board_diameter = settings.three_dee.mirror_board_diameter;
+
 
   const mirror = {
     widthVector: vector(mirror_diameter, 0, 0),
@@ -100,7 +100,20 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
   await reflection_visualizer.visualizeArrangement(settings, reflections, mirror_board);
 
 
+  printSize(reflections)
 
+
+}
+
+function printSize(reflections) {
+  let positions = reflections.map(r => r.mirror);
+  let max_x = Math.max(...positions.map(p=>p.pos.x + p.width/2));
+  let min_x = Math.min(...positions.map(p=>p.pos.x - p.width/2));
+
+  let max_y = Math.max(...positions.map(p=>p.pos.y + p.height/2));
+  let min_y = Math.min(...positions.map(p=>p.pos.y - p.height/2));
+
+  console.log(`Mirrors width: ${max_x - min_x}, height: ${max_y - min_y}`.brightBlue)
 }
 
 function createReflectanceEllipsePoints(mirror, eye_pos, target_pos, wall_pos, wall_normal) {

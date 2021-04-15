@@ -1,0 +1,54 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/cat.png"
+      ],
+      "invert": true,
+      "iterations": 2000
+    },
+    "arrangement": {
+      "equidistant_spiral": {
+        "width": 45,
+        "height": 45,
+        "coils": 15,
+        "chord": 1.5
+      }
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-stipple/cat_spiral",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      }
+    },
+    "obj": true,
+    "mod": true,
+    "cnc": true
+  },
+  "three_dee": {
+    "mirror_thickness": 0.002,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 1.5,
+      "y": 0,
+      "z": 1
+    },
+    "wall_rotation_scalar": -0.25,
+    "wall_diameter": 2,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 3
+    }
+  }
+}

@@ -5,7 +5,6 @@ const Image = Canvas.Image;
 import fs from  'fs-extra';
 import path from  'path';
 import colors from  'colors';
-import cliProgress from  'cli-progress';
 import vector from './vector.js';
 import * as color_convert from  './color-convert.js';
 import * as image_loader from './image-loader.js';

@@ -33,23 +33,44 @@ async function run() {
 
   console.log('Load images'.brightBlue);
   let reflection_image = await image_loader.readImage(settings.input.image.paths[0]);
-  let arrangement_image = await image_loader.readImage(settings.input.arrangement.image);
   await image_loader.writeImage(path.join(settings.output.path, 'input.png'), reflection_image);
-  await image_loader.writeImage(path.join(settings.output.path, 'arrangement.png'), arrangement_image);
 
-  console.log('Convert arrangement'.brightBlue);
-  let mirror_arrangement = mirror_arranger.convert(settings, arrangement_image);
+  var mirror_arrangement;
+
+  switch (true) {
+    case (!!settings.input.arrangement.image):
+      let arrangement_image = await image_loader.readImage(settings.input.arrangement.image);
+      await image_loader.writeImage(path.join(settings.output.path, 'arrangement.png'), arrangement_image);
+      console.log('Convert arrangement'.brightBlue);
+      mirror_arrangement = mirror_arranger.convert(settings, arrangement_image);
+      break;
+
+    case !!settings.input.arrangement.equidistant_spiral:
+      mirror_arrangement = mirror_arranger.equidistantSpiral(settings);
+      break;
+
+    case !!settings.input.arrangement.stippling: 
+      mirror_arrangement = await mirror_arranger.stippling(settings);
+      break;
+
+    default: 
+      throw new Error('No input');
+      break;
+  
+  }
+  
+
+
+  console.log(`Number of pixels in arrrangement: ${mirror_arrangement.pixels.length}`.blue)
 
   const input_context = reflection_image.getContext('2d');
   const input_data = input_context.getImageData(0, 0, reflection_image.width, reflection_image.height);
 
   let reflection_size = Math.max(reflection_image.width, reflection_image.height);
-  let arrangement_size = Math.max(arrangement_image.width, arrangement_image.height);
+  let arrangement_size = Math.max(mirror_arrangement.image_size.width, mirror_arrangement.image_size.height);
 
   const point_count = mirror_arrangement.pixels.length;
-  const iterations = [settings.output.simulation.iterations];
-  const scale = settings.output.simulation.scale;
-  const point_size = settings.output.simulation.point_size;
+  const iterations = [settings.input.image.iterations];
 
   let stipled_points = stipple(input_data.data, reflection_image.width, reflection_image.height, point_count, iterations, settings.input.image.invert)
     .points
@@ -62,35 +83,7 @@ async function run() {
       return list;
     }, []);
 
-  //console.log(stipled_points)
-
-
-  let reflection_output = await image_loader.getOutputImage(reflection_image.width * scale, reflection_image.height * scale, {r:0, g:0, b: 0, a: 255});
-  const reflection_context = reflection_output.getContext("2d");
-
-  const color = {r: 255, g: 255, b:255, a: 255};
-  reflection_context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-  reflection_context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-
-  stipled_points.map(p => ({x: p.x * scale, y: p.y*scale})).forEach(point => drawDot(reflection_context, point, point_size));
-
-  await image_loader.writeImage(path.join(settings.output.path, 'simulation', 'reflection.png'), reflection_output);
-
-
-  let arrangement_output = await image_loader.getOutputImage(arrangement_image.width * scale, arrangement_image.height * scale, {r:0, g:0, b: 0, a: 255});
-  const arrangement_context = arrangement_output.getContext("2d");
-
-  arrangement_context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-  arrangement_context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-
-  mirror_arrangement
-    .pixels
-    .map( pixel => {return {x: pixel.x * scale, y: pixel.y * scale}})
-    .forEach(point => drawDot(arrangement_context, point, point_size));
-
-  await image_loader.writeImage(path.join(settings.output.path, settings.output.simulation.path, 'arrangement.png'), arrangement_output);
-
-  // normalize size
+  
 
   let scaled_stipled_points = stipled_points.map(point => {
     return {
@@ -102,8 +95,8 @@ async function run() {
   
   let scaled_arrangement_points = mirror_arrangement.pixels.map(point => {
     return {
-      x: (point.x - arrangement_image.width / 2) / arrangement_size, 
-      y: (point.y - arrangement_image.height / 2) / arrangement_size,
+      x: (point.x - mirror_arrangement.image_size.width / 2) / arrangement_size, 
+      y: (point.y - mirror_arrangement.image_size.height / 2) / arrangement_size,
     }
   });
 
@@ -112,7 +105,9 @@ async function run() {
 
   console.log('Generate 3d files'.brightBlue);
 
-  await three_dee_generator.generate(settings, mapping_conf, arrangement_size);
+  settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
+
+  await three_dee_generator.generate(settings, mapping_conf);
   
 }
 
@@ -165,12 +160,31 @@ function getSettings() {
       */
       image: {
         paths: [
-          './images/crab.png', 
+          './images/bone.png', 
         ],
         invert: true,
+        iterations: 2000,
       },
       arrangement: {
-        image: './images/crab-text.png',
+        //image: './images/crab-text.png',
+        
+        /*
+        equidistant_spiral: {
+          width: 45,
+          height: 45,
+          coils: 15,
+          chord: 1.5,
+        },*/
+
+        
+        stippling: {
+          path: './images/meat.png', 
+          invert: true,
+          iterations: 2000,
+          points: 250,
+          imaginary_size: 35
+        }
+        
       },
       /*image_and_rotate: {
         images: [
@@ -184,9 +198,6 @@ function getSettings() {
       path: './output-stipple', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
-        iterations: 5000,
-        scale: 3.0,
-        point_size: 2,
         ellipse_image_size: {width: 1000, height: 1000},
         mirror_image_size: {width: 1000, height: 1000},
       },
@@ -198,10 +209,11 @@ function getSettings() {
       mirror_thickness: 0.002, 
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
-      wall_offset: vector(1.50, 0, 2.0),
+      mirror_board_diameter: undefined, // declared later programmatically
+      wall_offset: vector(1.50, 0, 1.0),
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
-      wall_diameter: 3.00, 
-      eye_offset: vector(-2.50, 0, 2.00),
+      wall_diameter: 2.00, 
+      eye_offset: vector(0.0, 0.0, 3.00),
     },
   }
 
@@ -211,7 +223,26 @@ function getSettings() {
   if (settings.input.image_and_rotate) input = settings.input.image_and_rotate.images[0].path;
 
   let image_name = path.basename(input, path.extname(input));
-  let arrangement_name = path.basename(settings.input.arrangement.image, path.extname(settings.input.arrangement.image));
+  var arrangement_name
+
+  switch(true) {
+
+    case (!!settings.input.arrangement.image):
+      arrangement_name = path.basename(settings.input.arrangement.image, path.extname(settings.input.arrangement.image));
+      break;
+
+    case (!!settings.input.arrangement.equidistant_spiral):
+      arrangement_name = 'spiral';
+      break;
+
+    case (!!settings.input.arrangement.stippling):
+      arrangement_name = path.basename(settings.input.arrangement.stippling.path, path.extname(settings.input.arrangement.stippling.path));
+      break;
+
+    default:
+      arrangement_name = 'default';
+      break;
+  } 
 
   console.log(`adding ${image_name}_${arrangement_name} to ${settings.output.path}`.gray)
 

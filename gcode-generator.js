@@ -11,7 +11,7 @@ function generate(mirrors, reflections, photowall, eye) {
 
 function* generateModule(mirrors) {
 
-	const tool = 31;
+	const tool = 13;
 	const tool_diameter = 6.0;
 
 	yield `O1001 (TOP)`
