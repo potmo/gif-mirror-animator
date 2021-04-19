@@ -49,8 +49,8 @@ function* generateModule(mirrors) {
  	yield `(TURN SMOOTHING ON)`;
 	yield `G5.1 Q1;`;				//TODO: Check if this is really right
 
-	yield `(TOOL LENGTH COMPENSATION? UNCLEAR IF THIS IS NEEDED)`;
-	yield `G43 Z0 H${tool};`;
+	yield `(TOOL LENGTH COMPENSATION AND MOVE TOOL TO Z FROM DATUM)`;
+	yield `G43 H${tool} Z300.0;`;
 
 	yield `(GO TO STARTING POSITION)`;
 	yield `G00 X0. Y0. Z300. B0. C0.;`;	
