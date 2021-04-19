@@ -121,9 +121,13 @@ function* generatePositions(mirrors, tool, tool_diameter) {
 	const globalRight = vector(1,0,0);
 	const globalDown = vector(0,0,1);
 
+	var i = 0;
+
 	for (let mirror of adjusted_mirrors) {
 
-		yield `(START CIRCLE ${mirror.id})`;
+		i++;
+
+		yield `(START CIRCLE ${mirror.id}, ${i}/${adjusted_mirrors.length})`;
 
 		const feature_plane_method = 'points';
 
@@ -153,7 +157,7 @@ function* generatePositions(mirrors, tool, tool_diameter) {
 		}
 
 		
-		yield `G53.6 H${tool}; (ORIENT TOOL)`; // (G53.1 can be used but does not rotate around tool tip)
+		yield `G53.6 H${tool}; (${i}/${adjusted_mirrors.length} ORIENT TOOL)`; // (G53.1 can be used but does not rotate around tool tip)
 		
 		//yield `G00 X0. Y0. Z${clearence_height.toFixed(precision)} (RAPID TO CLEARENCE HEIGHT)`;
 
@@ -164,16 +168,16 @@ function* generatePositions(mirrors, tool, tool_diameter) {
 		yield `G00 X${(0).toFixed(precision)} Y${(0).toFixed(precision)} Z${clearence_height.toFixed(precision)}; (RAPID INTO CENTER)`;
 		
 		// FEED TO CUTTING DEPTH
-		yield `G01 Z${(0).toFixed(precision)}; (FEED TO CUTTING DEPTH)`;
+		yield `G01 Z${(0).toFixed(precision)}; (${i}/${adjusted_mirrors.length} FEED TO CUTTING DEPTH)`;
 
 		// FEED TO START OF ARC
-		yield `G01 Y${(mirror.height/2 - tool_diameter/2).toFixed(precision)}; (FEED TO START OF ARC)`;
+		yield `G01 Y${(mirror.height/2 - tool_diameter/2).toFixed(precision)}; (${i}/${adjusted_mirrors.length} FEED TO START OF ARC)`;
 
 		// CW CIRCULAR MOTION (IJ = DIST TO CENTER XY)
-		yield `G02 I0. J${((mirror.height/2 - tool_diameter / 2)*-1 ).toFixed(precision)}; (CW CIRCULAR MOTION)`;
+		yield `G02 I0. J${((mirror.height/2 - tool_diameter / 2)*-1 ).toFixed(precision)}; (${i}/${adjusted_mirrors.length} CW CIRCULAR MOTION)`;
 
 		// RAPID TO CLEARENCE HEIGHT
-		yield `G00 Z${clearence_height.toFixed(precision)}; (RAPID TO CLEARENCE HEIGHT)`;
+		yield `G00 Z${clearence_height.toFixed(precision)}; (${i}/${adjusted_mirrors.length} RAPID TO CLEARENCE HEIGHT)`;
 
 		yield `G69;  (CANCEL COORDINATE PLANE)`;
 
