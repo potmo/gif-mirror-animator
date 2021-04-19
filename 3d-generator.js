@@ -50,15 +50,6 @@ async function generate(settings, mappings) {
   const mirror_padding = settings.three_dee.mirror_padding * scale;
   
 
-
-
-  //TODO:
-
-
-  // IT SEEMS LIKE THE MIRROR NORMALS ARE INVERTED
-
-  //
-
   const dimentions = {width, height, mirror_size, padding: mirror_padding, thickness};
 
   const eye_offset = settings.three_dee.eye_offset.scale(scale);

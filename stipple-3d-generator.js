@@ -65,6 +65,8 @@ async function generate(settings, mappings) {
 
 async function createSection(settings, wall, mirror, mirror_board, eye, mappings) {
 
+  // Note that all positions are sclars between -0.5 to 0.5
+
   let mirrors = [];
   let reflections = [];
   let id = 0;

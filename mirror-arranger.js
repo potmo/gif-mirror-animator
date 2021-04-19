@@ -92,7 +92,7 @@ export function equidistantSpiral(settings) {
 
   var pixels = [];
 
-  for (var theta = chord / awayStep * 3; theta <= thetaMax; ) {
+  for (var theta = chord / awayStep; theta <= thetaMax; ) {
       var away = awayStep * theta;
       theta += chord / away;
 

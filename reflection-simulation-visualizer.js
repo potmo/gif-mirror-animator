@@ -42,9 +42,8 @@ async function visualize(settings, reflections, wall) {
 
   const context = output.getContext("2d");
 
-  const color = {r: 255, g: 255, b:255, a: 255};
-  context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-  context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
+  context.fillStyle = `rgba(255,255,255,1.0)`;
+  context.strokeStyle = `rgba(255,255,255,0.5)`;
 
   ellipses.forEach(points => {
     drawDot(context, points);                 

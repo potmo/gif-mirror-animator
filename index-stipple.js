@@ -39,17 +39,19 @@ async function run() {
 
   switch (true) {
     case (!!settings.input.arrangement.image):
+      console.log(`1 bit arrangment image`.yellow)
       let arrangement_image = await image_loader.readImage(settings.input.arrangement.image);
       await image_loader.writeImage(path.join(settings.output.path, 'arrangement.png'), arrangement_image);
-      console.log('Convert arrangement'.brightBlue);
       mirror_arrangement = mirror_arranger.convert(settings, arrangement_image);
       break;
 
     case !!settings.input.arrangement.equidistant_spiral:
+      console.log(`Spiral arrangment`.yellow)
       mirror_arrangement = mirror_arranger.equidistantSpiral(settings);
       break;
 
     case !!settings.input.arrangement.stippling: 
+      console.log(`Stiple arrangment`.yellow)
       mirror_arrangement = await mirror_arranger.stippling(settings);
       break;
 
@@ -72,6 +74,7 @@ async function run() {
   const point_count = mirror_arrangement.pixels.length;
   const iterations = [settings.input.image.iterations];
 
+  console.log(`Stiple reflections`.yellow)
   let stipled_points = stipple(input_data.data, reflection_image.width, reflection_image.height, point_count, iterations, settings.input.image.invert)
     .points
     .reduce( (list, current, index) => {
@@ -83,8 +86,8 @@ async function run() {
       return list;
     }, []);
 
-  
-
+    
+  console.log(`Scale points to be scalars between -0.5 to 0.5`.yellow)
   let scaled_stipled_points = stipled_points.map(point => {
     return {
       x: (point.x - reflection_image.width / 2) / reflection_size, 
@@ -100,13 +103,11 @@ async function run() {
     }
   });
 
-
+  console.log(`Map to positions`.yellow)
   let mapping_conf = await stipple_mapper.map(settings, scaled_arrangement_points, scaled_stipled_points);
 
-  console.log('Generate 3d files'.brightBlue);
-
+  console.log('Generate 3d files'.yellow);
   settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
-
   await three_dee_generator.generate(settings, mapping_conf);
   
 }
@@ -160,7 +161,7 @@ function getSettings() {
       */
       image: {
         paths: [
-          './images/bone.png', 
+          './images/bone-big.png', 
         ],
         invert: true,
         iterations: 2000,
@@ -170,20 +171,21 @@ function getSettings() {
         
         /*
         equidistant_spiral: {
-          width: 45,
-          height: 45,
+          width: 35,
+          height: 35,
           coils: 15,
           chord: 1.5,
         },*/
 
         
         stippling: {
-          path: './images/meat.png', 
+          path: './images/face.png', 
           invert: true,
           iterations: 2000,
-          points: 250,
-          imaginary_size: 35
-        }
+          points: 4000,
+          imaginary_size: 180,
+          invert: true,
+        },
         
       },
       /*image_and_rotate: {
@@ -206,14 +208,14 @@ function getSettings() {
       cnc: true, 
     },
     three_dee: { // units in meters
-      mirror_thickness: 0.002, 
+      mirror_thickness: 0.001, 
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(1.50, 0, 1.0),
-      wall_rotation_scalar: -0.25, // scalar of full circle around up axis
-      wall_diameter: 2.00, 
-      eye_offset: vector(0.0, 0.0, 3.00),
+      wall_offset: vector(0.5, 0, 3.0),
+      wall_rotation_scalar: -0.5, // scalar of full circle around up axis
+      wall_diameter: 4.00, 
+      eye_offset: vector(-0.5, 0.0, 2.00),
     },
   }
 
