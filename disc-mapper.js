@@ -162,7 +162,17 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		await saveText(path.join(settings.output.path,'disc.svg'), discSvg, {encoding: 'utf8'});	
 	}
 
-	
+	// set the mirror and palette to be centered on 0 (from -0.5 to 0.5)
+	mapping_conf.mapping = mapping_conf.mapping.map( item => {
+
+		item.mirror.x += -0.5;
+		item.mirror.y += -0.5;
+
+		item.palette.x += -0.5;
+		item.palette.y += -0.5;
+
+		return item;
+	});
 
 	return mapping_conf;
 }

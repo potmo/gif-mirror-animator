@@ -5,7 +5,7 @@ import colors from 'colors';
 import fs from 'fs-extra';
 import * as mapper from './cylinder-mapper.js';
 import * as image_loader from './image-loader.js';
-import * as three_dee_generator from './stipple-3d-generator.js';
+import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
 import vector from './vector.js';

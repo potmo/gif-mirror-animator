@@ -42,7 +42,10 @@ run()
   console.log('Map to disc'.brightBlue);
   let mapping_conf = await disc_mapper.map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
 
+
   console.log('Generate 3d files'.brightBlue);
+  const arrangement_size = Math.max(image_size.width, image_size.height);
+  settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
   await three_dee_generator.generate(settings, mapping_conf);
 
   var hole_size_measurement = settings.three_dee.disc_diameter * (settings.output.disc_image.hole_size / settings.output.disc_image.width);
@@ -99,6 +102,10 @@ run()
           width: 1000,
           height: 1000,
         },
+        mirror_image_size: {
+          width: 1000, 
+          height: 1000
+        },
         max_deviation_from_optimal: 0,
         frame_number_scaling: 1,
       },
@@ -115,16 +122,14 @@ run()
       cnc: true, //TODO: Maybe these should have a scaling here instead
     },
     three_dee: {
-      scale: 0.01, // dimensions in cm below this with this setting. Scaling it up to M for the output
-      width_mirror_units: 90, //110 // the number of mirror pixels width
-      height_mirror_units: 90,//110 // the number of mirror pixels height
-      mirror_thickness: 0.2, 
-      mirror_size: 1.05, // this is the diameter of the mirror
-      mirror_padding: 0.25, // the padding between mirrors
-      disc_offset: vector(150, 0, 200.0),
-      disc_rotation_scalar: -0.25, // scalar of full circle around up axis
-      disc_diameter: 249.0, 
-      eye_offset: vector(-250, 0, 200.0),
+      mirror_thickness: 0.001, 
+      mirror_diameter: 0.0105, // this is the diameter of the mirror
+      mirror_padding: 0.0025, // the padding between mirrors
+      mirror_board_diameter: undefined, // this is set programatically later
+      wall_offset: vector(1.50, 0, 2.000),
+      wall_rotation_scalar: -0.25, // scalar of full circle around up axis
+      wall_diameter: 2.490, 
+      eye_offset: vector(-2.50, 0, 2.00),
     },
     optimization: {
       reuse_permutations: true,

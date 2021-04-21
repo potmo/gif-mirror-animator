@@ -7,7 +7,7 @@ import * as image_loader from './image-loader.js';
 import {stipple} from './stipple.js';
 import * as mirror_arranger from './mirror-arranger.js';
 import * as stipple_mapper from './stipple-mapper.js';
-import * as three_dee_generator from './stipple-3d-generator.js';
+import * as three_dee_generator from './3d-generator.js';
 import vector from './vector.js';
 
 run()

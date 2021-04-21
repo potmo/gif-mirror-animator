@@ -28,6 +28,10 @@
         "width": 1000,
         "height": 1000
       },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
       "max_deviation_from_optimal": 0,
       "frame_number_scaling": 1
     },
@@ -44,23 +48,20 @@
     "cnc": true
   },
   "three_dee": {
-    "scale": 0.01,
-    "width_mirror_units": 90,
-    "height_mirror_units": 90,
-    "mirror_thickness": 0.2,
-    "mirror_size": 1.05,
-    "mirror_padding": 0.25,
-    "disc_offset": {
-      "x": 150,
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 1.5,
       "y": 0,
-      "z": 200
+      "z": 2
     },
-    "disc_rotation_scalar": -0.25,
-    "disc_diameter": 249,
+    "wall_rotation_scalar": -0.25,
+    "wall_diameter": 2.49,
     "eye_offset": {
-      "x": -250,
+      "x": -2.5,
       "y": 0,
-      "z": 200
+      "z": 2
     }
   },
   "optimization": {
