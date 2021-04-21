@@ -117,7 +117,7 @@ Since each mirror first points a color in the first vertical line and then the s
 
 	<PICTURE>
 
-##First optimization: De Bruijn sequences
+##Optimization: De Bruijn sequences
 To continue here we first need to forget about the cylinder in the previous section and go back to the initial setup with all the colors in a grid on the wall since this trick requires that the mirror can se multiple horizontal fields at the same time without the color fields being on the back of a cylinder.
 
 One observation that can be made is that one horizontal sequence might start with the same colors as another ends with. There might be an even larger overlap where one sequence first two colors is the same as anothers last two colors. When doing this we of course need to adjust the mirrors accordingly. All mirrors using a sequence that now is overlapped at the end of another sequence must start pointing at the start of the overlapping sequence, that might be the end of another sequence.
@@ -137,7 +137,7 @@ We any of them are not we can only rotate the color circle and still produce the
 
 	<PICTURE>
 
-##Second optimization: Circles
+##Optimization: Circles
 Having a few frames and a few colors in our animation will produce an awfully long De Bruin sequnece and hence an awfully big circle.
 A lot of these sequences will probably also not be used by any mirror so they are only redundant. Since it is important that the color fields cover as small of an area as possible to avoid the inverse square law described below we need to do some more work. 
 
@@ -149,17 +149,33 @@ A fortunate side effect of having circles instead of grids or lines are that the
 
 <img src="./output/potato-tomato-final/disc.png" alt="alt text" title="A disc" style="zoom:10%;" />
 
+##Optimization: Resuing multiple sequence loops
 
 
+##Palette setups
+* Disc
+* Cylinder
+* Conveyor
+* X-Lines
+* Y-Lines
+* XY-Grid
+* Interlaced grid
+* Multiple palettes
+* Combination of palette types
+* Stippling with light
+
+## Shape of mirror board and mirror arrangement
+* Stippling
+* Hex
+* Grid
+* Freeform
 
 
-
-
-## Shape of mirrors
+##Shape of mirrors
 
 Square tiling of a plane is 100% efficient but for reasons we will discuss later using round mirrors have some good properties (that we will discuss in the manufacturing section). Round mirrors arranged in a grid will leave a lot of gaps between them that does not reflect any light (or it will reflect light, just not the light we want) and that will wash out the colors of the picture. The most dense packing of circles on a plane, making more of the surface be mirrors, is the hexagonal array packing. This is the same packing bees use for their beehives. This will minimize the space between the mirrors and hence reflect more light per unit area and therefore allow for a more vivid image.
 
-## Accounting for distances
+##Accounting for distances
 Although the light rays starts at a light source, bounces and scatters of the color surfaces and then reflects on the mirros and strikes the spectators retina it is easier to think of the process in reverse. The math will add up both directions (it is actually a funamental law of thermodynamics that all optics are reversable). If we think of the rays from the eye (so in reverse) that strike the mirror they will actually form a cone  with the apex in the eye and  the base covering the mirrors surface. When the rays reflect off the mirrors the cone will continue expanding with the same taper until it strikes the color fields. The surface area that will be sticken on the color fields is related to the surface area of the mirrors and the combined distances between the eye, mirror and color surfaces. Doubleing that distance will quadrouble the area (called _The inverse square law_). This is important since having too small color fields in relation to the distance from the mirrors will make the mirror pick up more than one color field.
 To account for that one can either move the color disc closer to the mirrors or make the mirror disc bigger.
 
@@ -171,7 +187,7 @@ There is another phenomena that we have to at least consider: If the light cone 
 
 The more extreme the angle of incidence of the cone the more extreme the proportions of the ellipse will be. As the angle of incidence approaches tangency to the surface the length of ellipses major axis will approach infinity. 
 
-## Positioning and angles
+##Positioning and angles
 
 The relative positions of the mirrors, color disc and spectator makes for different pros and cons. In this section we are going to investigate them.
 
@@ -183,13 +199,11 @@ The third option is to put the mirrors perpendicular to the disc between the spe
 
 ##Being smart with the animation
 
-
-##Making the disc look better with helix
+##Making the disc look better with helix offsets
 
 ## Randomizing starting points for equivivivalent cyclic sequences
 
 ## Sorting circles with shannon entropy
-
 
 ##Multiplying frames for higher framerates
 
@@ -216,19 +230,6 @@ Criteria I have set up for myself for the selections of pictures.
 
 
 
-
-FC2 you should indicate your position by visual signals
-
-FJ5 Position of accident are marked by wreckage 
-
-IV Where is the fire
-
-FZ1 I am continuing to search
-
-GC1 result of search negative
-
-
-
 # Machining
 
 ## 3d-printing
@@ -239,7 +240,7 @@ GC1 result of search negative
 
 ## Using 6+1 axis KUKA robot
 
-##Mounting disc
+## Mounting disc
 
 ## Painting the disc
 

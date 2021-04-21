@@ -71,6 +71,7 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
   let reflections = [];
   let id = 0;
 
+
   for (let mapping of mappings) {
     const target = wall.center.add(wall.widthVector.scale(mapping.palette.x))
                               .add(wall.heightVector.scale(mapping.palette.y * -1));

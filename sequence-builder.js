@@ -109,7 +109,9 @@ function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, m
     let best_match = sequences.reduce( (best, curr) => {
       var permutation_key = candidate.key;
 
-      for (let permutation_offset = 0; permutation_offset < permutation_key.length-1; permutation_offset++) {
+      var max_permutation_offset = settings.optimization.reuse_permutations ? permutation_key.length-1 : 1;
+
+      for (let permutation_offset = 0; permutation_offset < max_permutation_offset; permutation_offset++) {
         // check all permutations
         permutation_key = shiftString(candidate.key, permutation_offset);
 
