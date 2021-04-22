@@ -25,10 +25,10 @@ async function visualize(settings, reflections, wall) {
       const scaled_points = stipled_points
       .map( v => {
         // move to origo
-        return v.sub(wall.center)  
+        return v.sub(wall.worldPosAtTextureCoord(0, 0))  
       })
-      .map( v => {
-        return {x : wall.widthVector.normalized().dot(v) / wall.widthVector.mag(), y: wall.heightVector.normalized().dot(v) / wall.heightVector.mag()};
+      .map( p => {
+        return wall.textureCoordAtWorldPos(p);
       })
       .map(p => {
         return {x: size.width / 2 + p.x * size.width , y: size.height - (size.height / 2 + p.y * size.height)}

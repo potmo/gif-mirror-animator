@@ -26,23 +26,43 @@ async function generate(settings, mappings) {
                                     .rotatedAroundY(Math.PI * 2 * settings.three_dee.wall_rotation_scalar, vector(0, 0, 0));
   const wall_normal = wall_width_vector.normalized().cross(wall_height_vector.normalized());                                    
 
-  const wall = {
-    upperLeft: wall_position.add(wall_width_vector.scale(-0.5)).add(wall_height_vector.scale(-0.5)),
-    upperRight: wall_position.add(wall_width_vector.scale(0.5)).add(wall_height_vector.scale(-0.5)),
-    lowerRight: wall_position.add(wall_width_vector.scale(0.5)).add(wall_height_vector.scale(0.5)),
-    lowerLeft: wall_position.add(wall_width_vector.scale(-0.5)).add(wall_height_vector.scale(0.5)),
-    widthVector: wall_width_vector,
-    heightVector:  wall_height_vector,
-    center: wall_position,
-    normal: wall_normal,
-  };
+  let wall = {}
+  wall.worldPosAtTextureCoord = (x,y) => {
+    return wall_position.add(wall_width_vector.scale(x))
+                        .add(wall_height_vector.scale(y))
+  }
 
+  wall.worldRightNormalAtTextureCoord = (x, y) => {
+    // Rotate around the mirror pos that is impicitly 0,0,0
+    return vector(wall_width, 0, 0)
+      .rotatedAroundY(Math.PI * 2 * settings.three_dee.wall_rotation_scalar, vector(0, 0, 0))
+      .normalized();
+  }
+
+  wall.worldUpNormalAtTextureCoord = (x, y) => {
+    return vector(0, wall_height, 0)
+      .rotatedAroundY(Math.PI * 2 * settings.three_dee.wall_rotation_scalar, vector(0, 0, 0))
+      .normalized();
+  }
+
+  wall.worldNormalAtTextureCoord = (x, y) => {
+    const right = wall.worldRightNormalAtTextureCoord(x,y);
+    const up = wall.worldUpNormalAtTextureCoord(x,y);
+    return right.normalized().cross(up.normalized());
+  }
+
+  wall.textureCoordAtWorldPos = (pos) => {
+    const widthVector = vector(wall_width, 0, 0)
+                              .rotatedAroundY(Math.PI * 2 * settings.three_dee.wall_rotation_scalar, vector(0, 0, 0));
+    const heightVector = vector(0, wall_height, 0)
+                              .rotatedAroundY(Math.PI * 2 * settings.three_dee.wall_rotation_scalar, vector(0, 0, 0));
+    return {x : widthVector.normalized().dot(pos) / widthVector.mag(), y: heightVector.normalized().dot(pos) / heightVector.mag()}
+  }
 
   const mirror_diameter = settings.three_dee.mirror_diameter;
   const mirror_padding = settings.three_dee.mirror_padding;
   const mirror_thickness = settings.three_dee.mirror_thickness;
   const mirror_board_diameter = settings.three_dee.mirror_board_diameter;
-
 
   const mirror = {
     widthVector: vector(mirror_diameter, 0, 0),
@@ -73,8 +93,10 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
 
   for (let mapping of mappings) {
-    const target = wall.center.add(wall.widthVector.scale(mapping.palette.x))
-                              .add(wall.heightVector.scale(mapping.palette.y * -1));
+    /*const target = wall.center.add(wall.widthVector.scale(mapping.palette.x))
+                              .add(wall.heightVector.scale(mapping.palette.y * -1));*/
+
+    const target = wall.worldPosAtTextureCoord(mapping.palette.x, mapping.palette.y * -1)
 
 
     const mirrorPos = vector(0,0,0).add(mirror_board.widthVector.scale(mapping.mirror.x))
@@ -84,7 +106,8 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
     const mirrorObj = createMirrorLookingAt(id++, mirrorPos, eye, target, mirror.widthVector.mag(), mirror.thicknessVector.mag());
     mirrors.push(mirrorObj);
 
-    const ellipse_points = createReflectanceEllipsePoints(mirrorObj, eye.pos, target, wall.center, wall.normal);
+    // TODO: This should be changed
+    const ellipse_points = createReflectanceEllipsePoints(mirrorObj, eye.pos, target, wall);
 
     reflections.push({mirror: mirrorObj, target, eye, ellipse_points});
   }
@@ -95,7 +118,7 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
   const gcodeString = gcode.generate(mirrors, reflections, wall, eye);
   await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
 
-  const objString = objcode.generate(mirrors, reflections, wall, eye);
+  const objString = objcode.generate(mirrors, reflections, wall, eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
   await reflection_visualizer.visualize(settings, reflections, wall);
@@ -119,8 +142,14 @@ function printSize(reflections) {
   console.log(`Mirrors width: ${max_x - min_x}, height: ${max_y - min_y}`.brightBlue)
 }
 
-function createReflectanceEllipsePoints(mirror, eye_pos, target_pos, wall_pos, wall_normal) {
+function createReflectanceEllipsePoints(mirror, eye_pos, target_pos, wall) {
+
+  //TODO: This should be in relation to the curature of the wall
+  const wall_pos =  wall.worldPosAtTextureCoord(0, 0);
+  const wall_normal =  wall.worldNormalAtTextureCoord(0,0);
   
+  // TODO: here we can use the wall up and right vectors
+  // It needs to be done per pixel
   const right = vector().globalUp.cross(mirror.normal).normalized().scale(mirror.width/2);
   const down = right.cross(mirror.normal).normalized().scale(mirror.height/2);
 

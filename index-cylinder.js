@@ -143,7 +143,9 @@ function getSettings() {
       wall_offset: vector(1.0, 0.0, 1.0), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.375, // scalar of full circle around up axis
       wall_diameter: 2.0,//2.490, 
+      wall_face_divisions: 50,
       eye_offset: vector(0, 0, 4.00),
+
     },
     optimization: {
       reuse_permutations: true,

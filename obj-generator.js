@@ -7,12 +7,12 @@ export {
 	generate,
 }
 
-function generate(mirrors, reflections, photowall, eye) {
-	const program = Array.from(createObjFile(mirrors, reflections, photowall, eye)).join('\n');
+function generate(mirrors, reflections, wall, eye, wall_face_divisions) {
+	const program = Array.from(createObjFile(mirrors, reflections, wall, eye, wall_face_divisions)).join('\n');
 	return program;
 }
 
-function * createObjFile(mirrors, reflections, photowall, eye) {
+function * createObjFile(mirrors, reflections, wall, eye, wall_face_divisions) {
 
   console.log('mirrors', mirrors.length);
 
@@ -22,29 +22,13 @@ function * createObjFile(mirrors, reflections, photowall, eye) {
   yield 's off';
   yield 'o mirror'
 
-  yield 'vt 0 1'
-  yield 'vt 1 1'
-  yield 'vt 1 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-	yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-  yield 'vt 0 0'
-
+  var textures = getWallTextureMap(wall_face_divisions) 
+  
+  yield * convertTexturesToObj(textures);
 
   yield * convertMirrorsToObj(mirrors, vertex);
 
-  yield * convertPhotoWallToObj(photowall, vertex);
+  yield * convertWallToObj(wall, vertex, textures.wall_texture_ids);
 
   yield * convertEyeToObj(eye, vertex);
 
@@ -55,6 +39,43 @@ function * createObjFile(mirrors, reflections, photowall, eye) {
   yield * convertMirrorNormalsToObj(mirrors, vertex);
 
   console.log(colors.green(`created mesh (.obj) file`));
+}
+
+function * convertTexturesToObj(textures) {
+  for (var uv of textures.uv) {
+    yield `vt ${uv.u.toFixed(5)} ${uv.v.toFixed(5)}`;
+  } 
+}
+
+function getWallTextureMap(wall_face_divisions) {
+
+  var output = {};
+
+  output.uv = [
+    {id: 1, u: 0, v: 1},
+    {id: 2, u: 1, v: 1},
+    {id: 3, u: 1, v: 0},
+    {id: 4, u: 0, v: 0},
+  ];
+
+  var texture_id = output.uv[output.uv.length-1].id + 1;
+
+  var grids = wall_face_divisions;
+  var wall_texture_ids = Array.from({length: grids + 1}).fill(0).map( _ => Array.from({length: grids + 1}).fill(0));
+  for (var i = 0; i < wall_texture_ids.length; i++) {
+    for (var j = 0; j < wall_texture_ids[i].length; j++) {
+      var u = i / grids;
+      var v = j / grids;
+
+      var id = texture_id++;
+      output.uv.push({id, u, v});
+      wall_texture_ids[i][j] = id;
+    }
+  }
+
+  output.wall_texture_ids = wall_texture_ids;
+
+  return output;
 }
 
 function * convertMirrorsToObj(mirrors, vertex) {
@@ -189,14 +210,46 @@ function * convertMirrorNormalToObj(mirror, vertex) {
 
 }
 
-function * convertPhotoWallToObj(photowall, vertex) {
-  yield `g photowall`;
-  //#yield `usemtl photo_wall`;
-  yield vertice(photowall.lowerLeft);
-  yield vertice(photowall.lowerRight);
-  yield vertice(photowall.upperRight);
-  yield vertice(photowall.upperLeft);
-  yield `f ${vertex.current++}/1 ${vertex.current++}/2 ${vertex.current++}/3 ${vertex.current++}/4`;
+function * convertWallToObj(wall, vertex, wall_texture_ids) {
+
+  const grids = wall_texture_ids.length - 1;
+  var vertices = Array.from({length: grids + 1}).fill(0).map( _ => Array.from({length: grids + 1}).fill(0));
+
+  yield `g wall`;
+
+  for (var i = 0; i < grids + 1; i++) {
+    for (var j = 0; j < grids + 1; j++) {
+      var x = i / grids - 0.5;
+      var y = j / grids - 0.5;
+
+      yield vertice(wall.worldPosAtTextureCoord(x, y)); // lower left
+
+      var vertex_id = vertex.current++;
+      vertices[i][j] = vertex_id;       
+    }
+  }
+
+  for (var i = 0; i < grids; i++) {
+    for (var j = 0; j < grids; j++) {
+      var vertice_lower_left = vertices[i][j+1];
+      var vertice_lower_right = vertices[i+1][j+1];
+      var vertice_upper_right = vertices[i+1][j];
+      var vertice_upper_left = vertices[i][j];
+
+      var uv_lower_left = wall_texture_ids[i][j+1];
+      var uv_lower_right = wall_texture_ids[i+1][j+1];
+      var uv_upper_right = wall_texture_ids[i+1][j];
+      var uv_upper_left = wall_texture_ids[i][j];
+
+      yield `f ${vertice_lower_left}/${uv_lower_left} ${vertice_lower_right}/${uv_lower_right} ${vertice_upper_right}/${uv_upper_right} ${vertice_upper_left}/${uv_upper_left}`;
+    }
+  }
+
+  //yield vertice(wall.worldPosAtTextureCoord(-0.5, 0.5)); // lower left
+  //yield vertice(wall.worldPosAtTextureCoord(0.5, 0.5)); // lower right
+  //yield vertice(wall.worldPosAtTextureCoord(0.5, -0.5)); // upper right
+  //yield vertice(wall.worldPosAtTextureCoord(-0.5, -0.5)); // upper left
+  //yield `f ${vertex.current++}/1 ${vertex.current++}/2 ${vertex.current++}/3 ${vertex.current++}/4`;
 }
 
 function * convertEyeToObj(eye, vertex) {
