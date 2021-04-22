@@ -13,6 +13,9 @@ export {
 }
 
 async function build(settings, pixels, color_map, frames) {
+
+  const unduplicated_frames = frames / settings.input.duplicate_frames;
+
   if (settings.print.sequence_count) {
     printStatsForSequenceCount(pixels);  
   }
@@ -41,7 +44,7 @@ async function build(settings, pixels, color_map, frames) {
   }
   
   if (settings.optimization.reuse_permutations) {
-    sequences = reuseLoopingPermutationSequences(sequences);  
+    sequences = reuseLoopingPermutationSequences(sequences, unduplicated_frames);  
     if (settings.print.sequence_count) {
       console.log(`After reducing permutations: ${Object.keys(sequences).length}`.yellow);
     }
@@ -50,7 +53,7 @@ async function build(settings, pixels, color_map, frames) {
 	var sequence_keys = sortSequenceKeys(sequences, settings);
 
   if (settings.optimization.prune) {
-    sequences = reduceNumberOfSequences(settings, sequences, reverse_color_map, settings.optimization.prune.max_sequences);  
+    sequences = reduceNumberOfSequences(settings, sequences, reverse_color_map, settings.optimization.prune.max_sequences, unduplicated_frames);  
     sequence_keys = sortSequenceKeys(sequences, settings);
 
     if (settings.print.sequence_count) {
@@ -81,7 +84,7 @@ async function build(settings, pixels, color_map, frames) {
   return {sequences, sequence_keys, reverse_color_map}
 }
 
-function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, max_sequences) {
+function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, max_sequences, unduplicated_frames) {
 
 
   let sequences = Object.keys(input_sequences)
@@ -129,7 +132,7 @@ function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, m
           best.value = current_distance;
           best.string = permutation_key;
           best.key = curr.key;
-          best.offset = permutation_offset;
+          best.offset = permutation_offset % unduplicated_frames;
         }
       }
 
@@ -143,7 +146,7 @@ function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, m
       let new_permutation = {
         original_main_key: permutation.main_key,
         main_key: sequences[index].key,
-        offset: (permutation.offset + best_match.offset) % permutation.string.length,
+        offset: (permutation.offset + best_match.offset) % permutation.string.length % unduplicated_frames,
         string: permutation.string,
         occurences: permutation.occurences,
       };
@@ -200,7 +203,7 @@ function stringColorDistance(a, b, reverse_color_map) {
 }
 
 
-function reuseLoopingPermutationSequences(sequences) {
+function reuseLoopingPermutationSequences(sequences, unduplicated_frames) {
   console.log(`finding bithsifts`.gray);
   return Object.values(sequences)
                .map(a => a[0]) // the sequences comes in in the same format they go out
@@ -226,7 +229,7 @@ function reuseLoopingPermutationSequences(sequences) {
             } else {
               // add a new permutation to the key
               output[key].push({string: sequence.string, 
-                                offset, 
+                                offset: offset % unduplicated_frames , 
                                 occurences: sequence.occurences, 
                                 main_key: key});
             }

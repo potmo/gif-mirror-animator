@@ -1,0 +1,73 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/tea-sun-lager3.png",
+      "columns": 3,
+      "rows": 1
+    },
+    "duplicate_frames": 4
+  },
+  "output": {
+    "path": "output-cylinder/tea-sun-lager3",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false
+      }
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "cylinder_image": {
+      "height": 1000,
+      "diameter_scalar": 0.3
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 1,
+      "y": 0,
+      "z": 1
+    },
+    "wall_rotation_scalar": -0.375,
+    "wall_diameter": 2,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 4
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "shannon",
+      "acending": true
+    },
+    "prune": {
+      "max_sequences": 40,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": false
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

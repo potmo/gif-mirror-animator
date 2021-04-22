@@ -30,8 +30,14 @@ run()
   await fs.writeFile(path.join(path.resolve(), path.join(settings.output.path, 'settings.json')), JSON.stringify(settings, null, '  '));
   console.log(colors.yellow(`saved settings.js`));
 
+
   console.log('Load images'.brightBlue);
   let images = await image_loader.load(settings);
+
+  console.log('Save input images'.brightBlue);
+  for (var i = 0; i < images.length / settings.input.duplicate_frames; i++) {
+    await image_loader.writeImage(path.join(settings.output.path, `input_${i}.png`), images[i]);
+  }
 
   console.log('Convert to hex'.brightBlue);
   let {frames, pixels, image_size, color_map} = await hex_converter.convert(settings, images);

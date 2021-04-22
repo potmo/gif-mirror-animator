@@ -151,6 +151,9 @@ A fortunate side effect of having circles instead of grids or lines are that the
 
 ##Optimization: Resuing multiple sequence loops
 
+##Optimization: Do not overlap pictures 
+If all pictures in an animation uses the same colors and each picture only overlaps a solid background color of the other pictures the resulting number of sequences are exactly equal to the number of colors. This can only be used if sequence offsets can be used since all encodings goes from color -> background and hence all combinations can be achived with only sequence offsets.
+
 
 ##Palette setups
 * Disc

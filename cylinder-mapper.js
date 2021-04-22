@@ -71,7 +71,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 		const column_width = width / colors[row].length;
 		const cos_scalar = column / visible_columns;
-		const x = width / 2 + Math.cos(Math.PI * cos_scalar) * column_width * (visible_columns-1) / 2;
+		const x = width / 2 + Math.cos(Math.PI * cos_scalar) * column_width * (visible_columns) / 2;
 
 		const y = row_height * row + row_height / 2; // middle of row
 

@@ -97,8 +97,8 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/small-meal.png', 
-        columns: 2, 
+        path: './images/tea-sun-lager4.png', 
+        columns: 3, 
         rows: 1,
       },
       
@@ -146,13 +146,13 @@ function getSettings() {
       eye_offset: vector(0, 0, 4.00),
     },
     optimization: {
-      reuse_permutations: false,
+      reuse_permutations: true,
       sort_sequnece: {
         algo: 'shannon', //none | shannon
         acending: true,
       },
       prune: {
-        max_sequences: 80,//32
+        max_sequences: 40,//32
         comparator: 'color_distance', // 'color_distance' | 'sequence_string_distance'
         //min_usage: 4
       },
