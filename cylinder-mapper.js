@@ -63,6 +63,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 		const row = sequence_keys.indexOf(item.offset_key);
 		const column = item.offset;
 		const color = colors[row][column];
+		const columns = colors[row].length;
 
 		/*
 		const cos_scalar = column / visible_columns;
@@ -71,7 +72,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 		const column_width = width / colors[row].length;
 		const cos_scalar = column / visible_columns;
-		const x = width / 2 + Math.cos(Math.PI * cos_scalar) * column_width * (visible_columns) / 2;
+		const x = (columns / 2 + visible_columns / 2 - column) * column_width;
 
 		const y = row_height * row + row_height / 2; // middle of row
 

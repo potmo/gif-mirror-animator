@@ -21,18 +21,14 @@ async function visualize(settings, reflections, wall) {
 
   const ellipses = reflections
     .map(a => a.ellipse_points)
-    .map( stipled_points => {
-      const scaled_points = stipled_points
-      .map( v => {
-        // move to origo
-        return v.sub(wall.worldPosAtTextureCoord(0, 0))  
-      })
-      .map( p => {
-        return wall.textureCoordAtWorldPos(p);
-      })
-      .map(p => {
-        return {x: size.width / 2 + p.x * size.width , y: size.height - (size.height / 2 + p.y * size.height)}
-      });
+    .map( reflection_points => {
+      const scaled_points = reflection_points
+        .map( p => {
+          return wall.textureCoordAtWorldPos(p);
+        })
+        .map(p => {
+          return {x: size.width / 2 + p.x * size.width , y: size.height - (size.height / 2 + p.y * size.height)}
+        });
       return scaled_points;
     });
 

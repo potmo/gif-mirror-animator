@@ -56,6 +56,31 @@ Vector.prototype.normalReflectingBetweenPoints = function(start, end) {
   return normal;
 }
 
+Vector.prototype.angleBetweenInXZPlane = function(other) {
+	let a = this.normalized()
+	let b = other.normalized()
+	// atan2 return -PI to +PI
+	let result = Math.atan2(b.z,b.x) - Math.atan2(a.z,a.x);
+
+	// restrict value to be between -PI and +PI
+	//if (result < 0) result += Math.PI * 2;
+	if (result > +Math.PI) result -= Math.PI * 2;
+	if (result < -Math.PI) result += Math.PI * 2;
+
+	//if (result > Math.PI || result < -Math.PI) throw new Error(`${result} is not in range`)
+
+	return result;
+
+}
+
+Vector.prototype.angleBetween = function(other) {
+	// returns angle 0 to 180 (in radians) and the axis (that can then be used to figure out direction)
+	// the axis is perpendicular to the two input vectors
+	let angle = Math.acos(this.normalized().dot(other.normalized()));
+	let axis = this.normalized().cross(other.normalized()).normalized();
+	return {angle, axis};
+}
+
 
 Vector.prototype.add = function(other) {
 	let result;

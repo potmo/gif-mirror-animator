@@ -60,7 +60,12 @@
       "max_sequences": 40,
       "comparator": "color_distance"
     },
-    "pick_any_cycle": false
+    "pick_any_cycle": false,
+    "shift_sequences": {
+      "8": 2,
+      "9": 2,
+      "10": 2
+    }
   },
   "print": {
     "palette": true,

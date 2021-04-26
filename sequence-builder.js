@@ -60,20 +60,46 @@ async function build(settings, pixels, color_map, frames) {
       console.log(`After reducing sequences: ${Object.keys(sequences).length}`.green);
     }
   }
+
+  console.log(sequences)
+
+  if (!!settings.optimization.shift_sequences) {
+    for (let number of Object.keys(settings.optimization.shift_sequences)) {
+      let key = sequence_keys[number];
+      let offset = settings.optimization.shift_sequences[number];
+      let new_main_key = shiftString(sequence_keys[number], offset);
+      var new_sequences = sequences[key];
+
+
+      
+      for (let sequence of new_sequences) {
+        console.log(sequence, offset)
+        sequence.offset = (sequence.offset + offset) % unduplicated_frames;
+        //sequence.string = shiftString(sequence.string, offset);
+        sequence.main_key = new_main_key;
+        console.log(sequence)
+      }
+
+      delete sequences[key];
+      sequences[new_main_key] = new_sequences;
+      sequence_keys[number] = new_main_key;
+
+    }
+  }
 	
 	
   if (settings.print.sequence_occurencies) {
-    sequence_keys.forEach( key => {
+    sequence_keys.forEach( (key, i) => {
 
       let entropy = shannon_entropy(key).toFixed(8).red;
       let subsequences = sequences[key].map(a => {
         let moved = a.original_main_key ? '*' : '';
         let shifted = shiftString(a.string, a.offset);
         let colored = colorizeString(shifted, reverse_color_map);
-        return `\n${colored}  ${shifted} ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
+        return `\n   ${colored}  ${shifted} ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
       }).join('')
 
-      console.log(`${colorizeString(key, reverse_color_map)} ${key.yellow}(${entropy}) ${subsequences}`);
+      console.log(`${i.toString().padStart(2)}.${colorizeString(key, reverse_color_map)} ${key.yellow}(${entropy}) ${subsequences}`);
     });  
   }
 
@@ -312,4 +338,5 @@ function getColoredString(color) {
 
   return "\x1B[48;2;"+r+";"+g+";"+b+"m" + ' ' + '\x1B[49m';
 }
+
 

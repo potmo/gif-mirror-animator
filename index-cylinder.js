@@ -132,7 +132,7 @@ function getSettings() {
       cnc: true, 
       cylinder_image: {
         height: 1000,
-        diameter_scalar: 0.3,
+        diameter_scalar: 0.3, // this is multiplied with three_dee.wall_diameter or output.cylinder_image.height to get width
       }
     },
     three_dee: { // units in meters
@@ -159,6 +159,11 @@ function getSettings() {
         //min_usage: 4
       },
       pick_any_cycle: false,
+      shift_sequences: {
+        8: +2,
+        9: +2,
+        10: +2,
+      }
     },
     print: {
       palette: true,
