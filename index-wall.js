@@ -3,12 +3,13 @@
 import path from 'path';
 import colors from 'colors';
 import fs from 'fs-extra';
-import * as mapper from './cylinder-mapper.js';
+import * as mapper from './wall-mapper.js';
 import * as image_loader from './image-loader.js';
 import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
-import * as wall_generator from './cylindrical-wall-generator.js'
+import * as wall_generator from './flat-wall-generator.js'
+
 import vector from './vector.js';
 
 run()
@@ -45,7 +46,7 @@ async function run() {
   console.log('Build sequences'.brightBlue);
   let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, pixels, color_map, frames);
 
-  console.log('Map to cylinder'.brightBlue);
+  console.log('Map to wall'.brightBlue);
   let mapping_conf = await mapper.map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
 
   var arrangement_size = Math.max(mapping_conf.mirror.width, mapping_conf.mirror.height);
@@ -120,7 +121,7 @@ function getSettings() {
       duplicate_frames: 4, 
     },
     output: {
-      path: './output-cylinder', // this is modified and the input name is added
+      path: './output-wall', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},

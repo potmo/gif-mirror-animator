@@ -8,6 +8,7 @@ import {stipple} from './stipple.js';
 import * as mirror_arranger from './mirror-arranger.js';
 import * as stipple_mapper from './stipple-mapper.js';
 import * as three_dee_generator from './3d-generator.js';
+import * as wall_generator from './flat-wall-generator.js'
 import vector from './vector.js';
 
 run()
@@ -108,7 +109,7 @@ async function run() {
 
   console.log('Generate 3d files'.yellow);
   settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
-  await three_dee_generator.generate(settings, mapping_conf);
+  await three_dee_generator.generate(settings, mapping_conf, wall_generator);
   
 }
 

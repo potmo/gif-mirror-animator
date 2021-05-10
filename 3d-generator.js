@@ -8,18 +8,15 @@ import * as rapid from './rapid-generator.js';
 import * as gcode from './gcode-generator.js';
 import * as objcode from './obj-generator.js';
 import * as reflection_visualizer from './reflection-simulation-visualizer.js'
-import * as flat_wall_generator from './flat-wall-generator.js'
-import * as cylindrical_wall_generator from './cylindrical-wall-generator.js'
 
 
 export {
   generate,
 }
 
-async function generate(settings, mappings) {
+async function generate(settings, mappings, wall_generator) {
 
-  //TODO: Switch on type
-  let wall = cylindrical_wall_generator.getWall(settings)                                 
+  let wall = wall_generator.getWall(settings)                                 
   
   const eye_offset = settings.three_dee.eye_offset;
 

@@ -10,6 +10,7 @@ import * as image_loader from './image-loader.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
 import * as three_dee_generator from './3d-generator.js';
+import * as wall_generator from './flat-wall-generator.js'
 
 
 run()
@@ -52,7 +53,7 @@ run()
   console.log('Generate 3d files'.brightBlue);
   const arrangement_size = Math.max(image_size.width, image_size.height);
   settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
-  await three_dee_generator.generate(settings, mapping_conf);
+  await three_dee_generator.generate(settings, mapping_conf, wall_generator);
 
   var hole_size_measurement = settings.three_dee.disc_diameter * (settings.output.disc_image.hole_size / settings.output.disc_image.width);
   console.log(`Disc section thickness: ${(settings.three_dee.disc_diameter - hole_size_measurement) / sequence_keys.length / 2}`.green);
