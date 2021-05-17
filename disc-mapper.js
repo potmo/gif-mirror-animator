@@ -26,19 +26,19 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 
 
 
-	const center_x = width / 2;
-	const center_y = height / 2;
-	const radius = height / 2;
+	const center_x = 0;
+	const center_y = 0;
+	const radius = 0.5;
 
 	if (settings.print.section_angles) {
-		console.log(`Section Angles`.brightYellow)
+		console.log(`Section Angles`.yellow)
 	}
 
 	var slices = [];
 	for (let circle = 0; circle < colors.length; circle++) {
 
 		if (settings.print.section_angles) {
-			console.log(`Section ${circle}`.brightYellow)
+			console.log(`Section ${circle}`)
 		}
 		
 		for (let section = 0; section < colors[circle].length; section++) {
@@ -46,7 +46,8 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 			const color = colors[circle][section];
 			const slice = getSlice(settings, circle, section, colors.length, colors[circle].length, radius, center_x, center_y);
 
-			console.log(`	${section}: ${slice.start_angle * 180 / Math.PI}° to ${slice.end_angle * 180 / Math.PI}°. ${slice.inner_radius / radius} to ${slice.outer_radius / radius}`.brightYellow)
+			let color_int = color_convert.objToARGB(color);
+			console.log(`  ${section} ${color_convert.toConsoleForeground(color_int, '█')}: ${(slice.start_angle * 180 / Math.PI).toFixed(2)}° to ${(slice.end_angle * 180 / Math.PI).toFixed(2)}°. ø ${(slice.inner_radius / radius).toFixed(2)} to ø ${(slice.outer_radius / radius).toFixed(2)}`.gray)
 
 			const middle = getMiddleOfSlice(settings, circle, section, colors.length, colors[circle].length, radius, center_x, center_y);
 			//drawSlice(context, slice, color);
@@ -57,7 +58,7 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 	}
 
 	for (var slice of slices) {
-		drawSlice(context, slice.slice, slice.color);
+		drawSlice(settings, context, slice.slice, slice.color);
 	}
 
 	const discSvg = Array.from(drawSlicesSvg(settings, slices)).join('\n');
@@ -94,19 +95,17 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		return getMiddleOfSlice(settings, item.circle, item.section, colors.length, colors[item.circle].length, radius, center_x, center_y);
 	});
 
-	
-
 	var mapping = pixels.map((pixel, i) => {
 		const circle_pos = circle_positions[i];
 		const aim_position = middle_positions[i];
 		return {
 			mirror: {
-				x: pixel.x,
-				y: pixel.y,
+				x: pixel.x - 0.5,
+				y: pixel.y - 0.5,
 			},
 			palette: {
-				x: aim_position.x / width,
-				y: aim_position.y / height,
+				x: aim_position.x,
+				y: aim_position.y,
 			},
 			circle: circle_pos.circle,
 			section: circle_pos.section,
@@ -116,7 +115,7 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 
 	// simulate that the mirrors are off
 	if (settings.output.simulation.max_deviation_from_optimal) {
-		console.log(`Adding simulated mirror noice with ${settings.output.simulation.max_deviation_from_optimal}`.red)
+		console.log(`Adding simulated mirror noise with ${settings.output.simulation.max_deviation_from_optimal}`.red)
 		const max_deviation_from_optimal = settings.output.simulation.max_deviation_from_optimal;
 		mapping = mapping.map((map,i) => {
 			const aim_position = middle_positions[i];
@@ -162,18 +161,6 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		await saveText(path.join(settings.output.path,'disc.svg'), discSvg, {encoding: 'utf8'});	
 	}
 
-	// set the mirror and palette to be centered on 0 (from -0.5 to 0.5)
-	mapping_conf.mapping = mapping_conf.mapping.map( item => {
-
-		item.mirror.x += -0.5;
-		item.mirror.y += -0.5;
-
-		item.palette.x += -0.5;
-		item.palette.y += -0.5;
-
-		return item;
-	});
-
 	return mapping_conf;
 }
 
@@ -202,17 +189,18 @@ async function drawSimulation(settings, dir, frames, disc_image, mapping) {
 
 	const simulation_size = settings.output.simulation.gif;
 	const encoder = new GIFEncoder(simulation_size.width, simulation_size.height);
+
 	encoder.createReadStream().pipe(fs.createWriteStream(path.join(dir, 'simulation.gif')));
 	encoder.start();
 	encoder.setRepeat(0);   // 0 for repeat, -1 for no-repeat
 	encoder.setDelay(settings.output.simulation.gif.frame_delay);  // frame delay in ms
 	encoder.setQuality(1); // image quality. 10 is default (1 is best.
- 
 
 	let total_frames = frames * settings.output.simulation.frame_number_scaling;
 	bar1.start(total_frames-1, 0);
 	for (var i = 0; i < total_frames; i++){
 		let angular_offset = Math.PI * 2 / total_frames * i;
+
 		let {image, disc} = drawSimulationFrame(settings, disc_image, mapping, angular_offset, simulation_size, encoder);
 		bar1.update(i);
 		
@@ -246,9 +234,13 @@ async function drawSimulation(settings, dir, frames, disc_image, mapping) {
 }
 
 function drawSimulationFrame(settings, disc_image, mappings, angular_offset, simulation_size, gif_encoder) {
+
+	
+
 	const output_image = getOutputImage(simulation_size.width, simulation_size.height, {r: 100, g: 100, b: 100, a: 255});
 	const output_disc = getOutputImage(disc_image.width, disc_image.height, {r: 100, g: 100, b: 100, a: 255});
 	
+
 	const context = output_image.getContext('2d');
 	const disc_image_context = disc_image.getContext('2d')
 	const output_disc_context = output_disc.getContext('2d');
@@ -258,7 +250,7 @@ function drawSimulationFrame(settings, disc_image, mappings, angular_offset, sim
 
 	for (let mapping of mappings) {
 
-		var pivot = {x: 0.5, y: 0.5}
+		var pivot = {x: 0.0, y: 0.0}
 		// rotate
 		var palette_angular_offset = angular_offset;// + -20 + Math.PI * 2 / 360 * Math.random() * 40;
 		let rotated_palette_point = {
@@ -267,16 +259,18 @@ function drawSimulationFrame(settings, disc_image, mappings, angular_offset, sim
 		}
 
 		var palette_point = {
-			x: rotated_palette_point.x * disc_image.width, 
-			y: rotated_palette_point.y * disc_image.height
+			x: disc_image.width / 2 + rotated_palette_point.x * disc_image.width, 
+			y: disc_image.height / 2 + rotated_palette_point.y * disc_image.height
 		};
-		
+
+
 		var p = disc_image_context.getImageData(palette_point.x, palette_point.y, 1, 1).data; 
+
 		let color = {r: p[0],  g: p[1], b: p[2], a: p[3]};
 
 		let pos = {
-			x: mapping.mirror.x * simulation_size.width,
-			y: mapping.mirror.y * simulation_size.height,
+			x: simulation_size.width / 2 + mapping.mirror.x * simulation_size.width,
+			y: simulation_size.height / 2 + mapping.mirror.y * simulation_size.height,
 		}
 
 		
@@ -336,45 +330,12 @@ function findKeyAndOffset(sequences, pixel_string) {
 	throw new Error(`Could not find key offset for "${pixel_string}"`);
 }
 
-function drawSlice_old(context, slice, color) {
+
+function drawSlice(settings, context, slice, color) {
 	context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
 	context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
 
-	let {center_x, center_y, start_angle, end_angle, inner_radius, outer_radius} = slice;
-
-  let intermediate_angle_steps = 100;
-
-  context.beginPath();
-  context.moveTo(center_x + Math.cos(start_angle) * inner_radius, center_y + Math.sin(start_angle) * inner_radius);
-  context.lineTo(center_x + Math.cos(start_angle) * outer_radius, center_y + Math.sin(start_angle) * outer_radius);
-
-  let intermediate_angle_step = 1 / intermediate_angle_steps;
-	for (var i = 0; i <= intermediate_angle_steps; i++) {
-		let intermediate_angle = start_angle + (end_angle - start_angle) * intermediate_angle_step * i;
-		context.lineTo(center_x + Math.cos(intermediate_angle) * outer_radius,
-									 center_y + Math.sin(intermediate_angle) * outer_radius);
-	}
-
-  //context.arc(center_x, center_y, outer_radius, start_angle, end_angle, false);
-  context.lineTo(center_x + Math.cos(end_angle) * inner_radius, center_y + Math.sin(end_angle) * inner_radius);
-  //context.arc(center_x, center_y, inner_radius, end_angle, start_angle, true);
-
-	for (var i = 0; i <= intermediate_angle_steps; i++) {
-		let intermediate_angle = start_angle + (end_angle - start_angle) * (1-intermediate_angle_step * i); 
-		context.lineTo(center_x + Math.cos(intermediate_angle) * inner_radius, 
-									 center_y + Math.sin(intermediate_angle) * inner_radius);
-	}
-
-  context.closePath();
-  context.stroke();
-  context.fill();
-}
-
-function drawSlice(context, slice, color) {
-	context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-	context.strokeStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`;
-
-	let points = Array.from(getSlicePoints(slice));
+	let points = Array.from(getSlicePoints(settings, slice));
 
   context.beginPath();
   context.moveTo(points[0].x, points[0].y);
@@ -398,15 +359,23 @@ function* drawSlicesSvg(settings, slices) {
 
 function* drawSliceSvg(settings, slice, color) {
 	
-	let points = Array.from(getSlicePoints(slice))
+	let points = Array.from(getSlicePoints(settings, slice))
 								.map(a => `${a.x.toFixed(4)}, ${a.y.toFixed(4)}`)
 								.join(' ')
 	yield `<polyline points="${points}" style="fill:rgb(${color.r}, ${color.g}, ${color.b});stroke:black;stroke-width:1" />`
 	
 }
 
-function *getSlicePoints(slice) {
+function *getSlicePoints(settings, slice) {
 	let {center_x, center_y, start_angle, end_angle, inner_radius, outer_radius} = slice;
+	
+	// scale to image sizes
+	center_x = settings.output.disc_image.width / 2 + center_x * settings.output.disc_image.width;
+	center_y = settings.output.disc_image.height / 2 + center_y * settings.output.disc_image.height;
+	inner_radius = settings.output.disc_image.height * inner_radius;
+	outer_radius = settings.output.disc_image.height * outer_radius;
+
+
 	let intermediate_angle_steps = 100;
 	yield {x: center_x + Math.cos(start_angle) * inner_radius, 
 				 y: center_y + Math.sin(start_angle) * inner_radius};
