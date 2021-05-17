@@ -55,114 +55,234 @@ On a high level it consists of an array of mirrors colorized by being  angled in
 
 In this section we are going to discuss how reflections work in a mathematically. Mathematical models allows us to calculate the theoretical behaviour of light disregardning the inperfections of the physical world. This will therefore not be an exact mathematical calculation but an approximation of the physical world. Since the physical world is imperfect and chaotic we need to add some tolerances to our design when we create the final object.
 
-##How reflection works
-> TODO: This might need some extra explanation about frequencies and colors
+
+
+> `TODO: We need to explain what we are doing here`
+
+##A quick primer on how light works
+> `TODO: This might need some extra explanation about frequencies and colors`
 
 Light rays travel in a straight line through a medium (like air). When striking a surface some of the light will be absorbed by the surface (converted to heat) and some will bounce back, reflected. The absorption is what makes object look colorized since the surface might absorb some frequencies more than other. On a perfectly flat, smooth surface, called a specular surface, the angle of incidence, the angle at witch the light ray hits the surface, will be exactly the same as the angle of reflection with regards to a projected line perpendicular to the surface known as the normal. On rough surfaces, called diffuse surfaces, the light will reflect in slightly different angles all over the surface but still retaining its energy.
 A mirror is said to be more specular than a painted wall is said to be diffuse.
 
-	<Picture>
+> ​	`<Picture 1> Of specular and diffuse surfaces`
 
 For opaque materials all the light will either have to be reflected or absorbed.  If the material is transparent or translucent some of the light might pass into the material. When passing into a material the light ray bends from its angle of incidence. This phenomenon is called refraction. The amount of bending is due to the relative indices of refraction (also called the optical density) of the medium the ray travels from and the medium the ray travels into (described by Snell's Law). The larger the difference between the media the more the ray bends. For reference air has a refractive index very close to 1.00 while the value for window glass is about 1.52.
 
-	<Picture>
+> ​	`<Picture 2> of refraction`
 
-> TODO: Here we need a segway into the project
+~~So far we have thought of the light as single rays that strike the middle of the color field, the middle of the mirror and the middle of the spectators eye but that is a too big of a simplification. In reality there are millions of rays bouncing in different directions. We will not consider all of them since that would be too interlectually straining but we need to at least acknoledge that the color fields and mirrors are surfaces and not just points.~~
 
-So far we have thought of the light as single rays that strike the middle of the color field, the middle of the mirror and the middle of the spectators eye but that is a too big of a simplification. In reality there are millions of rays bouncing in different directions. We will not consider all of them since that would be too interlectually straining but we need to at least acknoledge that the color fields and mirrors are surfaces and not just points.
+For our purpuses we can largely disregard both refraction and diffuseness. We also don't have to consider translucensy, internal reflections, subsurface scattering, fresnel effects or any other obscure phenomena present in the real world since it will not make any noticeable difference that we can adjust for anyway. We will consider the mirrors we use ideal mirrors that are perfectly flat, covered with a perfectly transparent glass with the same refractive index as the surrounding media and the reflective surface to be perfectly specular. 
 
-For our purpuses we can largely disregard both refraction and diffuseness. We also don't have to consider translucensy, internal reflections, subsurface scattering, fresnel effects or any other obscure phenomena since it will not make any noticable difference that we can adjust for anyway. We will consider the mirrors we use ideal mirrors that are perfectly flat, perfectly opaque and perfectly specular. The only thing we will do is to verify that the refraction of the glass mirrors. The reflective surface is of regular off-the-shelf mirrors usually on the back face so the light rays has to pass through the glass and refract slightly before it can be reflected by the silver surface. Since the distance the ray has to travel is very short it should not create too much of a problem. 
+~~Throughout this article we will calculate with single rays but that is a simplification. We will discuss that more in depth in the section about accounting for distances.~~
 
-Throughout this article we will calculate with single rays but that is a simplification. We will discuss that more in depth in the section about accounting for distances.
+##Colorising a mirror
+Since our idealised mirror reflects all light striking it without absorbing any light it itself doesn't have any inherent color. It appears as it has the color of whatever it reflects. By adjusting the angle of the mirror we can make it reflect any surface we want and thereby taking the color of that surface. If we want the mirror to look red we can adjust the angle in such a way that it will reflect a red surface.
 
-##Colorizing a mirror
-Since our idialized mirror reflects all light striking it without absorbing any light it itself doesn't have any inherent color. By adjusting the angle of the mirror we can make it reflect other surfaces and thereby taking the color of that surface. If we want the mirror to look red we can adjust the angle in such a way that it reflects a red surface.
+Say we have a surface with the center $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. To calculate what angle the mirror has to have to reflect the light from $t$ to $e$ is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal and since we already have all the positions they are easy to compute:
+$$
+\vec{i}=e-m, \vec{r}=t-m
+$$
+where $\vec{i}$ denotes the vector of incidence and $\vec{r}$ the vector of reflectance. The mirrors normal $\hat{m}$ (i.e. the vector that the face points in) is just the average of the normalised vectors  of incidence and reflectance:
+$$
+\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}
+$$
+ A normalised unit vector is denoted with a hat, e.g.  $\hat{r}=\frac{\vec{r}}{\|\vec{r}\|}$ witch requires us to know that the magnitude of a vector is denoted with double bars (the magnitude/length/euclidian distance can be computed with *Pythagoras theorem*):
+$$
+\|\vec{r}\| = \sqrt{r_x^2 + r_y^2 + r_z^2}
+$$
+​	`<PICTURE 3> diagram of reflecting mirrors`
 
-If we create a "color palette" that we then can "sample" colors from by adjusting the angle of our mirror we can essentially make a pixel that can take any color from the palette and reflect that into the spectators eye.
+This gives us the basic tools to "colorise" our mirrors. Since we are working with vectors instead of trigonometry this technique generalises nicely to higher dimensions.
 
-If we want another color we can just realign the mirror. Realigning a mirror can be a bit fiddely so instead we can just move the palette so the mirror reflects another color field.
+We can now create a "color palette" that we then can "sample" colors from by adjusting the angle of our mirror. If this mirror is fairly small it us the ability to essentially make a pixel that can take any color from the palette and reflect that into the spectators eye.
 
-	<Picture>
-	
-	TODO: Describe more carefully how this works and with multiple colors. How to calculate the angle of the mirrors
+If we want another color we can just realign the mirror to reflect another color. Since realigning a mirror can be a bit fiddly we instead opt for moving the palette so the mirror reflects another color field. Moving the spectator, the mirrors or the palette in relation to each other creates the same result.
 
+##Accounting for distances
+
+Although the light rays starts at a light source, bounces and scatters of the coloured surfaces, reflects in the mirrors and strikes the spectators retina it is easier to think of the process in reverse. The math will add up both directions (it is actually a funamental law of thermodynamics that all optics are reversable). If we think of the rays from the eye (so in reverse) that strike the mirror they will actually form a cone with the apex in the eye and  the base covering the mirrors surface. When the rays reflect in the mirrors the cone will continue expanding with the same taper until it strikes the color fields. The surface area that will be covered by the cone on the color fields is related to the surface area of the mirrors and the combined distances between the eye, mirror and color surfaces. Doubling that distance will quadruple the area (called _The inverse square law_). This is important since having too small color fields in relation to the distance from the mirrors will make the mirror pick up more than one color field.
+
+>  `<PICTURE 4> of the difference in size of the circle when distance changes`
+
+There is another phenomena that we have to at least consider: If the light cone from the mirror does not strike the color disc completely perpendicular the cone will be "cut off" at a slanted angle (in geometry called _a conic section_). The conic section is (actually literally by definition) an ellipse. 
+
+> `<PICTURE 5> of conic section`
+
+This means that the reflected surface of the color field will also not be a perfect circle but an ellipse. Depending on where on the color disc the mirrors are reflecting the shape of the reflecting area will be different. We need to make sure that the entire area of the reflected shape will be within the color field.
+
+>  `<PICTURE 6> of conic sections at different angles`
+
+The more extreme the angle of incidence of the cone the more extreme the proportions of the ellipse will be. As the angle of incidence approaches tangency to the surface the length of ellipses major axis will approach infinity. 
 
 ##A picture
-By putting multiple mirrors in a two dimensional array, or a grid, and angling them individually towards different color fields on the color palette we can create any arbitrary image. Needless to say we do not need a separate color field for each mirror. Multiple mirrors that require the same color can all point to the same spot on the color palette since the color palette is diffuse and hence reflecting light in all directions.
 
-	<PICTURE>
+By putting multiple mirrors in a two dimensional array, or a grid, and angling them individually towards different color fields on the color palette we can create any arbitrary image. Needless to say each mirror does not need a separate color field. Multiple mirrors that require the same color can all point to the same spot on the color palette since the color palette.
 
-One way we could do is to line up all the colors in the palette in a vertical line and have the mirrors point to whatever color it needs to reflect. This configuration will be useful as we will see in the next section.
+One way we could do is to line up all the colors in the palette in a vertical column and have the mirrors point to whatever color it needs to reflect. This configuration will be useful as we will see in the next section.
 
-	<PICTURE>
+> `<PICTURE 7> or multiple mirrors pointing at color fields`
 
-##An animation
-If we now swap out the palette with another we can change all the colors in the picture. By placing two vertical lines of colors we can just slide the lines left or right to change from palette one to palette two.
+##Shape of mirrors
 
-	<PICTURE>
+We want the picture in the mirror to be vibrant so we need to reflect as much light as possibleby trying to cover as much of the substrate that the mirrors are glued to with mirrors. There are infinitely many options of tiling a plane but it's only easy to find square and round circles off the shelf. Fabricating thousands of odd shaped mirrors are nor a viable option. 
 
-Every mirror is now essentially pointing to a sequence of colors instead of just one color. This means that the first palette might have to contain multiple copies of one color. One mirror might for example need red in the first palette and blue in the seconds and another mirror might need red and then green.
-Since the its just a shift the first palette need to make space for whatever comes in the next palette. 
+Square tiling of a plane is 100% efficient but for reasons we will discuss later using round mirrors have some good properties (that we will discuss in the manufacturing section). Round mirrors arranged in a grid will leave a lot of gaps between them that does not reflect any light (or it will reflect light, just not the light we want) and that will wash out the colors of the picture. The most dense packing of circles on a plane, making more of the surface be mirrors, is the hexagonal array packing. This is the same packing bees use for their beehives. This will minimize the space between the mirrors and hence reflect more light per unit area and therefore allow for a more vivid image.
 
-	<PICTURE>
+The density of packing circles with diameter $D$ is 
+$$
+\frac{3\pi}{4}D^2 \big/ \frac{3\sqrt{3}}{2}D^2= \frac{\pi\sqrt{3}}{6} \approx 0.9069
+$$
+ i.e. about 10% of the light will be hitting the substrate instead of a mirror.
 
-By moving the palette horizontally we can now switch from the first to the second picture. Note that it is also possible to shift the mirrors and the spectator an equal amount in the opposite direction for the same effect. A third option would be to rotate the mirrors individually without moving anything.
+##Making an animation
 
-	<PICTURE>
+If we now swap out the palette with another we can change all the colors in the picture. By placing two vertical lines of colors we can just slide the lines left or right to change column and hence the palette.
 
-If we want more frames to our animation we just add another vertical line. One problem that will be appearent really quickly is that the more frames we add and the more colors we add will grow the color fields to cover a wall.
-Adding more colors and/or frames requires you to add more horizontal sections to be able to create all possible sequences. The number of sequences that can be created with $x$ colors and $y$ frames is $x^y$. This means that having five colors and four frames will in the worst case make $5^4 = 625$ horizontal lines and five vertical to be able to fit all possible combinations. Adding one frame adds another 2500 horizontal lines while adding another color adds 671 horizontal lines and one vertical.
+> `<PICTURE 8> of sliding the palette`
 
-Since each mirror first points a color in the first vertical line and then the seconds and the third etc. we could save some space by putting the colors on a cylinder that rotates around its vertical axis. This whould make us fit 3.14 times more vertical lines in the same horizontal space but at a cost of some space in the depth direction.
+As an example we are going to animate between these two images consisting of five colors:
 
-	<PICTURE>
+> `<PICTURE 9> Two example images`
+>
+> `<PICTURE 10> Two example images palette`
+>
+> `<PICTURE 11> Two example palette sequences`
+>
+> `<PICTURE 12> Mirrors assigned to sequences`
+>
+> 
 
-##Optimization: De Bruijn sequences
-To continue here we first need to forget about the cylinder in the previous section and go back to the initial setup with all the colors in a grid on the wall since this trick requires that the mirror can se multiple horizontal fields at the same time without the color fields being on the back of a cylinder.
+When we create the palette array we see that every mirror is now essentially pointing to a sequence of colors instead of just one color, to the left the colors from the first picture and to the right the second. This means that the each column might have to contain multiple copies of one color. One mirror might for example need red in the first palette and blue in the seconds and another mirror might need red and then green.
 
-One observation that can be made is that one horizontal sequence might start with the same colors as another ends with. There might be an even larger overlap where one sequence first two colors is the same as anothers last two colors. When doing this we of course need to adjust the mirrors accordingly. All mirrors using a sequence that now is overlapped at the end of another sequence must start pointing at the start of the overlapping sequence, that might be the end of another sequence.
+By moving the palette horizontally we can now switch from the first to the second picture. Note that it is also possible to shift the mirrors or the spectator for the same effect. 
 
-If we put those sequences that overlap another sequence on top of eachother we can get a lot less horizontal lines at the cost of adding a few vertical lines.
-We can actually keep on doing this, adding sequnences that overlap, until we have just one long horizontal line. We will then, if we're lucky, have something called a _De Bruijn sequence_. A De Bruijn sequence is a sequence that contains every possible subsequence of a particular length exactly once.
-It is actually possible to compute the De Bruijn sequence rather easily although we will not go into the details of it here but instead just assume we can do it. We now have a color line instead of a color grid.
+If we want more frames to our animation we could just add another vertical line. One problem that will be apparent really quickly is that the more frames we add and the more colors we add will grow the color fields to cover a wall. Adding more colors and/or frames requires you to add more horizontal sections to be able to create all possible sequences. The number of sequences that can be created with $x$ colors and $y$ frames is $y*x^y$. This means that having three colors and three frames will in the worst case make $2*5^2 = 50$ color fields to be able to fit all possible combinations. For longer or more colourful animations it will become a problem of fitting the color palette into a room.
 
-	<PICTURE>
+~~Since each mirror first points a color in the first vertical line and then the seconds and the third etc. we could save some space by putting the colors on a cylinder that rotates around its vertical axis. This whould make us fit 3.14 times more vertical lines in the same horizontal space but at a cost of some space in the depth direction.~~
 
-De Bruin sequences are actually cyclical, meaning that the end of the sequence hooks into the beginning of itself. One subsequence can therefore exist on the bridge between the start and end.
+##Optimisation attempt: De Bruijn sequences
+One observation that can be made is that one horizontal sequence might start with the same colors as another ends with. It might be possible to put all sequences in one long horizontal line and let some sequences overlap each other reducing the total number of color fields. For animations with more frames there might be an even larger overlap where one sequence first two colors is the same as anothers last two colors etc. If we keep on doing this we will eventually have something called a _De Bruijn sequence_. A De Bruijn sequence is a sequence that contains every possible subsequence of a particular length exactly once. 
+It is actually possible to compute the De Bruijn sequence rather easily although we will not go into the details of it here but instead just assume we can do it. We now have one color line instead of a color grid.
 
-	<PICTURE>
+For example this naïve sequence that is made up by concatenating all two letter combinations of A, B , C, D and E (we are using letters here instead of colors for clarity). Of course it contains all two letter subsequences e.g. AB, DA, BD, DD (in bold) etc. since it was made from it in the first place but we can see that there are multiple instances of many of the combinations. For example there are more than one BC (underlined) witch is redundant.
 
-This sequence will be awfully long so we might as well just use a color circle instead of a color line. By doing this we will also trade a lot of horizontal space for a little vertical space making the entire contraption a bit more managable. This also means that instead of moving the colorfields horizontally we need to start rotating something. If the center of the color circle, the center of the mirrors and the center of the spectators eye lies on the same line we can rotate either the color circle or the mirrors.
-We any of them are not we can only rotate the color circle and still produce the effect.
+A A **A B** A C A **D A** E B A B B <u>B C</u> **B D** B E C A C <u>B C</u> C C D C E D A D B D C **D D** D E E A E B E C E D E E
 
-	<PICTURE>
+Below is the De Bruijn sequence, also containing all two letter subsequences but with the difference that it does not contain any duplicates and hence is much shorter.
 
-##Optimization: Circles
-Having a few frames and a few colors in our animation will produce an awfully long De Bruin sequnece and hence an awfully big circle.
-A lot of these sequences will probably also not be used by any mirror so they are only redundant. Since it is important that the color fields cover as small of an area as possible to avoid the inverse square law described below we need to do some more work. 
+A **A B** A C A **D A** E B <u>B C</u> **B D** B E C C D C E **D D** E E A
 
-The good news is that we can use some ideas from the previous optimization to make the following observation: If we make the sequences cyclical, some of those sequences will equal to another sequence if rotated. So if we make the color sequences into concentric color circles we will be able to prune some rotational duplicates. We now also only have to add the sequnences that a mirror is really going to use. Once again we will have to adjust where the mirrors point to adjust for the starting offset in the overlapping sequences. We now have our final form: a color disc. 
+In the previous example with the naïve implementation we needed to use $y*x^y = 50$ fields while we with a De Bruijn sequence only need $x^y = 25$ to fit all possible color sequences.
 
-	<PICTURE>
+> `<PICTURE 13> of the naive and the de bruijn sequence for the example picture` 
 
-A fortunate side effect of having circles instead of grids or lines are that the animation will automatically loop by just keep on rotating the color disc.
+Now, we might not actually need all the color fields in the De Bruijn sequence. There might not be a transition from A to A and in that case we can prune away those fields and end up with an even shorter sequence.
+
+The only drawback with using a De Bruijn sequence is that it needs to be in one continues line witch is not very space efficient. We'd like to have the ratio of the height and the width of the full color palette as close to $1.0$ as possible since we get less conic distortions by having the mirrors set with shallow angles.
+
+##Optimisation attempt: Round palettes
+
+The sequence can be awfully long so it might be an idea to try to pack the color fields for example in a color circle instead of a color line. By doing this we will also trade a lot of horizontal space for a little vertical space making the entire contraption a bit more manageable. This also means that instead of moving the colorfields horizontally we need to start rotating something. If the center of the color circle, the center of the mirrors and the center of the spectators eye lies on the same line we can rotate either the color circle or the mirrors. We any of them are not we can only rotate the color circle and still produce the effect.
+Using a disc also has the fortunate side effect of making the animation loop by simply continuing to rotate the disc.
+
+> `<PICTURE> of a vanilla round palette`
+
+##### Increasing frame-rate by duplication
+
+To make the frame rate higher without spinning the disc faster we can duplicate the color fields in each radial section. So instead of having the sequence ABC we can have ABCABCABC. It doesn't change any of the other optimisations.
+
+> `<PICTURE> of a duplicated round palette`
+
+##### Helix shifts
+
+We can also shift each radial sequence a little in relation to each other on the palette. This can either make it look more random (enhancing the confusion of how it works) or if they are shifted by a set amount make something that looks like a helix.
+
+> `<PICTURE> of a helixed duplicated palette`
+
+##### Randomised aiming points
+
+When a lot of mirrors are facing a few amount of spots on the palette one can discern the outlines from the images from regularities in the mirrors even if the color palette is removed. 
+
+> `<PICTURE> of the discerned outlines`
+
+This can be partially fixed. If we have duplicated the sequences there are multiple, equally good, points on the color palette that has the same temporal sequence. Each mirror can therefore randomly select any of the possible points. This will add some noise reducing the effect.
+
+>  `<PICTURE> of the regular aiming point and then the randomized`
+
+#####Sorting the sequence rings with Shannon entropy
+
+The radial ordering of the sequences (rings) are generally arbitrary. The sequences closer to the middle cover a smaller area since the circumference increases with radius. Since the mirrors might not be totally exact due to the fabrication process it can be a good idea to have more information density in the periphery of the disc where the area are bigger. We could for example sort the sequences in a way such as we put the single color sequences end up close to the middle and the sequences with multiple colors end up close to the periphery. An over engineering method (that I've opted to go with) is to sort the sequences on their Shannon entropy. Shannon entropy of $X$ is defined as:
+$$
+\Eta(X) = -\sum_{i=1}^n {\mathrm{P}(x_i) \log \mathrm{P}(x_i)}
+$$
+Where $$x_1, ..., x_n$$ is the possible outcomes which occur with probability $$\mathrm{P}(x_1), ..., \mathrm{P}(x_n)$$.
+We don't really have to dwell too long on the nitty gritty but can conclude we can compute a number for each line that will be lower if not much happens in the sequence and high if there is a lot happening. We can then use that to sort the radial rings.
+
+> `<PICTURE> some examples of shannon entropy values?`
+
+
+
+
 
 <img src="./output/potato-tomato-final/disc.png" alt="alt text" title="A disc" style="zoom:10%;" />
 
-##Optimization: Resuing multiple sequence loops
+##Optimisation: Reusing multiple sequence loops
 
-##Optimization: Do not overlap pictures 
-If all pictures in an animation uses the same colors and each picture only overlaps a solid background color of the other pictures the resulting number of sequences are exactly equal to the number of colors. This can only be used if sequence offsets can be used since all encodings goes from color -> background and hence all combinations can be achived with only sequence offsets.
+We can also use some ideas from before to make the following observation: If we make the sequences cyclical, some of those sequences will equal to another sequence if rotated. So if we make the color sequences into concentric color circles we will be able to prune some rotational duplicates. 
+
+For example the circular sequence ABC is isomorphic to BCA and CAB (by putting the first letter last). This is great news since we, just like that, can divide the number of sequences by the number of frames.
+
+This has the greatest effect with few colors and a lot of colors that are reused in the different images.
+
+> `<PICTURE>` of reducing rotational symmetries
+
+##Optimisation: Do not overlap pictures 
+If all pictures in an animation uses the same colors for one particular mirror and each picture only overlaps a solid background color of the other pictures the resulting number of sequences are exactly equal to the number of colors. This can only be used if sequence offsets can be used since all encodings goes from color to background and hence all combinations can be achieved with only sequence offsets. The big drawback is of course that not all animations can be made.
+
+## Pruning when having too many sequences
+
+Sometimes the number of colors and/or frames are too high and we end up with too many sequences. When there are too many sequences it is hard to fit all of them in any given space. One last resort can then be to try to prune sequences by repeatedly removing the least used and replacing it with a sequence that it pretty similar. To do this we need to be able to quantise color difference and luckily someone has already figured that out for us with something called _CIELAB $\Delta$E*94_ (CIE stands for _the **I**nternational **C**ommission on **I**llumination_. LAB for L\*a\*b witch is a color space used to representing colors. The L stands for perceived **L**ightness while the a\* and b\* for the four unique colors of human vision: red, green, blue, and yellow. Further in the $\Delta$E* part the greek letter delta commonly denotes difference and the E stands for *Empfindung*; German for "sensation". 94 means it was published in 1994) or Delta-E for short.
+
+Delta-E quantise the difference between two colors as perceived by the human vision.
+The algorithm is fairly complicated but for completeness, this is how it works:
+$$
+\Delta E_{94}^* = \sqrt{ \left(\frac{\Delta L^*}{k_L S_L}\right)^2 + \left(\frac{\Delta C^*_{ab}}{k_C S_C}\right)^2 + \left(\frac{\Delta H^*_{ab}}{k_H S_H}\right)^2 }
+$$
+where:
+$$
+\begin{aligned}
+\Delta L^* &=L^*_1 - L^*_2\\
+C^*_1 &=\sqrt{ {a^*_1}^2 + {b^*_1}^2 }\\
+C^*_2 &=\sqrt{ {a^*_2}^2 + {b^*_2}^2 }\\
+\Delta C^*_{ab} &=C^*_1 - C^*_2\\
+\Delta H^*_{ab} &=\sqrt{ {\Delta E^*_{ab}}^2 - {\Delta L^*}^2 - {\Delta C^*_{ab}}^2 } &=\sqrt{ {\Delta a^*}^2 + {\Delta b^*}^2 - {\Delta C^*_{ab}}^2 }\\
+\Delta a^* &=a^*_1 - a^*_2\\
+\Delta b^* &=b^*_1 - b^*_2\\
+S_L &=1\\
+S_C &=1+K_1 C^*_1\\
+S_H &=1+K_2 C^*_1\\
+\end{aligned}
+$$
+What we get out is a number ranging from 0.0 to 100.0. Values below 1.0 is not perceivable by the human eye. Values between 1 and 2 can be perceived by close observation, 2-10 at a glance. Values between 11 and 49 means the colors are more similar than opposite and the value 100 means the colors are exact opposites. 
+
+By comparing the candidate-for-removal-sequence (the least used one) with all other non-candidate sequences it is possible to compute an square mean difference (its usually better to compute the square mean instead of just the plain mean to inflate big differences and suppress small). Then all mirrors using the soon-to-be removed sequence is set to instead use the sequence with the least difference.
+
+> `<PICTURE> some examples of reducing sequneces`
 
 
-##Palette setups
+##Palette arrangements
 * Disc
 * Cylinder
+* Ring
+* Internal Cylinder
 * Conveyor
 * X-Lines
 * Y-Lines
 * XY-Grid
 * Interlaced grid
+* Just different color fields randomly positioned
 * Multiple palettes
 * Combination of palette types
 * Stippling with light
@@ -174,21 +294,8 @@ If all pictures in an animation uses the same colors and each picture only overl
 * Freeform
 
 
-##Shape of mirrors
 
-Square tiling of a plane is 100% efficient but for reasons we will discuss later using round mirrors have some good properties (that we will discuss in the manufacturing section). Round mirrors arranged in a grid will leave a lot of gaps between them that does not reflect any light (or it will reflect light, just not the light we want) and that will wash out the colors of the picture. The most dense packing of circles on a plane, making more of the surface be mirrors, is the hexagonal array packing. This is the same packing bees use for their beehives. This will minimize the space between the mirrors and hence reflect more light per unit area and therefore allow for a more vivid image.
 
-##Accounting for distances
-Although the light rays starts at a light source, bounces and scatters of the color surfaces and then reflects on the mirros and strikes the spectators retina it is easier to think of the process in reverse. The math will add up both directions (it is actually a funamental law of thermodynamics that all optics are reversable). If we think of the rays from the eye (so in reverse) that strike the mirror they will actually form a cone  with the apex in the eye and  the base covering the mirrors surface. When the rays reflect off the mirrors the cone will continue expanding with the same taper until it strikes the color fields. The surface area that will be sticken on the color fields is related to the surface area of the mirrors and the combined distances between the eye, mirror and color surfaces. Doubleing that distance will quadrouble the area (called _The inverse square law_). This is important since having too small color fields in relation to the distance from the mirrors will make the mirror pick up more than one color field.
-To account for that one can either move the color disc closer to the mirrors or make the mirror disc bigger.
-
-	<PICTURE>
-
-There is another phenomena that we have to at least consider: If the light cone from the mirror does not strike the color disc completely perpendicular the cone will be "cut off" at a slanted angle (called _a conic section_). This means that the reflected surface of the color field will not be a perfect circle but an ellipse. Depending on where on the color disc the mirrors are reflecting the shape of the reflecting area will be different. We need to make sure that the entire area of the reflected shape will be within the color field.
-
-	<PICTURE>
-
-The more extreme the angle of incidence of the cone the more extreme the proportions of the ellipse will be. As the angle of incidence approaches tangency to the surface the length of ellipses major axis will approach infinity. 
 
 ##Positioning and angles
 
@@ -201,14 +308,6 @@ To remedy both those downside one can put a small hole in the middle of the disc
 The third option is to put the mirrors perpendicular to the disc between the spectator and the disc in the depth direction but slightly to the side. In this configuration only the disc can be rotated to play the animation for geometric reasons. The disc can be hung on the wall and there is a possibility to randomly discover the picture by just walking by. The spectator is also not in the way of any of the light rays. One has to consider that the distance between the some of the mirrors and the disc will differ quite substantially in relation to the cone shape of the arrays from each mirror. Mirrors further away from the disc will reflect a larger area on the disc than mirrors closer to the disc.
 
 ##Being smart with the animation
-
-##Making the disc look better with helix offsets
-
-## Randomizing starting points for equivivivalent cyclic sequences
-
-## Sorting circles with shannon entropy
-
-##Multiplying frames for higher framerates
 
 ##Simulating in Blender
 
