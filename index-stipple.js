@@ -217,6 +217,7 @@ function getSettings() {
       wall_rotation_scalar: -0.5, // scalar of full circle around up axis
       wall_diameter: 4.00, 
       eye_offset: vector(-0.5, 0.0, 2.00),
+      wall_face_divisions: 10,
     },
   }
 

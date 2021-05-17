@@ -137,6 +137,7 @@ run()
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
       wall_diameter: 2.490, 
       eye_offset: vector(-2.50, 0, 2.00),
+      wall_face_divisions: 10,
     },
     optimization: {
       reuse_permutations: true,

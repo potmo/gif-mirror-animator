@@ -94,7 +94,7 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
 
   const context = output.getContext("2d");
 
-  context.fillStyle = `rgba(0,0,0,255)`;
+  context.fillStyle = `rgba(255,255,255,0.01)`;
   context.strokeStyle = `rgba(255,255,255,255)`;
 
   ellipses.forEach(points => {
@@ -105,8 +105,7 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
 }
 
 function drawDot(context, points) {
-  
-  //console.log('drawing', points)
+
 
   context.beginPath();
   context.moveTo(points[0].x, points[0].y);
