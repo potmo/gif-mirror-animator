@@ -27,57 +27,90 @@ async function build(settings, pixels, color_map, frames) {
     }, {});
 
   if (settings.print.reverse_color_map) {
-    console.log(`reverse color map ${Object.keys(reverse_color_map).length}`);
-    Object.keys(reverse_color_map).forEach(key => console.log(key.yellow, color_convert.toHexString(reverse_color_map[key]).green))
+    console.log(`Reverse color map ${Object.keys(reverse_color_map).length}`.yellow);
+    Object.keys(reverse_color_map).forEach(key => console.log(key.yellow, color_convert.toHexString(reverse_color_map[key]).green, colorizeString(key, reverse_color_map)))
   }  
-
-  console.log(`Calculating De Briujn sequence`.gray);
-  let alphabet = Object.keys(reverse_color_map).join('');
-  let debruijnSequence = Array.from(debruijn.sequence(alphabet, 3)).join('');
-  console.log(`De Briujn sequence of ${alphabet.yellow}: ${colorizeString(debruijnSequence, reverse_color_map)}`);
-	
 
   var sequences = getSequences(pixels);
 
+  console.log("Color palette per frame:".yellow)
+  var frame_palette = [];
+  Object.keys(sequences).map( sequence_string => {
+    sequence_string.split('')
+                   .slice(0, unduplicated_frames)
+                   .forEach((color, i) => {
+                      frame_palette[i] = frame_palette[i] || {};
+                      frame_palette[i][color] = 1;
+                   });
+  });
+  frame_palette.forEach((frame, i) => {
+    let color_string = Object.keys(frame).sort((a,b) => a.localeCompare(b)).join('')
+    console.log(`${i}. ${colorizeString(color_string, reverse_color_map)}`)
+  });
+
+  console.log(`Calculating De Briujn sequence`.gray);
+  const debruijn_length = 2;
+  let alphabet = Object.keys(reverse_color_map).join('');
+  let debruijnSequence = Array.from(debruijn.sequence(alphabet, debruijn_length)).join('');
+  console.log(`De Briujn sequence of ${alphabet.yellow}:\n${colorizeString(debruijnSequence, reverse_color_map)}.`);
+  console.log(`Alphabet length: ${alphabet.length} and subsequence length: ${debruijn_length} produces a sequence with length: ${debruijnSequence.length}. Brute force is: ${Math.pow(alphabet.length, debruijn_length) * debruijn_length}`.gray)
+	
+  var sequence_keys = sortSequenceKeys(sequences, settings);
+
   if (settings.print.sequence_count) {
-    console.log(`Original sequences: ${Object.keys(sequences).length}`.red);  
+    console.log(`Original sequence count: ${Object.keys(sequences).length}`.red);  
+  }
+
+  if (settings.print.sequence_occurencies) {
+    console.log(`Sequences looping frames times ${settings.input.duplicate_frames}:`.yellow);
+    printSequences(sequences, sequence_keys, reverse_color_map);    
   }
   
   if (settings.optimization.reuse_permutations) {
+    console.log('Sequences after resusing permutations');
     sequences = reuseLoopingPermutationSequences(sequences, unduplicated_frames);  
+    sequence_keys = sortSequenceKeys(sequences, settings);
     if (settings.print.sequence_count) {
-      console.log(`After reducing permutations: ${Object.keys(sequences).length}`.yellow);
+      console.log(`After reusing permutations: ${Object.keys(sequences).length}`.yellow);
+    }
+    if (settings.print.sequence_occurencies) {
+      console.log('Sequences after reusing permutation:'.yellow);
+      printSequences(sequences, sequence_keys, reverse_color_map);    
     }
   }
 	
-	var sequence_keys = sortSequenceKeys(sequences, settings);
+	
 
   if (settings.optimization.prune) {
     sequences = reduceNumberOfSequences(settings, sequences, reverse_color_map, settings.optimization.prune.max_sequences, unduplicated_frames);  
     sequence_keys = sortSequenceKeys(sequences, settings);
 
     if (settings.print.sequence_count) {
-      console.log(`After reducing sequences: ${Object.keys(sequences).length}`.green);
+      console.log(`Sequences after pruning: ${Object.keys(sequences).length}`.green);
+    }
+    if (settings.print.sequence_occurencies) {
+      console.log('Sequences after pruning:'.yellow);
+      printSequences(sequences, sequence_keys, reverse_color_map);    
     }
   }
 
-  console.log(sequences)
-
+  // NOTE: If sequences are shifted to align with another sequence that old one will be removed.
+  // so for example if reuse_permutations is off and there are permutations that are overlapping
+  // then there will be an error
   if (!!settings.optimization.shift_sequences) {
+    console.log('Shifting sequences'.yellow);
     for (let number of Object.keys(settings.optimization.shift_sequences)) {
       let key = sequence_keys[number];
       let offset = settings.optimization.shift_sequences[number];
       let new_main_key = shiftString(sequence_keys[number], offset);
-      var new_sequences = sequences[key];
+      var new_sequences = sequences[key].map( sequence => {return {...sequence}}) ; // shallow copy
 
 
-      
       for (let sequence of new_sequences) {
-        console.log(sequence, offset)
         sequence.offset = (sequence.offset + offset) % unduplicated_frames;
         //sequence.string = shiftString(sequence.string, offset);
         sequence.main_key = new_main_key;
-        console.log(sequence)
+        console.log(`shifting ${colorizeString(sequence.string, reverse_color_map)} (${sequence.string}) with ${offset}`);
       }
 
       delete sequences[key];
@@ -85,29 +118,37 @@ async function build(settings, pixels, color_map, frames) {
       sequence_keys[number] = new_main_key;
 
     }
-  }
-	
-	
-  if (settings.print.sequence_occurencies) {
-    sequence_keys.forEach( (key, i) => {
+    //sequence_keys = sortSequenceKeys(sequences, settings);
 
-      let entropy = shannon_entropy(key).toFixed(8).red;
-      let subsequences = sequences[key].map(a => {
-        let moved = a.original_main_key ? '*' : '';
-        let shifted = shiftString(a.string, a.offset);
-        let colored = colorizeString(shifted, reverse_color_map);
-        return `\n   ${colored}  ${shifted} ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
-      }).join('')
 
-      console.log(`${i.toString().padStart(2)}.${colorizeString(key, reverse_color_map)} ${key.yellow}(${entropy}) ${subsequences}`);
-    });  
+    if (settings.print.sequence_occurencies) {
+      console.log('sequences:'.yellow);
+      printSequences(sequences, sequence_keys, reverse_color_map);    
+    }
   }
 
   if (settings.print.number_of_pixels) {
-	 console.log(`Number of pixels: ${pixels.length}`.green);
+	 console.log(`Number of pixels: ${pixels.length}`.yellow);
   }
 
   return {sequences, sequence_keys, reverse_color_map}
+}
+
+function printSequences(sequences, sequence_keys, reverse_color_map) {
+  sequence_keys.forEach( (key, i) => {
+
+    let entropy = shannon_entropy(key).toFixed(4).red;
+    var total_occurences = 0;
+    let subsequences = sequences[key].map(a => {
+      let moved = a.original_main_key ? '*' : '';
+      let shifted = shiftString(a.string, a.offset);
+      let colored = colorizeString(shifted, reverse_color_map);
+      total_occurences += a.occurences;
+      return `\n   ${colored}  ${shifted} ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
+    }).join('')
+
+    console.log(`${i.toString().padStart(2)}.${colorizeString(key, reverse_color_map)} ${key.yellow} entropy: ${entropy}, total occurences: ${total_occurences} ${subsequences}`);
+  });  
 }
 
 function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, max_sequences, unduplicated_frames) {
@@ -121,7 +162,7 @@ function reduceNumberOfSequences(settings, input_sequences, reverse_color_map, m
                          }).
                          sort( (a,b) => b.occurences - a.occurences);
 
-  console.log(`reduce number of sequneces to ${max_sequences} from ${sequences.length} using comparator ${settings.optimization.prune.comparator}`.gray);
+  console.log(`reduce number of sequences to ${max_sequences} from ${sequences.length} using comparator ${settings.optimization.prune.comparator}`.gray);
 
   const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
@@ -322,11 +363,12 @@ function printStatsForSequenceCount(pixels) {
   });
 }
 
+
 function colorizeString(string, reverse_color_map) {
   return string
   .split('')
   .map(char => reverse_color_map[char])
-  .map(color => color_convert.toConsoleString(color, ' '))
+  .map(color => color_convert.toConsoleForeground(color, '█'))
   .join('');
 }
 

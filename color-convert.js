@@ -91,9 +91,15 @@ function toConsoleString(color, string) {
   return "\x1B[48;2;"+obj.r+";"+obj.g+";"+obj.b+"m" + string + '\x1B[49m';
 }
 
+function toConsoleForeground(color, string) {
+  let obj = toARGBObject(color);
+  return "\x1B[38;2;"+obj.r+";"+obj.g+";"+obj.b+"m" + string + '\x1B[39m';
+}
+
 export {
   imageDataToARGBObjectArray,
   toConsoleString,
+  toConsoleForeground,
   toHexString,
   ABGRtoARGB,
   ARGBtoABGR,

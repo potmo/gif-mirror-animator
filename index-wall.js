@@ -118,7 +118,7 @@ function getSettings() {
           { path: './images/fruits/fastfood2.png', rotation: Math.PI * 2 },
         ]
       }*/
-      duplicate_frames: 4, 
+      duplicate_frames: 3, 
     },
     output: {
       path: './output-wall', // this is modified and the input name is added
@@ -142,11 +142,13 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(1.0, 0.0, 1.0), //vector(2.00, 0.0, 2.00),
-      wall_rotation_scalar: -0.375, // scalar of full circle around up axis
-      wall_diameter: 2.0,//2.490, 
+      wall_offset: vector(0.0, 1.0, 2.5), //vector(2.00, 0.0, 2.00),
+      wall_rotation_scalar: 0, // scalar of full circle around up axis
+      //wall_diameter: 4.0,
+      wall_width: 5.0 * 0.8181,
+      wall_height: 5.0,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 4.00),
+      eye_offset: vector(0, 0, 2.00),
 
     },
     optimization: {
