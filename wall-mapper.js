@@ -23,15 +23,6 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 													 		.map(color_convert.toARGBObject));
 
 
-
-	const center_x = width / 2;
-	const center_y = height / 2;
-	const radius = height / 2;
-
-	if (settings.print.section_angles) {
-		console.log(`Section Angles`.brightYellow)
-	}
-
 	
 	const row_height = height / colors.length;
 	const column_width = width / colors[0].length;
