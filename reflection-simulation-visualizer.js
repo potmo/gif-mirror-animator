@@ -89,19 +89,36 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
     });
 
 
+  let frames = reflections[0].colors.length;
+  let outputs = [];
+  for (let i = 0; i < frames; i++) {
+    let output = await image_loader.getOutputImage(size.width, size.height, {r:255, g:255, b: 255, a: 0});  
+    outputs.push(output);
+  }
   
-  let output = await image_loader.getOutputImage(size.width, size.height, {r:0, g:0, b: 0, a: 255});
+  for (var frame = 0; frame < frames; frame++) {
+    const context = outputs[frame].getContext("2d");
 
-  const context = output.getContext("2d");
+    for (let i = 0; i < ellipses.length; i++) {
+      let points = ellipses[i];
+      let color = reflections[i].colors[frame];
+      context.fillStyle = `rgba(${color.r},${color.g},${color.b},1)`;
+      context.strokeStyle = `rgba(0,0,0,0.6)`;
+      drawDot(context, points);
+    }
+  }
 
-  context.fillStyle = `rgba(255,255,255,0.01)`;
+  /*
+    context.fillStyle = `rgba(255,255,255,0.01)`;
   context.strokeStyle = `rgba(255,255,255,255)`;
-
   ellipses.forEach(points => {
     drawDot(context, points);                 
-  }); 
-
-  await image_loader.writeImage(path.join(settings.output.path, 'simulation', 'simulated_mirrors.png'), output);
+  });
+  */ 
+  for(let frame = 0; frame < frames; frame++) {
+    await image_loader.writeImage(path.join(settings.output.path, 'simulation', `simulated_mirrors_${frame}.png`), outputs[frame]);  
+  }
+  
 }
 
 function drawDot(context, points) {

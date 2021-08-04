@@ -161,9 +161,9 @@ function getSettings() {
       },
       pick_any_cycle: false,
       shift_sequences: {
-        0: +1,
-        8: +2,
-        9: +2,
+        0:  +1,
+        8:  +2,
+        9:  +2,
         10: +2,
       }
     },

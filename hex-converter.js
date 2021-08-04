@@ -56,6 +56,7 @@ async function convert(settings, images) {
   */
 
 	if (settings.output.simulation.hex.enabled) {
+		console.log('Writing hex imgages');
 		let output_path = path.join(settings.output.path, 'hex');
 		await fs.remove(output_path);
 		await fs.mkdirs(output_path);
@@ -228,6 +229,9 @@ function renderWorld(world, color_map, settings) {
 		}, {});
 
 	const {width, height, mirror_size} = settings.output.simulation.hex;
+	
+	if (!width || !height || !mirror_size) throw new Error('hex simulation output size not defined');
+
 	const output = getOutputImage(width, height, {r: 255, g: 255, b: 255, a: 255});
 	const layout = Hex.Layout(Hex.layout_pointy, {x: mirror_size, y: mirror_size}, {x: width/2, y: height/2});
 	const context = output.getContext("2d");

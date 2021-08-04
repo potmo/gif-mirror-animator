@@ -99,8 +99,8 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/tea-sun-lager4.png', 
-        columns: 3, 
+        path: './images/smiley/smiley02.png', 
+        columns: 2, 
         rows: 1,
       },
       
@@ -118,7 +118,7 @@ function getSettings() {
           { path: './images/fruits/fastfood2.png', rotation: Math.PI * 2 },
         ]
       }*/
-      duplicate_frames: 3, 
+      duplicate_frames: 1, 
     },
     output: {
       path: './output-wall', // this is modified and the input name is added
@@ -126,7 +126,13 @@ function getSettings() {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
         mirror_image_size: {width: 1000, height: 1000},
-        hex: {enabled: false},
+        hex: {
+          enabled: false,
+          width: 400,
+          height: 400,
+          mirror_size: 10,
+        },
+        frames: true,
       },
       texture: true,
       obj: true,
@@ -142,17 +148,17 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(0.0, 1.0, 2.5), //vector(2.00, 0.0, 2.00),
-      wall_rotation_scalar: 0, // scalar of full circle around up axis
+      wall_offset: vector(0.5, 0.0, 1.0), //vector(2.00, 0.0, 2.00),
+      wall_rotation_scalar: -0.25, // scalar of full circle around up axis
       //wall_diameter: 4.0,
-      wall_width: 5.0 * 0.8181,
-      wall_height: 5.0,
+      wall_width: 1.0,
+      wall_height: 1.0,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 2.00),
+      eye_offset: vector(-0.5, 0, 1.00),
 
     },
     optimization: {
-      reuse_permutations: true,
+      reuse_permutations: false,
       sort_sequnece: {
         algo: 'shannon', //none | shannon
         acending: true,
@@ -164,10 +170,10 @@ function getSettings() {
       },
       pick_any_cycle: false,
       shift_sequences: {
-        0: +1,
+        /*0: +1,
         8: +2,
         9: +2,
-        10: +2,
+        10: +2,*/
       }
     },
     print: {

@@ -86,9 +86,14 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		}
 		section = (section + rand) % colors[circle].length;
 
+		const item_colors = Array(frames).fill(0).map((_,i) => {
+			const s = (section + i) % colors[circle].length;
+			let color = colors[circle][s];
+			return color;
+		});
 		
 		const color = colors[circle][section];
-		return {circle, section, string: item.string, color};
+		return {circle, section, string: item.string, color, colors: item_colors};
 	});
 
 	let middle_positions = circle_positions.map( item => {
@@ -106,9 +111,12 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 			palette: {
 				x: aim_position.x,
 				y: aim_position.y,
+				colors: circle_pos.colors,
 			},
-			circle: circle_pos.circle,
-			section: circle_pos.section,
+			circle: circle_pos.circle, // alias row
+			row: circle_pos.circle,
+			section: circle_pos.section, // alias column
+			column: circle_pos.section,
 			string: circle_pos.string
 		};
 	})
@@ -141,8 +149,10 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		palette: {
 			width,
 			height,
+			colors,
 		},
 		mapping,
+		frames,
 	}
 
 	if (settings.output.disc_image) {	

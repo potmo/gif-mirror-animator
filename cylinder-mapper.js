@@ -13,6 +13,8 @@ import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
 
 export async function map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames) {
 
+	const unduplicated_frames = frames / settings.input.duplicate_frames;
+
 	const height = settings.output.cylinder_image.height;
 	const width = height * settings.output.cylinder_image.diameter_scalar * Math.PI;
 
@@ -71,9 +73,13 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 		const y = row_height * row + row_height / 2; // middle of row
 
-		
+		const item_colors = Array(unduplicated_frames).fill(0).map((_,i) => {
+			const c = (column + i) % colors[row].length;
+			let color = colors[row][c];
+			return color;
+		});
 
-		return {row, column, aim_position: {x,y}, string: item.string, color};
+		return {row, column, aim_position: {x,y}, string: item.string, color, colors: item_colors};
 	});
 	
 
@@ -90,6 +96,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 			palette: {
 				x: aim_position.x / width - 0.5, // offset to be between -0.5 and 0.5
 				y: aim_position.y / height - 0.5, // offset to be between -0.5 and 0.5
+				colors: item.colors,
 			},
 			row: item.row,
 			column: item.column,
@@ -107,6 +114,8 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 			height,
 		},
 		mapping,
+		colors,
+		frames,
 	}
 
 	if (settings.output.texture) {	

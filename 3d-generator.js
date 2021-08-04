@@ -54,7 +54,6 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
   let reflections = [];
   let id = 0;
 
-
   for (let mapping of mappings) {
     /*const target = wall.center.add(wall.widthVector.scale(mapping.palette.x))
                               .add(wall.heightVector.scale(mapping.palette.y * -1));*/
@@ -62,7 +61,6 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
     const target_pos = wall.worldPosAtTextureCoord(mapping.palette.x, mapping.palette.y * -1)
     const target_normal = wall.worldNormalAtTextureCoord(mapping.palette.x, mapping.palette.y * -1);
     const target = {pos: target_pos, normal: target_normal}
-
 
     const mirrorPos = vector(0,0,0).add(mirror_board.widthVector.scale(mapping.mirror.x))
                                    .add(mirror_board.heightVector.scale(mapping.mirror.y * -1))
@@ -74,7 +72,9 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
     // TODO: This should be changed
     const ellipse_points = createReflectanceEllipsePoints(mirrorObj, eye.pos, target, wall);
 
-    reflections.push({mirror: mirrorObj, target: target.pos, eye, ellipse_points});
+    const colors = mapping.palette.colors || [{r:255, g:255, b: 255, a: 255}];
+
+    reflections.push({mirror: mirrorObj, target: target.pos, eye, ellipse_points, colors});
   }
 
   const rapidString = rapid.generate(mirrors, reflections, wall, eye);

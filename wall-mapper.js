@@ -13,6 +13,8 @@ import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
 
 export async function map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames) {
 
+	const unduplicated_frames = frames / settings.input.duplicate_frames;
+
 	const height = settings.output.cylinder_image.height;
 	const width = height * settings.output.cylinder_image.diameter_scalar * Math.PI;
 
@@ -45,31 +47,22 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 	const color_mapping = findColorMapping(pixels, sequences);
 
-	// the width of the cylinder watched from the side
-	const visible_width = height * settings.output.cylinder_image.diameter_scalar;
-	const visible_columns = Math.max(...color_mapping.map( i => i.offset));
-	console.log(`${visible_width}, ${visible_columns}`.red);
-
 	const items = color_mapping.map( item => {
 		const row = sequence_keys.indexOf(item.offset_key);
 		const column = item.offset;
 		const color = colors[row][column];
 		const columns = colors[row].length;
 
-		/*
-		const cos_scalar = column / visible_columns;
-		const x = width / 2 + Math.cos( Math.PI * cos_scalar) * (visible_width / 2 - visible_width / visible_columns);
-		*/
+		const x = column * column_width + column_width / 2;
+		const y = row_height * row + row_height / 2; 
 
-		const column_width = width / colors[row].length;
-		const cos_scalar = column / visible_columns;
-		const x = (columns / 2 + visible_columns / 2 - column) * column_width;
+		const item_colors = Array(unduplicated_frames).fill(0).map((_,i) => {
+			const c = (column + i) % colors[row].length;
+			let color = colors[row][c];
+			return color;
+		});
 
-		const y = row_height * row + row_height / 2; // middle of row
-
-		
-
-		return {row, column, aim_position: {x,y}, string: item.string, color};
+		return {row, column, aim_position: {x,y}, string: item.string, color, colors: item_colors};
 	});
 	
 
@@ -86,6 +79,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 			palette: {
 				x: aim_position.x / width - 0.5, // offset to be between -0.5 and 0.5
 				y: aim_position.y / height - 0.5, // offset to be between -0.5 and 0.5
+				colors: item.colors,
 			},
 			row: item.row,
 			column: item.column,
