@@ -3,15 +3,13 @@
 import path from 'path';
 import colors from 'colors';
 import fs from 'fs-extra';
-
-import vector from './vector.js';
 import * as disc_mapper from './disc-mapper.js';
 import * as image_loader from './image-loader.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
 import * as three_dee_generator from './3d-generator.js';
 import * as wall_generator from './flat-wall-generator.js'
-
+import vector from './vector.js';
 
 run()
   .then(()=>{
@@ -24,9 +22,12 @@ run()
   });
 
 
- async function run() {
+
+ async function run(iteration) {
   
   const settings = getSettings();
+
+  await prepareOutputDir(settings);
 
   await fs.writeFile(path.join(path.resolve(), path.join(settings.output.path, 'settings.json')), JSON.stringify(settings, null, '  '));
   console.log(colors.yellow(`saved settings.js`));
@@ -64,14 +65,27 @@ run()
 
  }
 
+ async function prepareOutputDir(settings) {
+  const output_dir = path.join(path.resolve(), settings.output.path);
+  await fs.remove(output_dir);
+  await fs.mkdirs(output_dir);
+
+  
+  
+  console.log(colors.yellow(`refreshed ${output_dir}`));
+  await fs.writeFile(path.join(output_dir, 'settings.json'), JSON.stringify(settings, null, '  '));
+  console.log(colors.yellow(`saved settings.js`));
+}
+
+
 
 
  function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/fruits/potato-tomato.png', 
-        columns: 2, 
+        path: './images/tea-sun-lager5.png', 
+        columns: 3, 
         rows: 1,
       },
       /*image: {
@@ -86,7 +100,7 @@ run()
           { path: './images/fruits/fastfood2.png', rotation: Math.PI * 2 },
         ]
       }*/
-      duplicate_frames: 3, 
+      duplicate_frames: 4, 
     },
     output: {
       path: './output', // this is modified and the input name is added
@@ -120,7 +134,7 @@ run()
       disc_image: {
         width: 2048,
         height: 2048,
-        helix_shift: 1.2, // shifting every circle % of section arc length
+        helix_shift: 0.03,//1.2, // shifting every circle % of section arc length
         hole_size: 0,
       },
       svg: true,
@@ -133,10 +147,10 @@ run()
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // this is set programatically later
-      wall_offset: vector(1.50, 0, 2.000),
+      wall_offset: vector(0.5, 0, 0.500),
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
-      wall_diameter: 2.490, 
-      eye_offset: vector(-2.50, 0, 2.00),
+      wall_diameter: 1.0, 
+      eye_offset: vector(-1.0, 0, 1.00),
       wall_face_divisions: 10,
     },
     optimization: {
@@ -146,11 +160,17 @@ run()
         acending: true,
       },
       prune: {
-        max_sequences: 10,//32
+        max_sequences: 100,//32
         comparator: 'color_distance', // 'color_distance' | 'sequence_string_distance'
         //min_usage: 4
       },
-      pick_any_cycle: true,
+      pick_any_cycle: false,
+      shift_sequences: {
+        /*0: +1,
+        8: +2,
+        9: +2,
+        10: +2,*/
+      }
     },
     print: {
       palette: true,
@@ -168,11 +188,11 @@ run()
   if (settings.input.image) input = settings.input.image.paths[0];
   if (settings.input.image_and_rotate) input = settings.input.image_and_rotate.images[0].path;
 
-  let project_name = path.basename(input, path.extname(input));
-  console.log(`adding ${project_name} to ${settings.output.path}`.yellow)
+  let image_name = path.basename(input, path.extname(input));
+  console.log(`adding ${image_name} to ${settings.output.path}`.gray)
 
-  settings.output.path = path.join(settings.output.path, project_name);
-  console.log(`modified output to ${settings.output}`.yellow)
+  settings.output.path = path.join(settings.output.path, image_name);
+  console.log(`modified output to ${settings.output.path}`.gray)
 
   return settings;
  }

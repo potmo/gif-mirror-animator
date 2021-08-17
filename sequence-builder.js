@@ -55,7 +55,7 @@ async function build(settings, pixels, color_map, frames) {
   console.log(`De Briujn sequence of ${alphabet.yellow}:\n${colorizeString(debruijnSequence, reverse_color_map)}.`);
   console.log(`Alphabet length: ${alphabet.length} and subsequence length: ${debruijn_length} produces a sequence with length: ${debruijnSequence.length}. Brute force is: ${Math.pow(alphabet.length, debruijn_length) * debruijn_length}`.gray)
 	
-  var sequence_keys = sortSequenceKeys(sequences, settings);
+  var sequence_keys = Object.keys(sequences);
 
   if (settings.print.sequence_count) {
     console.log(`Original sequence count: ${Object.keys(sequences).length}`.red);  
@@ -69,7 +69,7 @@ async function build(settings, pixels, color_map, frames) {
   if (settings.optimization.reuse_permutations) {
     console.log('Sequences after resusing permutations');
     sequences = reuseLoopingPermutationSequences(sequences, unduplicated_frames);  
-    sequence_keys = sortSequenceKeys(sequences, settings);
+    sequence_keys = Object.keys(sequences);
     if (settings.print.sequence_count) {
       console.log(`After reusing permutations: ${Object.keys(sequences).length}`.yellow);
     }
@@ -83,7 +83,7 @@ async function build(settings, pixels, color_map, frames) {
 
   if (settings.optimization.prune) {
     sequences = reduceNumberOfSequences(settings, sequences, reverse_color_map, settings.optimization.prune.max_sequences, unduplicated_frames);  
-    sequence_keys = sortSequenceKeys(sequences, settings);
+    sequence_keys = Object.keys(sequences);
 
     if (settings.print.sequence_count) {
       console.log(`Sequences after pruning: ${Object.keys(sequences).length}`.green);
@@ -118,8 +118,14 @@ async function build(settings, pixels, color_map, frames) {
       sequence_keys[number] = new_main_key;
 
     }
-    //sequence_keys = sortSequenceKeys(sequences, settings);
 
+  }
+
+  sequence_keys = sortSequenceKeys(sequences, settings);
+
+  if (!!settings.optimization.fixed_sequence_order) {
+    console.log('Setting fixed sequence order'.yellow);
+    sequence_keys = setFixedSequenceOrder(sequences, settings);
 
     if (settings.print.sequence_occurencies) {
       console.log('sequences:'.yellow);
@@ -144,7 +150,7 @@ function printSequences(sequences, sequence_keys, reverse_color_map) {
       let shifted = shiftString(a.string, a.offset);
       let colored = colorizeString(shifted, reverse_color_map);
       total_occurences += a.occurences;
-      return `\n   ${colored}  ${shifted} ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
+      return `\n   ${colored}  ${a.string} << ${a.offset}${moved} occurences: ${a.occurences}`
     }).join('')
 
     console.log(`${i.toString().padStart(2)}.${colorizeString(key, reverse_color_map)} ${key.yellow} entropy: ${entropy}, total occurences: ${total_occurences} ${subsequences}`);
@@ -313,14 +319,32 @@ function reuseLoopingPermutationSequences(sequences, unduplicated_frames) {
     }, {});
 }
 
+function setFixedSequenceOrder(sequences, settings) {
+  const old_sequences = Object.keys(sequences);
+
+  if (settings.optimization.fixed_sequence_order.length !== old_sequences.length) {
+    throw new Error(`sequence mapping needs to be same length as sequences. ${settings.optimization.fixed_sequence_order.length} != ${old_sequences.length}`);
+  }
+
+  let new_sequences = Array.from({length: old_sequences.length}, (_, i) => {
+    let mapping = settings.optimization.fixed_sequence_order[i];
+    return old_sequences[mapping]; 
+  });
+
+  return new_sequences;
+
+}
+
 function sortSequenceKeys(sequences, settings) {
   if (settings.optimization.sort_sequnece.algo === 'shannon') {
+    console.log('sorting sequences with shannon'.yellow);
     if (settings.optimization.sort_sequnece.acending) {
       return Object.keys(sequences).sort((a,b) => shannon_entropy(a) - shannon_entropy(b));      
     } else {
       return Object.keys(sequences).sort((a,b) => shannon_entropy(b) - shannon_entropy(a));  
     }
   } else {
+    console.log('skipping sorting sequences'.yellow);
     return Object.keys(sequences);
   }
 }

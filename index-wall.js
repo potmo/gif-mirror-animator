@@ -9,7 +9,6 @@ import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
 import * as wall_generator from './flat-wall-generator.js'
-
 import vector from './vector.js';
 
 run()
@@ -99,8 +98,8 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/smiley/smiley02.png', 
-        columns: 2, 
+        path: './images/tea-sun-lager5.png', 
+        columns: 3, 
         rows: 1,
       },
       
@@ -118,7 +117,7 @@ function getSettings() {
           { path: './images/fruits/fastfood2.png', rotation: Math.PI * 2 },
         ]
       }*/
-      duplicate_frames: 1, 
+      duplicate_frames: 4, 
     },
     output: {
       path: './output-wall', // this is modified and the input name is added
@@ -158,10 +157,10 @@ function getSettings() {
 
     },
     optimization: {
-      reuse_permutations: false,
+      reuse_permutations: true,
       sort_sequnece: {
         algo: 'shannon', //none | shannon
-        acending: true,
+        acending: false,
       },
       prune: {
         max_sequences: 40,//32
@@ -193,8 +192,6 @@ function getSettings() {
   if (settings.input.image_and_rotate) input = settings.input.image_and_rotate.images[0].path;
 
   let image_name = path.basename(input, path.extname(input));
-
-
   console.log(`adding ${image_name} to ${settings.output.path}`.gray)
 
   settings.output.path = path.join(settings.output.path, image_name);
