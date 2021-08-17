@@ -17,6 +17,7 @@ export {
 
 async function map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames) {
 
+	const unduplicated_frames = frames / settings.input.duplicate_frames;
 	const {width, height} = settings.output.disc_image;
 	const output = getOutputImage(width, height, {r: 255, g: 255, b: 255, a: 0});
 	const context = output.getContext("2d");
@@ -86,7 +87,7 @@ async function map(settings, pixels, sequences, sequence_keys, reverse_color_map
 		}
 		section = (section + rand) % colors[circle].length;
 
-		const item_colors = Array(frames).fill(0).map((_,i) => {
+		const item_colors = Array(unduplicated_frames).fill(0).map((_,i) => {
 			const s = (section + i) % colors[circle].length;
 			let color = colors[circle][s];
 			return color;
