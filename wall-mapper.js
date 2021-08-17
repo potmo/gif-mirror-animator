@@ -56,8 +56,9 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 		const x = column * column_width + column_width / 2;
 		const y = row_height * row + row_height / 2; 
 
-		const item_colors = Array(unduplicated_frames).fill(0).map((_,i) => {
-			const c = (column + i) % colors[row].length;
+		const item_colors = Array.from({length:unduplicated_frames}, (_) => 0).map((_,i) => {
+			let c = (columns-column + i);
+			c = ((c%columns)+columns)%columns; // this handles negative modulo
 			let color = colors[row][c];
 			return color;
 		});

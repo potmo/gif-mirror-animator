@@ -58,14 +58,9 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 	const items = color_mapping.map( item => {
 		const row = sequence_keys.indexOf(item.offset_key);
+		const columns = colors[row].length;
 		const column = item.offset;
 		const color = colors[row][column];
-		const columns = colors[row].length;
-
-		/*
-		const cos_scalar = column / visible_columns;
-		const x = width / 2 + Math.cos( Math.PI * cos_scalar) * (visible_width / 2 - visible_width / visible_columns);
-		*/
 
 		const column_width = width / colors[row].length;
 		const cos_scalar = column / visible_columns;
@@ -73,8 +68,9 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 		const y = row_height * row + row_height / 2; // middle of row
 
-		const item_colors = Array(unduplicated_frames).fill(0).map((_,i) => {
-			const c = (column + i) % colors[row].length;
+		const item_colors = Array.from({length:unduplicated_frames}, (_) => 0).map((_,i) => {
+			let c = (columns-column + i);
+			c = ((c%columns)+columns)%columns; // this handles negative modulo
 			let color = colors[row][c];
 			return color;
 		});
