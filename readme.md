@@ -4,15 +4,19 @@ typora-root-url: ./readme/images
 
 # Mirror animator
 
-_Nisse Bergman_ 
-_Draft 2021-08-11_
+## Abstract
+
+We present a novel optical device capable of faithfully reproducing arbitrary images and image sequences by utilizing the interplay between mirrors and coloured surfaces acting as interactive mosaics.
+Our main contribution is describing a method for precomputing the mirror lattice configuration as well as a near optimal method for finding the corresponding diffuse colour pattern in the spatio-temporal domain. 
+Our formulation allows for rapid iteration by enabling physically based light ray simulation ahead of construction.
+We demonstrate the effectiveness of our method in a wide range of image and image sequence scenarios as well as multiple device configuration variants.
 
 ## Introduction
 
 > `TODO: This section needs a rewrite`
 
 This paper describes a novel type of image making mechanism consisting of mirrors and painted fields.
-Throughout the paper we will use multiple variants of a two part sculpture as working examples. The first part is a lattice of small mirrors that will work as pixels or a mosaic. We will address different lattice configurations and mirror shapes and discuss pros and cons of them. The second part of the sculpture consists of a surface painted with different color fields working as a palette. As we will see the surface may come in many different shapes that allow for different functionality. The end goal is to make the mirrors appear to have a colour and by that making them collectively look like an arbitrary picture that we can choose before fabrication. This is achieved by calculating the direction each mirror has to face to make light bounce off a selected section of the color fields of the palette, off the mirror and into a spectators eye.
+We show multiple variants of a two part sculpture as working examples. The first part is a lattice of small mirrors that will work as pixels or a mosaic. We investigate different lattice configurations and mirror shapes and discuss pros and cons of them. The second part of the sculpture consists of a surface painted with different color fields working as a palette and colour source. The surface may come in many different shapes that allow for different functionality. The end goal is to make the mirrors appear to have a colour and by that making them collectively look like an arbitrary picture that we can choose before fabrication. This is achieved by calculating the direction each mirror has to face to make light bounce off a selected section of the color fields of the palette, off the mirror and into a spectators eye.
 
 > `TODO: We need to explain what we are doing here`
 >
@@ -97,7 +101,7 @@ We want the image in the mirror to be vibrant so we need to reflect as much ligh
 
 It is only easy to find square and round circles off the shelf. We will need thousands of mirrors and having to fabricate odd shaped ones is not really a viable option. 
 
-Square mirrors seems to be the obvious choice but for reasons we will discuss later we want to use round mirrors since they have some good properties (that we will discuss in the manufacturing section). While square tiling of square tiles are 100% efficient round mirrors arranged in a regular grid are not. It will leave a lot of gaps. We can do better. Fortunately people have been studying this thoroughly and proved that most dense packing of circles on a plane is the hexagonal array packing. 
+Square mirrors seems to be the obvious choice but for reasons we will discuss later we want to use round mirrors since they have some good properties (that we will discuss in the manufacturing section). While square tiling of square tiles are 100% efficient round mirrors arranaged in a regular grid are not. It will leave a lot of gaps. We can do better. Fortunately people have been studying this thoroughly and proved that most dense packing of circles on a plane is the hexagonal array packing. 
 
 <img src="/circular-pattern.png" style="zoom:50%;" />
 
@@ -106,6 +110,10 @@ Square mirrors seems to be the obvious choice but for reasons we will discuss la
 This is the same honeycomb packing bees use in their beehives [^Circle packing]. It minimises the space between the mirrors and hence reflect more light per unit area and therefore allow for a more vivid image.
 
 > `TODO: maybe mention that this requires us to convert from cartesian to hex coordinates if our original is a bitmap`
+
+> `TODO: http://extremelearning.com.au/how-to-evenly-distribute-points-on-a-sphere-more-effectively-than-the-canonical-fibonacci-lattice/`
+
+> `TODO: Colours chroma shifting with mixing white: https://en.wikipedia.org/wiki/Abney_effect`
 
 [^Circle packing]: The density of packing circles on a plane with diameter $D$ is $\frac{3\pi}{4}D^2 \big/ \frac{3\sqrt{3}}{2}D^2= \frac{\pi\sqrt{3}}{6} \approx 0.9069$ i.e. about 10% of the light will be hitting the substrate instead of a mirror.
 
@@ -130,6 +138,8 @@ This leads to another phenomena that we have to at least consider: One could ass
 <center><i>Fig 8. The same scene as Fig 7. but viewing straight down at the mirror (the rightmost black circle). The elliptical conic section is apparent.</i></center>
 
 This means that the reflected surface of the color field will not generally be a perfect circle but an ellipse. Depending on where on the colour fields the mirrors are reflecting the shape of the reflecting area will be differently shaped and sized. 
+
+> `TODO: The below is not true when the mirrors size is fixed. Only the distance in the normal direction of the mirror affects the reflected shapes size. However if the wall is not parallell with the mirror then the size is affected and aproaches infinity as the angle approches infinity (or towards a singular point depending on the relation of the mirrors and the walls angles)` 
 
 The more extreme the angle of incidence of the cone the more extreme the proportions of the ellipse will be. As the angle of incidence approaches tangency to the surface the length of ellipses major axis will approach infinity. We need to make sure that the entire area inside the silhouette of the reflected shape will be cover only the colour we want it to cover and nothing else.
 
@@ -283,6 +293,10 @@ Delta-E quantifies the difference between two colours as perceived by the human 
 By comparing the sum of square means of the Delta-E values of the elements of the least used sequence with the elements of all other sequences it is possible to figure out which sequence looks more the same. Then all mirrors using the soon-to-be removed sequence is set to instead use the most similar sequence.
 
 The algorithm reduces the number of sequences until we have the desired number of sequences. When reducing, some colours will be completely discarded since they might have very similar approximates already in the set of sequences. For example a light brown to red transition can maybe be replaced with a slightly darker brown to red transition without much of a visual difference overall. It can also be that a single mirror is assigned to a sequence and then we can assign that mirror to a sequence that looks quite similar without it being easy to even notice it. Though when the number of sequences gets too low ghosting artefacts starts to appear. Ghosting is when features of one image starts leaking into the other. In future work this algorithm could probably be improved to avoid ghosting by for example incorporating more advanced error diffusion techniques like *Floyd-Steinberg dithering* or *Atkinson dithering* adapted to work on sequences.
+
+> `TODO: This could also be interesting: Agglomerative hierarchical clustering (http://harthur.github.io/clusterfck/)`
+>
+> `also RGB quantization: http://leeoniya.github.io/RgbQuant.js/demo/`
 
 |  #   | Palette                                                 |                             |                             |
 | :--: | ------------------------------------------------------- | --------------------------- | --------------------------- |
