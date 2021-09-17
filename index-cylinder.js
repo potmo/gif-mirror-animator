@@ -98,7 +98,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/tea-sun-lager5.png', 
+        path: './images/tea-sun-lager6.png', 
         columns: 3, 
         rows: 1,
       },
@@ -141,11 +141,11 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(1.0, 0.0, 1.0), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(1.5, 0.0, 1.5), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.4, // scalar of full circle around up axis
       wall_diameter: 2.0,//2.490, 
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 4.00),
+      eye_offset: vector(-3, 0, 3.00),
 
     },
     optimization: {
@@ -162,16 +162,15 @@ function getSettings() {
       pick_any_cycle: false,
       shift_sequences: { // note: this shifts left
         0:  0,
-        1:  0,
-        2:  1,
-        3:  2,
-        4:  1,
+        1:  2,
+        2:  0,
+        3:  0,
+        4:  0,
         5:  0,
-        6:  2,
-        7:  1,
-        8:  1,
-        9:  1,
-        10: 2,
+        6:  0,
+        7:  0,
+        8:  2,
+        9:  2,
       },
       fixed_sequence_order: [ // note: this happens after shifting sequences
         0,
@@ -180,11 +179,10 @@ function getSettings() {
         5,
         8,
         7,
-        10,
+        9,
         6,
         4,
         1,
-        9,
       ]
     },
     print: {
