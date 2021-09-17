@@ -1,0 +1,14 @@
+colors for cups_of_tea_the_sun_and_lager
+
+Montana Gold
+-------------
+S0120   Shock white Pure    #FFFFFF
+G7000   Pebble              #EDEEE4
+G7230   Buzzard             #CCC9BE
+G7030   Iron Curtain        #9A9A91
+G8040   Duck Season         #A27F4D
+G8090   Nougat              #A65B3F
+CL8310  Hazelnut            #6C3115
+G1230   Yolk                #F28D09
+G1220   Yellow Cab          #F5AA05
+G1020   Citrus              #FED010

@@ -62,7 +62,8 @@
       "x": -2.5,
       "y": 0,
       "z": 2
-    }
+    },
+    "wall_face_divisions": 10
   },
   "optimization": {
     "reuse_permutations": true,
