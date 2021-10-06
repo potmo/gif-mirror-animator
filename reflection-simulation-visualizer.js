@@ -51,7 +51,7 @@ async function visualize(settings, reflections, wall) {
 
 async function visualizeArrangement(settings, reflections, mirror_board) {
   const size = settings.output.simulation.mirror_image_size;
-
+  const padding = {vertical: 150, horizontal: 150}
  
    const ellipses = reflections
     .map(a => a.mirror)
@@ -81,8 +81,8 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
       })
       .map(p => {
         return {
-          x: size.width / 2 + p.x * size.width , 
-          y: size.height - (size.height / 2 + p.y * size.height)
+          x: padding.horizontal + size.width / 2 + p.x * size.width , 
+          y: padding.vertical + size.height - (size.height / 2 + p.y * size.height)
         }
       });
       return scaled_points;
@@ -91,8 +91,9 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
 
   let frames = reflections[0].colors.length;
   let outputs = [];
+
   for (let i = 0; i < frames; i++) {
-    let output = await image_loader.getOutputImage(size.width, size.height, {r:255, g:255, b: 255, a: 0});  
+    let output = await image_loader.getOutputImage(size.width + padding.horizontal * 2, size.height + padding.vertical * 2, {r:255, g:255, b: 255, a: 0});  
     outputs.push(output);
   }
   
@@ -106,24 +107,32 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
       context.strokeStyle = `rgba(0,0,0,0.6)`;
       drawDot(context, points);
     }
+
+    context.strokeStyle = `rgba(255,0,0, 0.5)`;
+    drawSquare(context, padding.horizontal, padding.vertical, size.width, size.height)
   }
 
-  /*
-    context.fillStyle = `rgba(255,255,255,0.01)`;
-  context.strokeStyle = `rgba(255,255,255,255)`;
-  ellipses.forEach(points => {
-    drawDot(context, points);                 
-  });
-  */ 
+  
+  
   for(let frame = 0; frame < frames; frame++) {
     await image_loader.writeImage(path.join(settings.output.path, 'simulation', `simulated_mirrors_${frame}.png`), outputs[frame]);  
   }
   
 }
 
+function drawSquare(context, x, y, width,height) {
+  context.beginPath();
+  context.moveTo(x, y);
+  context.lineTo(x + width, y);
+  context.lineTo(x + width, y + height);
+  context.lineTo(x, y + height);
+  context.lineTo(x, y);
+  context.closePath();
+  context.stroke();
+  
+}
+
 function drawDot(context, points) {
-
-
   context.beginPath();
   context.moveTo(points[0].x, points[0].y);
   

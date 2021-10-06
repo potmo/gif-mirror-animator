@@ -11,7 +11,7 @@ function generate(mirrors, reflections, photowall, eye) {
 
 function* generateModule(mirrors) {
 
-	const tool = 13;
+	const tool = 20;
 	const tool_diameter = 6.0;
 
 	yield `O1001 (TOP)`
@@ -33,7 +33,7 @@ function* generateModule(mirrors) {
 	yield `(USE ABSOLUTE COORDINATES)`;
 	yield `G90;`;
 
-	yield `(CHANGE TO TOOL 2)`;
+	yield `(CHANGE TO TOOL ${tool})`;
 	yield `T${tool} M06;`;
 
 	yield `(START SPINDLE 20K RPM)`; //TODO: A lot more. 22K max

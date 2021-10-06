@@ -11,15 +11,12 @@ export {
 	convert,
 }
 
-async function convert(settings, images) {
-	var {width, height} = extractSize(images);
-	let {color_map} = extractColorMap(images, width, height);
+async function convert(settings, images, color_map, image_size) {
+	var {width, height} = image_size;
 	const color_array = Object.keys(color_map);
-
-
-
 	const sampled_images = images.map( (raw) => createSampledImage(width, height, raw));
-		
+	const pixel_images = sampled_images.map(image => getPixelsForWorld(image, width, height, color_map));
+
 	if (settings.print.palette) {
 		console.log('Palette');
 		Object.keys(color_map).forEach(color => {
@@ -30,12 +27,11 @@ async function convert(settings, images) {
 		});
 	}
 	
-	const pixel_images = sampled_images.map(image => getPixelsForWorld(image, width, height, color_map));
-
 	var pixels = pixel_images[0].map((pixel, i) => {
 		const pixel_colors = pixel_images.map( image => image[i].color);
 		const x = pixel.x;
 		const y = pixel.y;
+
 		return {
 			pixel_colors,
 			x,
@@ -43,17 +39,6 @@ async function convert(settings, images) {
 		};
 	});
 
-  // make it round
-  // this is the apothem witch is the radius of a 
-  // circle inscribed in a hexagon that is incribed in a circle with diameter 1
-  // this is basically cutting off the corners of the hexagon and making it into a circle
-  /*
-  let max_dist = Math.sqrt(3) / 4; 
-  pixels = pixels.filter(pixel => {
-    let dist = Math.sqrt(Math.pow(pixel.x - 0.5, 2) + Math.pow(pixel.y - 0.5 ,2));
-    return dist < 0.5//0.374;//max_dist;
-  });
-  */
 
 	if (settings.output.simulation.hex.enabled) {
 		console.log('Writing hex imgages');
@@ -70,39 +55,7 @@ async function convert(settings, images) {
 		}
 	}
 
-	return {frames: sampled_images.length, pixels, image_size: {width, height}, color_map};
-}
-
-
-function extractSize(images) {
-	let width = Math.min(...images.map((a)=> a.width));
-	let height = Math.min(...images.map((a)=> a.height));
-	return {width, height};
-}
-
-function extractColorMap(images, width, height) {
-
-	var colors = [];
-	for (var image of images) {
-		let context = image.getContext('2d');
-		var p = context.getImageData(0, 0, image.width, image.height).data; 
-		for (i = 0; i < p.length; i += 4) {
-			let color = color_convert.objToARGB({r: p[i+0],  g: p[i+1], b: p[i+2], a: p[i+3]});	
-			if (!colors.includes(color)) {
-					colors.push(color);
-			}
-		}
-
-	}
-
-	var color_map = {};
-	var color_names = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ1234567890".split('');
-	for (var i = 0; i < colors.length; i++) {
-		color_map[colors[i]] = color_names[i];
-	}
-
-	return {color_map};
-	
+	return {frames: sampled_images.length, pixels};
 }
 
 function createSampledImage( width, height, image) {
@@ -111,34 +64,14 @@ function createSampledImage( width, height, image) {
 	const origo = Hex.Hex(0,0,0);
 	const middle = Hex.move(origo, 0, 5);
 
-	const hex_positions = Hex.spiral_fill_circle(middle, width / 2); // do a little bit more than radius. Then remove to circle later
+	const hex_positions = Hex.spiral_fill_circle(middle, Math.max(width, height) / 2); // do a little bit more than radius. Then remove to circle later
 	const positions = hex_positions.map(hex => Hex.roffset_from_cube(1, hex));
-
-
-	const min = positions.reduce((best,pos) => {
-		return {
-			row: Math.min(best.row, pos.row),
-			col: Math.min(best.col, pos.col),
-		}
-	}, {col: Number.MAX_VALUE, row: Number.MAX_VALUE})
-
-	const adjusted_positions = positions.map(pos => {
-		return {
-			col: pos.col + Math.abs(min.col),
-			row: pos.row + Math.abs(min.row),
-		}
-	});
 
 	let context = image.getContext('2d');
 	let p = context.getImageData(0, 0, image.width, image.height).data; 
 	const colors = positions.map((pos, i) => { // adjusted_position
-		//let abgr = image.getAt(pos.col, pos.row) >>> 0;
-		//let argb = color_convert.ABGRtoARGB(abgr);
-    
     var col = pos.col + image.width/2;
     var row = pos.row + image.height/2;
-    //col = Math.max(0,Math.min(col, image.width-1));
-    //row = Math.max(0,Math.min(row, image.height-1));
 		let index = (col + row * image.width) * 4;
 		var argb = color_convert.objToARGB({r: p[index+0],  g: p[index+1], b: p[index+2], a: p[index+3]});	
 
@@ -156,56 +89,6 @@ function createSampledImage( width, height, image) {
 	return world;
 
 }
-
-function* createSpaceImage(color_map, width, height, background) {
-
-	const frames = 36;
-
-	const red = color_map[1];
-	const yellow = color_map[2];
-	const blue = color_map[0];
-
-	const colors = [yellow, red];
-	const origo = Hex.Hex(0,0,0);
-	const middle = Hex.move(origo, 0, 5);
-
-	const ring = Hex.ring(origo, width / 2 - 1);
-
-	const background_image = getSortedWorldArray(background);
-
-	let particles = Array(600)
-										.fill()
-										.map( i => {
-											const ring_id = Math.round(Math.random() * (ring.length - 1));
-											const end_hex = ring[ring_id];
-											const line = Hex.linedraw(origo, end_hex);
-											const offset = Math.floor(Math.random() * line.length);
-											const color_id = Math.round(Math.random() * (colors.length-1));
-											const color = colors[color_id];
-											return {line, color, offset};
-										});
-
-
-	for (let i = 0; i < frames; i++) {
-		const world = {hexes: {}};
-
-		//background_image.forEach(({hex, color}) => storeHex(world, hex, color));
-		Hex.spiral_fill(middle, width/2)
-	  	.forEach(hex => storeHex(world, hex, blue));
-
-		particles.map( obj => {
-			const offset = i / frames;
-			const hex = obj.line[ Math.round(obj.offset + obj.line.length * offset) % (obj.line.length) ];
-			const color = obj.color;
-			return {hex, color};
-		})
-		.forEach(({hex, color}) => storeHex(world, hex, color));
-
-		yield world;
-	}
-
-}
-
 
 function getPixelsForWorld(world, width, height, color_map) {
 	const layout = Hex.Layout(Hex.layout_pointy, {x: 0.5, y: 0.5}, {x: width/2, y: height/2});

@@ -9,6 +9,8 @@ import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
 import * as sequence_builder from './sequence-builder.js';
 import * as wall_generator from './cylindrical-wall-generator.js'
+import * as color_extractor from './color-extractor.js'
+import * as image_size_extractor from './image-size-extractor.js';
 import vector from './vector.js';
 
 run()
@@ -38,9 +40,14 @@ async function run() {
     await image_loader.writeImage(path.join(settings.output.path, `input_${i}.png`), images[i]);
   }
 
-  console.log('Convert to hex'.brightBlue);
-  let {frames, pixels, image_size, color_map} = await hex_converter.convert(settings, images);
+  console.log('Extract palette'.brightBlue);
+  let color_map = color_extractor.extractColorMap(images);
 
+  console.log('Extract size'.brightBlue);
+  let image_size = image_size_extractor.extractSize(images);
+
+  console.log('Convert to hex'.brightBlue);
+  let {frames, pixels} = await hex_converter.convert(settings, images, color_map, image_size);
 
   console.log('Build sequences'.brightBlue);
   let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, pixels, color_map, frames);
@@ -141,11 +148,11 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(1.5, 0.0, 1.5), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(1.5, -0.7, 1.5), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.4, // scalar of full circle around up axis
       wall_diameter: 2.0,//2.490, 
       wall_face_divisions: 50,
-      eye_offset: vector(-3, 0, 3.00),
+      eye_offset: vector(-3, 0.0, 3.00),
 
     },
     optimization: {

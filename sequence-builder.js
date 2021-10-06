@@ -123,6 +123,7 @@ async function build(settings, pixels, color_map, frames) {
 
   sequence_keys = sortSequenceKeys(sequences, settings);
 
+
   if (!!settings.optimization.fixed_sequence_order) {
     console.log('Setting fixed sequence order'.yellow);
     sequence_keys = setFixedSequenceOrder(sequences, settings);

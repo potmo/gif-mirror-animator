@@ -120,6 +120,57 @@ function ring(center, radius) {
   return results
 }
 
+/*
+function rectangle_fill(width, height) {
+  
+  let layout = Layout(layout_pointy, {x: width, y: height}, {x: 0, y: 0});
+  let start = Hex(0,0,0);
+
+  let results = [];
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      let hex = pixel_to_hex(layout, new Point(x, y));
+
+      let horizontal = add(start, scale(direction(1), x));
+      let position = add(horizontal, scale(direction(2), y));
+
+      results.push(position);
+    }
+  }
+
+  return results;
+}*/
+
+function rectangle_fill(width, height) {
+
+  
+  const center = move(Hex(0,0,0), 0, 5);
+  let radius = Math.max(width, height) / 2;
+  // add twice as much radius as we have to
+  let results = [center];
+  for (let k = 1; k < radius * 2 ; k++) {
+    results.push(...ring(center, k));
+  }
+
+  // trim off the overhangs
+  let layout = Layout(layout_pointy, {x: 0.5, y: 0.5}, {x: radius, y: radius});
+  results = results.filter(hex => {
+    let pixel = to_pixel(layout, hex);
+
+    console.log(pixel)
+
+    //if (pixel.x < -width/2 || pixel.y < -height/2 || pixel.x > width/2 || pixel.y > height/2) {
+    //  console.log(width, height)
+    //  console.log(pixel)
+    //  return false;
+    //}
+    return true;
+  });
+
+  return results
+}
+
+
 function spiral_fill(center, radius) {
   let results = [center];
   for (let k = 1; k < radius; k++) {
@@ -140,9 +191,9 @@ function spiral_fill_circle(center, radius) {
   results = results.filter(hex => {
     let pixel = to_pixel(layout, hex);
 
+    console.log(pixel)
+
     let dist = Math.sqrt(Math.pow(pixel.x - radius, 2) + Math.pow(pixel.y - radius, 2));
-    //console.log(pixel, radius, distance(hex, center), dist);
-    //return true;
     return dist < radius * 0.7;//0.8659;
   });
 
@@ -329,6 +380,7 @@ export {
   ring,
   spiral_fill,
   spiral_fill_circle,
+  rectangle_fill,
   spiral,
   wedge,
   zoom,

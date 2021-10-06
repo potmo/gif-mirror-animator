@@ -7,8 +7,12 @@ import * as mapper from './wall-grid-mapper.js';
 import * as image_loader from './image-loader.js';
 import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
+import * as mirror_arranger from './mirror-square-arranger.js';
+import * as arrangement_color_sampler from './mirror-arrangement-color-sampler.js';
 import * as sequence_builder from './sequence-builder.js';
-import * as wall_generator from './flat-wall-generator.js'
+import * as wall_generator from './flat-wall-generator.js';
+import * as color_extractor from './color-extractor.js';
+import * as image_size_extractor from './image-size-extractor.js';
 import vector from './vector.js';
 
 run()
@@ -38,15 +42,23 @@ async function run() {
     await image_loader.writeImage(path.join(settings.output.path, `input_${i}.png`), images[i]);
   }
 
-  console.log('Convert to hex'.brightBlue);
-  let {frames, pixels, image_size, color_map} = await hex_converter.convert(settings, images);
+  console.log('Extract palette'.brightBlue);
+  let color_map = color_extractor.extractColorMap(images);
 
+  console.log('Extract size'.brightBlue);
+  let image_size = image_size_extractor.extractSize(images);
+
+  console.log('Convert to hex'.brightBlue);
+  let {frames, pixels} = await mirror_arranger.arrange(settings, images, color_map, image_size);
+
+  console.log('Colorize mirrors'.brightBlue);
+  let colored_pixels = await arrangement_color_sampler.sample(settings, pixels, color_map, images, image_size);
 
   console.log('Build sequences'.brightBlue);
-  let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, pixels, color_map, frames);
+  let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, colored_pixels, color_map, frames);
 
   console.log('Map to wall'.brightBlue);
-  let mapping_conf = await mapper.map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
+  let mapping_conf = await mapper.map(settings, colored_pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
 
   var arrangement_size = Math.max(mapping_conf.mirror.width, mapping_conf.mirror.height);
 
@@ -98,7 +110,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/big_burger.png', 
+        path: './images/vulcano2.png', 
         columns: 1, 
         rows: 1,
       },
@@ -140,7 +152,7 @@ function getSettings() {
       image: {
         height: 1000,
         width: 1000,
-        columns: 5,
+        columns: 4,
       }
     },
     three_dee: { // units in meters
@@ -151,10 +163,10 @@ function getSettings() {
       wall_offset: vector(3, 0.0, 3.0), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
       //wall_diameter: 4.0,
-      wall_width: 2.0,
-      wall_height: 2.0,
+      wall_width: 3.5,
+      wall_height: 3.0,
       wall_face_divisions: 50,
-      eye_offset: vector(-3, 0, 3.00),
+      eye_offset: vector(-3, -0.0, 3.00),
 
     },
     optimization: {
@@ -176,37 +188,11 @@ function getSettings() {
         10: +2,*/
       },
       
-      fixed_sequence_order: [ // note: this happens after shifting sequences
-        6,
-        10,
-        9,
-        8,
-        2,
-
-        11,
-        23,
-        1,
-        7,
-        4,
-
-        5,
-        16,
-        21,
-        17,
-        3,
-
-
-        22,
-        15,
-        13,
-        14,
-        12,
-
-        0,
-        20,
-        18,
-        24,
-        19
+      fixed_sequence_key_order: [
+        'I', 'G', 'B', 'A',
+        'J', 'E', 'D', 'F',
+        'C', 'K', 'L', 'H',
+        'M', 'N', 'P', 'O',
       ]
     },
     print: {

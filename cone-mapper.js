@@ -7,78 +7,37 @@ import path from  'path';
 import colors from  'colors';
 import GIFEncoder from  'gifencoder';
 import cliProgress from  'cli-progress';
-import seedrandom  from 'seedrandom';
 
 import * as color_convert from  './color-convert.js';
 import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
-
-const rnd = seedrandom('This is the seed');
 
 export async function map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames) {
 
 	const unduplicated_frames = frames / settings.input.duplicate_frames;
 
-	const width = settings.output.image.width;
-	const height = settings.output.image.height;
-
-	// duplicate colors
-	//TODO: Make this better
-	/*
-	sequence_keys = [...sequence_keys]
-										.concat(sequence_keys)
-										.concat(sequence_keys)
-										.map((v) => ({sort: rnd(), value: v})) // this is taking a random element
-							      .sort((a, b) => a.sort - b.sort)
-							      .map((a) => a.value)
-							      */
-
-	
-	if (settings.optimization.fixed_sequence_key_order) {
-		console.log('Using fixed sequence key order'.yellow);
-		sequence_keys = settings.optimization.fixed_sequence_key_order;
-	}
-
-	
+	const height = settings.output.cylinder_image.height;
+	const width = height * settings.output.cylinder_image.diameter_scalar * Math.PI;
 
 	const output = getOutputImage(width, height, {r: 255, g: 255, b: 255, a: 0});
 	const context = output.getContext("2d");
 	const colors = sequence_keys.map(string => string.split('')
-													 		.map(color => reverse_color_map[color])
-													 		.map(color_convert.toARGBObject))
+													 		.map( color => reverse_color_map[color])
+													 		.map(color_convert.toARGBObject));
 
-	const columns = settings.output.image.columns;
-	const rows = Math.round(colors.length / columns);
 
-	
-	const row_height = height / rows;
-	const column_width = width / columns;
+	console.log(`colors: ${colors.length} colors[0]: ${colors[0].length} frames: ${frames} unduplicated_frames: ${unduplicated_frames}`);
 
-	let aim_positions = Array.from({length: rows * columns});
+	console.log(colors)
+	const row_height = height / frames;
+	const column_width = width / colors.length;
 
-	if (sequence_keys.length != rows * columns) {
-		throw new Error(`Number of color fields needs to be same as rows times columns. ${sequence_keys.length} != ${rows * columns}`);
-	}
-
-	for (let row = 0; row < rows; row++) {
-		
-		for (let column = 0; column < columns; column++) {
+	for (let row = 0; row < frames; row++) {
+		for (let column = 0; column < colors.length; column++) {
 
 			const x = column * column_width;
 			const y = row * row_height;
-			const index = row * columns + column;
 
-			const color = colors[index][0]; // this should only have one frame hence the 0
-
-			aim_positions[index] = {
-				x: x + column_width / 2,
-				y: y + row_height / 2,
-				row,
-				column,
-				color,
-			};
-
-			
-
+			const color = colors[column][row];
 			context.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1.0})`;
 			context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1.0})`;
 			context.beginPath();
@@ -90,27 +49,38 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 
 	const color_mapping = findColorMapping(pixels, sequences);
 
+	// the width of the cylinder watched from the side
+	const visible_width = height * settings.output.cylinder_image.diameter_scalar;
+	const visible_columns = Math.max(...color_mapping.map( i => i.offset));
+	console.log(`${visible_width}, ${visible_columns}`.red);
+
 	const items = color_mapping.map( item => {
+		const column = sequence_keys.indexOf(item.offset_key);
+		const rows = colors[column].length;
+		const row = item.offset;
+		const color = colors[column][row];
 
-		// allow multiple keys with the same color
-		// by taking a random element
-		const index = sequence_keys
-										.map((v,i) => ({value: v, index: i}))
-										.filter(v => v.value == item.offset_key)
-										.map((v) => ({sort: rnd(), value: v.index})) // this is taking a random element
-							      .sort((a, b) => a.sort - b.sort)
-							      .map((a) => a.value)
-							      .shift()
+		//const x = (columns / 2 + visible_columns / 2 - column) * column_width;
+		//const y = row_height * row + row_height / 2; // middle of row
 
-		const {x, y, row, column, color} = aim_positions[index];
-		
-		return {row, column, aim_position: {x,y}, string: item.string, color, colors: [color]};
+		const x = column * column_width + column_width * 0.5;
+		const y = (row+1) * row_height;
+
+		const item_colors = Array.from({length:unduplicated_frames}, (_) => 0).map((_,i) => {
+			let r = (rows-row + i);
+			r = ((r%rows)+rows)%rows; // this handles negative modulo
+			let color = colors[column][r];
+			return color;
+		});
+
+		return {row, column, aim_position: {x,y}, string: item.string, color, colors: item_colors};
 	});
 	
 
 	var mapping = pixels.map((pixel, i) => {
 		const item = items[i];
 		const aim_position = item.aim_position;
+
 		
 		return {
 			mirror: {
@@ -138,6 +108,8 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 			height,
 		},
 		mapping,
+		colors,
+		frames,
 	}
 
 	if (settings.output.texture) {	
