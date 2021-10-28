@@ -53,7 +53,16 @@ async function sample(settings, pixels, color_map, images, image_size) {
         throw new Error(`Could not sample color at index ${index}, ${image_pos.x}, ${image_pos.y}. ${pixel.x}, ${pixel.y}`);
       } 
 
-      return color_map[argb];
+      let color_key = color_map[argb];
+
+      if (color_key === undefined) {
+        Object.keys(color_map).forEach( color => {
+          console.log(color_convert.toHexString(color), color_map[color], color_convert.toHexString(argb), color === argb, argb - color);
+        })
+        throw new Error(`Could not find color for ${color_convert.toHexString(argb)} in color map`);
+      }
+
+      return color_key;
     });
 
     return {

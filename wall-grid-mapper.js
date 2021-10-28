@@ -46,6 +46,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 													 		.map(color => reverse_color_map[color])
 													 		.map(color_convert.toARGBObject))
 
+
 	const columns = settings.output.image.columns;
 	const rows = Math.round(colors.length / columns);
 
@@ -68,6 +69,7 @@ export async function map(settings, pixels, sequences, sequence_keys, reverse_co
 			const index = row * columns + column;
 
 			const color = colors[index][0]; // this should only have one frame hence the 0
+
 
 			aim_positions[index] = {
 				x: x + column_width / 2,

@@ -50,6 +50,7 @@ async function visualize(settings, reflections, wall) {
 }
 
 async function visualizeArrangement(settings, reflections, mirror_board) {
+
   const size = settings.output.simulation.mirror_image_size;
   const padding = {vertical: 150, horizontal: 150}
  
@@ -90,6 +91,7 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
 
 
   let frames = reflections[0].colors.length;
+
   let outputs = [];
 
   for (let i = 0; i < frames; i++) {

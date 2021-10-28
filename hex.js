@@ -191,8 +191,6 @@ function spiral_fill_circle(center, radius) {
   results = results.filter(hex => {
     let pixel = to_pixel(layout, hex);
 
-    console.log(pixel)
-
     let dist = Math.sqrt(Math.pow(pixel.x - radius, 2) + Math.pow(pixel.y - radius, 2));
     return dist < radius * 0.7;//0.8659;
   });

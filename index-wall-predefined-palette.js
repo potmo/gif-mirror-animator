@@ -3,7 +3,7 @@
 import path from 'path';
 import colors from 'colors';
 import fs from 'fs-extra';
-import * as mapper from './wall-grid-mapper.js';
+import * as mapper from './predifened-color-position-mapper.js';
 import * as image_loader from './image-loader.js';
 import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
@@ -11,8 +11,9 @@ import * as mirror_arranger from './mirror-square-arranger.js';
 import * as arrangement_color_sampler from './mirror-arrangement-color-sampler.js';
 import * as sequence_builder from './sequence-builder.js';
 import * as wall_generator from './flat-wall-generator.js';
-import * as color_extractor from './color-extractor.js';
+import * as color_extractor from './fixed-palette-color-extractor.js';
 import * as image_size_extractor from './image-size-extractor.js';
+import * as color_convert from './color-convert.js';
 import vector from './vector.js';
 
 run()
@@ -43,7 +44,7 @@ async function run() {
   }
 
   console.log('Extract palette'.brightBlue);
-  let color_map = color_extractor.extractColorMap(images);
+  const color_map = color_extractor.extractColorMap(settings);
 
   console.log('Extract size'.brightBlue);
   let image_size = image_size_extractor.extractSize(images);
@@ -54,11 +55,31 @@ async function run() {
   console.log('Colorize mirrors'.brightBlue);
   let colored_pixels = await arrangement_color_sampler.sample(settings, pixels, color_map, images, image_size);
 
+  /*
   console.log('Build sequences'.brightBlue);
-  let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, colored_pixels, color_map, frames);
+  //TODO: Extract this to a separate file
+  let sequence_keys = Object.keys(settings.input.fixed_palette.aim_positions);
+  
+  let reverse_color_map = Object.keys(settings.input.fixed_palette.aim_positions).reduce((obj, key) => {
+    let color = settings.input.fixed_palette.aim_positions[key].color;
+    obj[key] = color;
+    return obj;
+  }, {});
+
+  let sequences = Object.keys(settings.input.fixed_palette.aim_positions).reduce((obj, key) => {
+    let color = settings.input.fixed_palette.aim_positions[key].color;
+    obj[key] = [{
+      string: key,
+      offset: 0,
+      occurences: 1,
+      main_key: key
+    }];
+    return obj;
+  }, {});*/
+
 
   console.log('Map to wall'.brightBlue);
-  let mapping_conf = await mapper.map(settings, colored_pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
+  let mapping_conf = await mapper.map(settings, colored_pixels, image_size);
 
   var arrangement_size = Math.max(mapping_conf.mirror.width, mapping_conf.mirror.height);
 
@@ -110,9 +131,32 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/rooster.png', 
+        path: './images/nimm-das-geld-small.png', 
         columns: 1, 
         rows: 1,
+      },
+
+      fixed_palette: 
+      {
+        aim_positions: {
+          'A': {color: 0x131c35 | 0xFF000000, positions: [{x: 1000-125, y: 1000-125}]},
+          'B': {color: 0x344d74 | 0xFF000000, positions: [{x: 1000-375, y: 1000-125}]},
+          'C': {color: 0x5089a3 | 0xFF000000, positions: [{x: 1000-625, y: 1000-125}]},
+          'D': {color: 0x58a9b5 | 0xFF000000, positions: [{x: 1000-875, y: 1000-125}]},
+          'E': {color: 0x6f0c06 | 0xFF000000, positions: [{x: 1000-125, y: 1000-375}]},
+          'F': {color: 0xb14729 | 0xFF000000, positions: [{x: 1000-375, y: 1000-375}]},
+          'G': {color: 0xe47c3f | 0xFF000000, positions: [{x: 1000-625, y: 1000-375}]},
+          'H': {color: 0xf2c269 | 0xFF000000, positions: [{x: 1000-875, y: 1000-375}]},
+          'I': {color: 0x9a0509 | 0xFF000000, positions: [{x: 1000-125, y: 1000-625}]},
+          'J': {color: 0xc70506 | 0xFF000000, positions: [{x: 1000-375, y: 1000-625}]},
+          'K': {color: 0xdb3722 | 0xFF000000, positions: [{x: 1000-625, y: 1000-625}]},
+          'L': {color: 0xfb604d | 0xFF000000, positions: [{x: 1000-875, y: 1000-625}]},
+          'M': {color: 0xffafe3 | 0xFF000000, positions: [{x: 1000-125, y: 1000-875}]},
+          'N': {color: 0xffcff4 | 0xFF000000, positions: [{x: 1000-375, y: 1000-875}]},
+          'O': {color: 0xffddfb | 0xFF000000, positions: [{x: 1000-625, y: 1000-875}]},
+          'P': {color: 0xfff4ff | 0xFF000000, positions: [{x: 1000-875, y: 1000-875}]},
+        },
+        path: './output-wall-single-picture/rooster/texture.png',
       },
       
       /*
@@ -132,7 +176,7 @@ function getSettings() {
       duplicate_frames: 1, 
     },
     output: {
-      path: './output-wall-single-picture', // this is modified and the input name is added
+      path: './output-wall-predefined', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
