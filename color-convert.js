@@ -31,7 +31,7 @@ function ABGRtoARGB(abgr) {
 }
 
 function objToARGB(obj) {
-	return (obj.a << 24 | obj.r << 16 | obj.g << 8 | obj.b) >>> 0;	
+	return ((obj.a << 24 | obj.r << 16 | obj.g << 8 | obj.b) >>> 0) & 0xFFFFFFFF;	
 }
 
 function ARGBtoABGR(argb) {
