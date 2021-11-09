@@ -83,7 +83,7 @@ function ARGBObjectToHexString(obj) {
 
 function toCSS(argb) {
 	const color = toARGBObject(argb);
-	return `rgba(${color.r},${color.g},${color.b},${color.a})`;
+	return `rgba(${color.r},${color.g},${color.b},${color.a / 255})`;
 }
 
 function toConsoleString(color, string) {
