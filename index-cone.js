@@ -13,6 +13,7 @@ import * as color_extractor from './fixed-palette-color-extractor.js';
 import * as image_size_extractor from './image-size-extractor.js';
 import * as mirror_arranger from './mirror-disc-arranger.js';
 import * as arrangement_color_sampler from './mirror-arrangement-color-sampler.js';
+import * as updown_merger from './up-down-image-merger.js';
 import vector from './vector.js';
 
 
@@ -43,6 +44,10 @@ async function run() {
     await image_loader.writeImage(path.join(settings.output.path, `input_${i}.png`), images[i]);
   }
 
+  console.log('Merge images'.brightBlue);
+  let merged_image = await updown_merger.merge(images);
+  await image_loader.writeImage(path.join(settings.output.path, `input_merged.png`), merged_image);
+  images = [merged_image];
 
   console.log('Extract palette'.brightBlue);
   const color_map = color_extractor.extractColorMap(settings);
@@ -65,31 +70,7 @@ async function run() {
   settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
   await three_dee_generator.generate(settings, mapping_conf, wall_generator);
 
-/*
 
-  console.log('Extract palette'.brightBlue);
-  let color_map = color_extractor.extractColorMap(images);
-
-  console.log('Extract size'.brightBlue);
-  let image_size = image_size_extractor.extractSize(images);
-
-  console.log('Convert to hex'.brightBlue);
-  let {frames, pixels} = await hex_converter.convert(settings, images, color_map, image_size);
-
-  console.log('Build sequences'.brightBlue);
-  let {sequences, sequence_keys, reverse_color_map} = await sequence_builder.build(settings, pixels, color_map, frames);
-
-  console.log('Map to cylinder'.brightBlue);
-  let mapping_conf = await mapper.map(settings, pixels, sequences, sequence_keys, reverse_color_map, image_size, frames);
-
-  var arrangement_size = Math.max(mapping_conf.mirror.width, mapping_conf.mirror.height);
-
-  console.log('Generate 3d files'.yellow);
-  settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
-  await three_dee_generator.generate(settings, mapping_conf, wall_generator);
-
-  */
-  
 }
 
 function drawDot(context, position, radius) {
@@ -134,22 +115,20 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/up-down-cone.png', 
-        columns: 1, 
+        path: './images/face-anim.png', 
+        columns: 5, 
         rows: 1,
       },
 
        fixed_palette: 
       {
-        aim_positions: {                                                             // HEAD DETERMINES DIR
-          'A': {color: 0xFF0000 | 0xFF000000, positions: [{x: 100 + 200 * 3, y: 100}, {x: 100 + 200 * 7, y: 100}]}, // vertical always on
-          'B': {color: 0x0000FF | 0xFF000000, positions: [{x: 100 + 200 * 1, y: 100}, {x: 100 + 200 * 5, y: 100}]}, // vertical always off
-          'C': {color: 0x00FF00 | 0xFF000000, positions: [{x: 100 + 200 * 3, y: 100}, {x: 100 + 200 * 7, y: 100}]}, // horizontal always on
-          'D': {color: 0xFF00FF | 0xFF000000, positions: [{x: 100 + 200 * 1, y: 100}, {x: 100 + 200 * 5, y: 100}]}, // horizontal always off
-          'E': {color: 0xF0000F | 0xFF000000, positions: [{x: 100 + 200 * 0, y: 100}]}, // vertical up on
-          'F': {color: 0x0F00F0 | 0xFF000000, positions: [{x: 100 + 200 * 4, y: 100}]}, // vertical down on
-          'G': {color: 0x00F000 | 0xFF000000, positions: [{x: 100 + 200 * 2, y: 100}]}, // horizontal left on
-          'H': {color: 0x000F00 | 0xFF000000, positions: [{x: 100 + 200 * 6, y: 100}]}, // horizontal right on
+        aim_positions: {        // HEAD DETERMINES DIR
+          'A': {color: updown_merger.getColors().always_on, positions: [{x: 100 + 200 * 3, y: 100, close: {x:0, y:1}}, {x: 100 + 200 * 7, y: 100, close: {x:1, y:0}}]}, // always on
+          'B': {color: updown_merger.getColors().always_off, positions: [{x: 100 + 200 * 1, y: 100, close: {x:0, y:0}}, {x: 100 + 200 * 5, y: 100, close: {x:1, y:1}}]}, // always off
+          'C': {color: updown_merger.getColors().up_on, positions: [{x: 100 + 200 * 0, y: 100}]}, // vertical up on
+          'D': {color: updown_merger.getColors().down_on, positions: [{x: 100 + 200 * 4, y: 100}]}, // vertical down on
+          'E': {color: updown_merger.getColors().left_on, positions: [{x: 100 + 200 * 2, y: 100}]}, // horizontal left on
+          'F': {color: updown_merger.getColors().right_on, positions: [{x: 100 + 200 * 6, y: 100}]}, // horizontal right on
         },
         path: './images/texture-for-up-down-cone.png',
       },

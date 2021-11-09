@@ -9,6 +9,9 @@ import * as three_dee_generator from './3d-generator.js';
 import * as hex_converter from './hex-converter.js';
 import * as mirror_arranger from './mirror-square-arranger.js';
 import * as arrangement_color_sampler from './mirror-arrangement-color-sampler.js';
+
+import * as hex_image_arranger from './hex-image-arranger.js'
+
 import * as sequence_builder from './sequence-builder.js';
 import * as wall_generator from './flat-wall-generator.js';
 import * as color_extractor from './fixed-palette-color-extractor.js';
@@ -49,33 +52,15 @@ async function run() {
   console.log('Extract size'.brightBlue);
   let image_size = image_size_extractor.extractSize(images);
 
-  console.log('Convert to hex'.brightBlue);
-  let {frames, pixels} = await mirror_arranger.arrange(settings, images, color_map, image_size);
+  //console.log('Convert to hex'.brightBlue);
+  //let {frames, pixels} = await mirror_arranger.arrange(settings, images, color_map, image_size);
 
-  console.log('Colorize mirrors'.brightBlue);
-  let colored_pixels = await arrangement_color_sampler.sample(settings, pixels, color_map, images, image_size);
+  //console.log('Colorize mirrors'.brightBlue);
+  //let colored_pixels_old = await arrangement_color_sampler.sample(settings, pixels, color_map, images, image_size);
 
-  /*
-  console.log('Build sequences'.brightBlue);
-  //TODO: Extract this to a separate file
-  let sequence_keys = Object.keys(settings.input.fixed_palette.aim_positions);
-  
-  let reverse_color_map = Object.keys(settings.input.fixed_palette.aim_positions).reduce((obj, key) => {
-    let color = settings.input.fixed_palette.aim_positions[key].color;
-    obj[key] = color;
-    return obj;
-  }, {});
+  console.log('Convert to colorized hex mirrors'.brightBlue);
+  let colored_pixels = await hex_image_arranger.arrange(settings, images, color_map, image_size);
 
-  let sequences = Object.keys(settings.input.fixed_palette.aim_positions).reduce((obj, key) => {
-    let color = settings.input.fixed_palette.aim_positions[key].color;
-    obj[key] = [{
-      string: key,
-      offset: 0,
-      occurences: 1,
-      main_key: key
-    }];
-    return obj;
-  }, {});*/
 
 
   console.log('Map to wall'.brightBlue);
@@ -131,7 +116,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/nimm-das-geld-small.png', 
+        path: './images/pig.png', 
         columns: 1, 
         rows: 1,
       },

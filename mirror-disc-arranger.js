@@ -19,7 +19,7 @@ async function arrange(settings, images, color_map, image_size) {
 
   let pixels_on_disc = pixels.map( p => {
     return p.filter( pixel => {
-      return Math.pow(pixel.x - 0.5, 2) + Math.pow(pixel.y - 0.5, 2) < Math.pow(0.33, 2)
+      return Math.pow(pixel.x - 0.5, 2) + Math.pow(pixel.y - 0.5, 2) < Math.pow(0.5, 2)
     });
   });
 

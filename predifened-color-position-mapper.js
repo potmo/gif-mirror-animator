@@ -29,10 +29,33 @@ export async function map(settings, pixels, image_size) {
   var mapping = pixels.map((pixel, i) => {
 
     const color_key = pixel.pixel_colors[0]; // just use first
-
     const num_pos = settings.input.fixed_palette.aim_positions[color_key].positions.length;
-    const rand_pos = Math.floor(num_pos * rnd());
-    const aim_position = settings.input.fixed_palette.aim_positions[color_key].positions[rand_pos];
+    let pos_index = 0;
+
+    if (num_pos > 1) {  
+      // if there is a close positon we can use that as priority
+      const num_closed = settings.input.fixed_palette.aim_positions[color_key].positions.filter(a => a.close !== undefined).length;
+
+      // if no value exist then just randomize
+      if (num_closed != num_pos) {
+        pos_index = Math.floor(num_pos * rnd());
+      } else {
+
+        let sorted_positions = 
+          settings.input.fixed_palette.aim_positions[color_key].positions.map( (elem, i) => {
+            let dist = Math.sqrt(Math.pow(elem.close.x - pixel.x,2) + Math.pow(elem.close.y - pixel.y,2));
+            return {elem, dist, i};
+          })
+          .sort((a,b)=> a.dist - b.dist);
+
+        let best = sorted_positions[0];
+        pos_index = best.i;
+
+      }
+    }
+
+    
+    const aim_position = settings.input.fixed_palette.aim_positions[color_key].positions[pos_index];
     const aim_color = color_convert.toARGBObject(settings.input.fixed_palette.aim_positions[color_key].color);
 
     context.fillStyle = `rgba(${aim_color.r}, ${aim_color.g}, ${aim_color.b}, 1.0})`;
