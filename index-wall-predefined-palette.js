@@ -116,7 +116,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/pig.png', 
+        path: './images/lines.png', 
         columns: 1, 
         rows: 1,
       },
@@ -189,13 +189,13 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(3, 0.0, 3.0), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(-3, 0.0, 3.0), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.25, // scalar of full circle around up axis
       //wall_diameter: 4.0,
       wall_width: 3.5,
       wall_height: 3.0,
       wall_face_divisions: 50,
-      eye_offset: vector(-3, -0.0, 3.00),
+      eye_offset: vector(3, -0.0, 3.00),
 
     },
     optimization: {

@@ -221,9 +221,8 @@ function * convertWallToObj(wall, vertex, wall_texture_ids) {
     for (var j = 0; j < grids + 1; j++) {
       var x = i / grids - 0.5;
       var y = j / grids - 0.5;
-
-      yield vertice(wall.worldPosAtTextureCoord(x, y)); // lower left
-
+      const vert = vertice(wall.worldPosAtTextureCoord(x, y)); // lower left
+      yield vert;
       var vertex_id = vertex.current++;
       vertices[i][j] = vertex_id;       
     }
@@ -245,11 +244,6 @@ function * convertWallToObj(wall, vertex, wall_texture_ids) {
     }
   }
 
-  //yield vertice(wall.worldPosAtTextureCoord(-0.5, 0.5)); // lower left
-  //yield vertice(wall.worldPosAtTextureCoord(0.5, 0.5)); // lower right
-  //yield vertice(wall.worldPosAtTextureCoord(0.5, -0.5)); // upper right
-  //yield vertice(wall.worldPosAtTextureCoord(-0.5, -0.5)); // upper left
-  //yield `f ${vertex.current++}/1 ${vertex.current++}/2 ${vertex.current++}/3 ${vertex.current++}/4`;
 }
 
 function * convertEyeToObj(eye, vertex) {

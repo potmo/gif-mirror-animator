@@ -7,9 +7,9 @@ export function getWall(settings) {
   let wall = {};
 
 
-  const wall_width = settings.three_dee.wall_diameter * settings.output.cylinder_image.diameter_scalar;
-  const wall_width_top = settings.three_dee.wall_diameter * settings.output.cylinder_image.diameter_scalar_top;
-  const wall_height = settings.three_dee.wall_diameter;
+  const wall_width = settings.three_dee.wall_diameter;
+  const wall_width_top = settings.three_dee.wall_top_diameter;
+  const wall_height = settings.three_dee.wall_height;
   
   const wall_height_vector = vector(0, 0, wall_height);
                                     
@@ -22,12 +22,13 @@ export function getWall(settings) {
   wall.worldPosAtTextureCoord = (x,y) => {
 
     let rotation = x;
+    let t = 0.5 + y;
     let normal = vector(1,0,0)
               .rotatedAroundZ(Math.PI * 2 * rotation + Math.PI * 2 * settings.three_dee.wall_roll_scalar, vector(0,0,0))
               .normalized()
 
-    var pos = wall_position.add(normal.scale(wall_width * 0.5 * (1-y) + wall_width_top * 0.5 * y))
-                           .add(wall_height_vector.scale(y))
+    var pos = wall_position.add(normal.scale(wall_width * 0.5 * (1-t) + wall_width_top * 0.5 * t))
+                           .add(wall_height_vector.scale(t))
 
     return pos;
   }

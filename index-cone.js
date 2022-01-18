@@ -115,7 +115,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/face-anim.png', 
+        path: './images/face-anim-small.png', 
         columns: 5, 
         rows: 1,
       },
@@ -163,8 +163,7 @@ function getSettings() {
       cnc: true, 
       cylinder_image: {
         height: 1000,
-        diameter_scalar: 2.0, // this is multiplied with three_dee.wall_diameter or output.cylinder_image.height to get width
-        diameter_scalar_top: 1.0, // this is to make the wall a cone
+        diameter_scalar: 3.0, // this is multiplied with three_dee.wall_diameter or output.cylinder_image.height to get width
       }
     },
     three_dee: { // units in meters
@@ -172,12 +171,14 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(0.0, 0.0, 0.25), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(0.0, 0.0, 0 + 0.05), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: 0.0, // scalar of full circle around up axis
       wall_roll_scalar: -112.5 / 360, // scalar of full rotation around rolling axis
-      wall_diameter: 0.5,//2.490, 
+      wall_top_diameter: 0.45, 
+      wall_diameter: 0.80,
+      wall_height: 0.27,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 3.00),
+      eye_offset: vector(0, 0, 2.00),
 
     },
     optimization: {

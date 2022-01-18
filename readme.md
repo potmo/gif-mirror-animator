@@ -13,20 +13,56 @@ We demonstrate the effectiveness of our method in a wide range of image and imag
 
 ## Introduction
 
-> `TODO: This section needs a rewrite`
+This master assay that is supposed to complement and give a more thorough understanding of my master exhibition. As I see myself as a object maker rather than a writer I see the exhibition as the main work and this paper is the support. While this paper is published deep in the humanities in the fine art department I have opted to write it a little bit more like one would write an in-depth technical blog or repo readme[^Repo readme] post that might be more familiar to the _natural scientist_ or the casual hobby coder. I will not go full techno on you but this paper will demand some prior knowledge of optics and combinatorics to fully comprehend all concepts. That said I will try to focus on the intuition[^Intuition] and add extensive figures and footnotes where a novice reader of the field can find a primer and an experienced reader some more depth and details. If you don't feel comfortable with the nitty gritty as for example the math figures you can just skip ahead. Since I want this article to work as a traditional readme-file or science paper I want it to be possible to, at least theoretically, reproduce the results by following along in the text. This is why I have insisted to keep the mathematical notation and technicalities to retain utility even though most readers of this fine art master thesis probably won't care.
 
-This paper describes a novel type of image making mechanism consisting of mirrors and painted fields.
-We show multiple variants of a two part sculpture as working examples. The first part is a lattice of small mirrors that will work as pixels or a mosaic. We investigate different lattice configurations and mirror shapes and discuss pros and cons of them. The second part of the sculpture consists of a surface painted with different color fields working as a palette and colour source. The surface may come in many different shapes that allow for different functionality. The end goal is to make the mirrors appear to have a colour and by that making them collectively look like an arbitrary picture that we can choose before fabrication. This is achieved by calculating the direction each mirror has to face to make light bounce off a selected section of the color fields of the palette, off the mirror and into a spectators eye.
+The sculptures I present here are a new kind of device, contraption or idea that can show images without any (required) moving parts or electricity. One can say that it is an analogue passive display. Instead of using illuminated pixels as a computer screen[^computerscreen] does, I use mirrors. Each mirror acts as a just as a pixel or a mosaic tile contributing with one small piece of the overall image. By orienting each mirror so that they reflect a colour from somewhere else in the room it is possible to make the mirror appear to have a colour. Hence, by painting a surface in a room it is possible to make sure that any particular colours are available to be reflected. After realising that it is possible to reflect a predetermined position in the room one can experiment with endless possibilities of arranging the colours to be reflected. I have focused on four different variants that I will talk about in this paper but that I have also build physical models of. The first one consists of a disc with painted with eccentric colour fields. This variant makes it possible to create animations by having the disc rotate around its minor axis thereby alternating what colours is at the reflection focal points. The second variant is a cylinder that rotates around its vertical axis and also enables an animation. Then I'm showing the most basic variant witch consists of a rectilinear array of colour fields that in my case only shows one image per mirror setup but can be used to show multiple images with using multiple mirror setups but reusing the colour fields. Lastly I will talk about a cone palette that interactively shows four different images depending on the spectators position. 
 
-> `TODO: We need to explain what we are doing here`
->
-> `TODO: Make sure all the figures has the right numbers`
->
-> `TODO: Make sure american/commonwealth english is consistent`
->
-> `TODO: Add external refereneces where needed`
+I have structured this paper to discuss all the elements of making an image with mirrors and colour fields including:
 
-###A brief primer on light
+- History and background
+- Picking a suitable image or images for reproduction.
+- Techniques for reducing the number of solid colours in a picture to something more manageable.
+- Ways of refining the reduced palette to create perceived gradients and shades.
+- Considerations of how to arrange the mirrors.
+- A brief primer on light transport
+- How to compute the orientation of each individual mirror.
+- Different shapes of colour palettes including discs, cylinders, rectangles and cones.
+- Some tricks used to optimise and reduce the physical space occupied by the colour fields.
+- Things to bear in mind when positioning the imagined spectator, mirrors and colour fields in relation to each other.
+- Using Software to simulate the mirror setups for rapid iterations.
+- Fabricating the mirror array panel using a 6-axis Kuka robot arm, a 5-axis CNC milling machine, a 3-axis CNC milling machine or a 3d printer.
+
+## A brief history and background
+
+> `TODO: talk about mosaics of course`
+
+In fine art there is a long history of making pictures that exploit how the human vision merges small dots in close proximity into perceiving it as one coherent shape. One example is ceramic, class or stone mosaics that has been made since the **XXXX**s. 
+
+> TODO: later George Rousse
+
+> TODO: Some examples
+
+In the late 1800s maybe a painting technique called _Pointillism_ emerged with prolific practitioners like Georges Seurat[^seurat1886] , Vincent can Gogh[^vangogh1887] and Paul Signac [^signac1901] and a bit later for example Robert Delauney[^delauney1906]. Pointillism exploits the fact that small dots of paint close together is merged in the human brain into a single blob. Instead of using a lot of colour shades some shades can be made by mixing dark and light dots with different densities although the early practitioners weren't super strict about that. This phenomena is also exploited in printing where the technique is adapted to paper and called _half toning_ where dots of, usually, cyan, magenta, yellow and black are printed in a raster with different sizes. In computer science where it is usually restricted to rectilinear arrays it is called _dithering_ and usually includes a restricted color palette. In engraving there is a technique called _stippling_ that similar to pointillism but only one colour is used. All techniques are basically the same with some modifications for each medium. When artists got access to the early computers in the 60s the output was usually limited to a paper strip that was printed with a fixed-width font (like Courier). Computer art pioneers like Kenneth Knowlton and Leon Harmon[^knowlton1967] used those limitations and made shaded pictures with only text by treating the different characters as different gray scale pixels. This has later become known as ASCII-art from the 1963 character encoding called _American Standard Code for Information Interchange_ specifying what characters that can be used. With the release of 8-bit (256 color) video game console _Nintendo Entertainment System_ in the early 1980s the _8-bit pixel art_ was popularised and featured lots of perceptual tricks using the limits of what pictures can be made with a very limited palette. 
+
+Using mirrors and optics to create a picture is also not a new idea. The Stanford physics PhD Ben Bartlett[^bartlett2021] used a similar and independently invented idea as mine just a month ago to project a "Will you marry me" message to his future partner on a beach with a hand held 3d-printed array of small mirrors. Interestingly for this paper he has also published a technical readme-writeup in his GitHub-repo. From academia we have got one interesting paper called _High-contrast Computational Caustic Design_[^schwartzburg2014] that was published in 2014 describing how a flat transparent surface can be shaped so that the caustics[^caustics] produce an arbitrary picture. Using the same technique the less academic but still aerospace engineer Matt Ferraro published a technical writeup[^ferraro2021] with sourcecode from 2021 where he explains how to make your own with a CNC-router. When researching this paper I found that Swedish artist Christian Partos [^partos2003] used the same idea as mine but instead of colour-fields he used the falloff from a spotlight as the palette. I can also mention Daniel Rozin[^rozin2011] who has made multiple sculptures involving mirrors (although computer controlled).
+
+[^partos2003]: Christian Partos, 2003, _MOM (Multi Oriented Mirrors)_, http://www.partos.se/Www/SidorE/MOM.htm
+[^bartlett2021]: Ben Bartlett, 2021, _3d-printed-mirror_array_,  https://github.com/bencbartlett/3D-printed-mirror-array
+[^schwartzburg2014]: Yuliy Schwartzburg, Romain Testuz, Andrea Tagliasacchi Mark Pauly, 2014, _High-contrast Computational Caustic Design_
+[^vangogh1887]: Vincent van Gogh, 1887, _Self Portrait_, oil on canvas,  41 × 32.5 cm, Art institute of Chicago
+[^seurat1886]: Georges Seurat, 1884–1886, _A Sunday Afternoon on the Island of La Grande Jatte_, oil on canvas, 207.6 × 308 cm, Art Institute of Chicago
+[^signac1901]: Paul Signac, 1901, _L'Hirondelle Steamer on the Seine_, oil on canvas, National Gallery in Prague
+[^ferraro2021]: Matt Ferraro, 2021, _Hiding Images in Plain Sight: The Physics Of Magic Windows_ , https://mattferraro.dev/posts/caustics-engineering
+[^delaunay1906]: Robert Delaunay, 1906, _Jean Metzinger_, oil on paper, 54.9 × 43.2 cm, Museum of Fine Arts, Houston
+[^knowlton1967]: Ken Knowlton, Leon Harmon, 1967, _Computer Nude (Studies in Perception I)_, 86.36 x 182.88 cm, silkscreen print
+[^rozin2011]: Daniel Rozin, 2011, _Brushed metal mirror_, http://www.smoothware.com/danny/brushedmetalmirror.html
+[^caustics]: When for example the sun rays hit the water of a pool they refract penetrating the waves and fills the bottom of the pool non-uniformally with areas of high light intensity and others with low. This phenomena is called caustics.
+[^computerscreen]: The most common type of computer screens are called Liquid Crystal Display or LCD. It works by shining a white back light on a liquid crystal film. By applying a polarised electrical current to the LCD-film the film can change from opaque to transparent or vice versa. By having red, green and blue filters the transmitted light can be either red, green or blue. Combining red, green and blue light with different intensities one can make the human eye perceive that it is possible to reproduce a large portion of the visible spectrum. One unit of red, green and blue is called a pixel. By putting a huge number of pixels together in a grid one can make electronic mosaics and produce any picture or animation.
+[^Repo readme]: Open source projects hosted publicly traditionally have a file called `README` that is intended to be read by users or contributors of the project before use. The readme file is usually placed in the root folder of the repository and commonly contains instructions on how to compile and run the project, some code examples, code formatting and style rules and sometimes more in-depth description of architectural design.
+[^Intuition]: In mathematics the term _intuition_ refers to a way to reason to a solution of a mathematical problem using a broader understanding of a mathematical concepts. It doesn't have to be a formal proof but more commonly an example. Explaining solutions by first describing the intuition is very common in geometry where it is commonly possible to describe problems in e.g. lower dimensions.
+[^loremipsum]: Lorem Ipsum is the first two words of a placeholder text commonly used in publishing and graphic design to demonstrate the visual form of a document without replying on meaningful content.
+
+###A very brief primer on light transport
 
 > `TODO: This might need some extra explanation about frequencies and colors`
 >
@@ -61,7 +97,9 @@ For our purposes we can largely disregard both refraction and diffuseness. We al
 
 ##Colouring a mirror
 
-Since our idealised mirror reflects all light striking it, without absorbing any light, it itself doesn't have any inherent color. It appears as it has the colour or colours of whatever it reflects., of course also depending on your vantage point. If we for example paint a wall blue, and stand with our back against it with a mirror in front of us, the mirror will look as blue as the wall. If we paint the wall with a colour spectrum and adjust either the angle of the mirror (or our own position) we can make it reflect any point on that surface we want and thereby taking the colour of it. If we want the mirror to look red we can adjust the angle in such a way that it will reflect a red point. If we want it green we adjust it accordingly. 
+Since our idealised mirror reflects all light striking it, without absorbing any light, it itself doesn't have any inherent color. It appears as it has the colour or colours of whatever it reflects, of course also depending on your vantage point. If we for example paint a wall blue, and stand with our back against it with a mirror in front of us, the mirror will look as blue as the wall. If we paint the wall with a colour spectrum and adjust either the angle of the mirror (or our own position) we can make it reflect any point on that surface we want and thereby taking the colour of it. If we want the mirror to look red we can adjust the angle in such a way that it will reflect a red point. If we want it green we adjust it accordingly. This is something we can use to decide what colour the mirror should appear as.
+
+> `TODO: Maybe talk about the other ways of changing the colour? Move the spectator, move the palette, move the mirror or rotate the mirror`
 
 > `TODO: The pictures can actually show a gradient palette here. We'll get to color fields later`
 
@@ -69,25 +107,25 @@ Since our idealised mirror reflects all light striking it, without absorbing any
 
 <center><i>Fig X. The same mirror can appear to be multiple colors by rotating the mirror. In the left picture the mirror will appear blue while in the right it will appear red.</i></center>
 
-To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$​​, to our eye, $e$,​​ is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal and since we already have all the positions they are easy to compute. Say we have a surface with the centre $t$​​. We also have the position of the spectators eye $e$​​ and the center of the mirror $m$​​​, which gives us:
+To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$, to our eye, $e$, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. This gives us equation 1:
 $$
 \vec{i}=e-m, \vec{r}=t-m
 $$
-where $\vec{i}$​​​ denotes the vector of incidence and $\vec{r}$​​​ the vector of reflectance. The mirrors normal $\hat{m}$​​​ (i.e. the vector that the face points in) is just bisecting of the normalised[^Normal vector] vectors  of incidence and reflectance:
+where $\vec{i}$​​​ denotes the vector of incidence and $\vec{r}$​​​ the vector of reflectance. The mirrors normal $\hat{m}$​​​ (i.e. the vector that the face points in) is bisecting of the normalised[^Normal vector] vectors  of incidence and reflectance:
 $$
 \hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}
 $$
-Bisecting the angle can be done by adding the two vectors and then splitting the resulting vector in half making it a unit vector.
+Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector.
 
 <img src="/finding-normal.png" style="zoom:50%;" />
 
 <center><i>Fig 5. A visual representation of Equation 2. finding the normal (green). The blue represents the inverted vector of incidence and red the reflected. Adding blue and red and then scaling the sum by 0.5 gives green. From the eye´s point of view the mirror will appear red.</i></center>
 
-This gives us the basic tools to "colour" our mirrors. In the figures above this has been shown to work in two dimensions (for clarity) but the math generalises to three dimensions (of course need to use all those three dimensions). 
+This gives us the basic tools to "set the colour" of our mirrors. In the figures above this has been shown to work in two dimensions (for clarity) but the math generalises to three dimensions (of course need to use all those three dimensions). 
 
 We can now create a "color palette" that we then can "sample" colors from by adjusting the angle of our mirror. If this mirror is fairly small it can essentially work as a single pixel that can take any colour from the palette and reflect that into the spectators eye. 
 
-If we want another colour on a mirror we can just realign the mirror to reflect another colour. Since realigning a mirror can be a bit fiddly we instead opt for moving the palette so the mirror reflects another colour field. Moving the spectator, the mirrors or the palette in relation to each other can all create the same result.
+If we want another colour for a mirror we can just realign the mirror to reflect another colour. Since realigning a mirror can be a bit fiddly we instead opt for moving the palette so the mirror reflects another colour field. Moving the spectator, the mirrors or the palette in relation to each other can all create the same result.
 
 [^Normal vector]: A normalised unit vector is denoted with a hat, e.g.  $\hat{r}=\frac{\vec{r}}{\|\vec{r}\|}$​​​​​​ where the magnitude of a vector is denoted with double bars. The magnitude can be computed, in 3d euclidian space, with *Pythagoras theorem*: $\|\vec{r}\| = \sqrt{r_x^2 + r_y^2 + r_z^2}$​​​​​​
 
@@ -184,7 +222,32 @@ If we want to add more frames to our animation we could just add another column.
 
 ## Optimisations
 
-The trickiest issue for making a good mirror picture is size and in particular the size of the colour palette. Having more colour fields allows for more complex sequences and hence more complex images but it will also require a bigger colour palette or smaller colour fields. When the colour fields get smaller it requires a higher precision of the mirrors angles to accurately fit the frustums base within the colour field. The effect is dependent on the viewing position and changing that also changes the reflection in the mirrors and therefore also where the rays hit the colour palette. The bigger the colour palette fields are the more viewing position room for error there is so we want to optimise for as few colour fields as possible since that will make more of them fit in each unit of area.
+The trickiest issue for making a good mirror picture is size and in particular the size of the colour palette. Having more colour fields allows for more complex sequences and hence more complex images but it will also require a spatially bigger colour palette or smaller colour fields. When the colour fields get smaller it requires a higher precision of the mirrors angles to accurately fit the frustums base within the colour field. The effect is dependent on the viewing position and changing that also changes the reflection in the mirrors and therefore also where the rays hit the colour palette. The bigger the colour palette fields are the more viewing position room for error there is so we want to optimise for as few colour fields as possible since that will make more of them fit in each unit of area. Obviously we want to optimise for few colour fields to be able to maximise their size.
+
+### Selecting an optimised palette, or "color quantisation"
+
+Maybe the most obvious optimisation for fitting larger color fields into a unit area is to use fewer colour fields. This inevitably leads to fewer colours that leads to lower fidelity images. Sometimes, if we are careful though, it's not easily detectable with the human eye. Two shades of red might be just a hair different but removing one and replacing it with the other might not make any noticeable difference[^noticeable]. 
+
+In our case each mirror need to be reflecting one colour but we do not want a colour field for each mirror. We want to somehow let many mirrors reflect the same colour field while still maintaining the maximum of similarity to the original. In the technical literature this is referred to as _color space quantisation_[^quantisation].
+
+This problem is computationally very hard[^NP-hard] but there exists a few good algorithms that can compute approximations. The standard color space quantisation algorithm that is used in for example Photoshop is called k-means clustering[^k-means clustering] and was invented in 1957. Another common algorithm is _Median Cut_ that is used less these days because of its poor quality. K-means and Median Cut tends to produce washed out colours when reducing the palette to very few colours.  A different slightly better but slow and resource intensive algorithm is _Hierarchical Agglomerative clustering_ or _Spatial Color Quantisation_ that were both published in 1994. For me I have got the best results with the _NeuQuant_ algorithm that uses pretrained Kohonen neural networks. 
+
+
+
+> TODO: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.72.1595&rep=rep1&type=pdf
+>
+> https://web.archive.org/web/20060614072845/http://members.ozemail.com.au/~dekker/NEUQUANT.HTML
+
+[^NP-hard]: NP-hard (Non-determenistic Polynomial-time) problems is a class of problems where there exist no known solution that can solve the problem in polynomial time.
+[^k-means clustering]: K-means clustering (or sometimes the _Lloyd–Forgy algorithm_ ) formally aims to partition _n_ observations into _k_ clusters in with each observation belongs to the cluster with the nearest mean.
+[^noticeable]: Noticeable is of course a relative term related to perception which makes any error hard to qualify. This paper is long enough as it is.
+[^quantisation]: In mathematics and signal processing _quantisation_ is the process of mapping a large often continuous set into a smaller countable set often with finite elements.
+
+
+
+### Simulating  varying degrees of solidity with dithering and stippling, half toning or pointillism
+
+> TODO: Write this
 
 ###De Bruijn sequences
 
@@ -297,6 +360,18 @@ The algorithm reduces the number of sequences until we have the desired number o
 > `TODO: This could also be interesting: Agglomerative hierarchical clustering (http://harthur.github.io/clusterfck/)`
 >
 > `also RGB quantization: http://leeoniya.github.io/RgbQuant.js/demo/`
+>
+> https://medium.com/@sitianliu_57680/how-to-pick-the-optimal-color-palette-from-any-image-ef1342da8b4f
+>
+> https://github.com/okaneco/rscolorq
+>
+> https://cmitja.files.wordpress.com/2015/01/hellandtanner_imagedithering11algorithms.pdf
+>
+> https://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/dither/dither.pdf
+>
+> https://surma.dev/things/ditherpunk/
+>
+> https://bisqwit.iki.fi/story/howto/dither/jy/
 
 |  #   | Palette                                                 |                             |                             |
 | :--: | ------------------------------------------------------- | --------------------------- | --------------------------- |
@@ -313,7 +388,7 @@ The algorithm reduces the number of sequences until we have the desired number o
 
 
 
-[^CIELab]: CIE stands for _the **I**nternational **C**ommission on **I**llumination_. LAB for L\*a\*b witch is a color space used to representing colors. The L stands for perceived **L**ightness while the a\* and b\* for the four unique colors of human vision: red, green, blue, and yellow. Further in the $\Delta$​​​​​​​​E* part the greek letter delta commonly denotes difference and the E stands for *Empfindung*; German for "sensation". 94 means it was published in 1994. To compute the difference of two colors: $\Delta E_{94}^* = \sqrt{ \left(\frac{\Delta L^*}{k_L S_L}\right)^2 + \left(\frac{\Delta C^*_{ab}}{k_C S_C}\right)^2 + \left(\frac{\Delta H^*_{ab}}{k_H S_H}\right)^2 }$​​​​​​​​ where $\Delta L^* = L^*_1 - L^*_2$​​​​​​​, $ C^*_1 =\sqrt{ {a^*_1}^2 + {b^*_1}^2 }$​​​​​​, $C^*_2 =\sqrt{ {a^*_2}^2 + {b^*_2}^2 }$​​​​​,$\Delta C^*_{ab} =C^*_1 - C^*_2$​​​​​, $\Delta H^*_{ab} =\sqrt{ {\Delta E^*_{ab}}^2 - {\Delta L^*}^2 - {\Delta C^*_{ab}}^2 } =\sqrt{ {\Delta a^*}^2 + {\Delta b^*}^2 - {\Delta C^*_{ab}}^2 }$​​​​​, $\Delta a^* =a^*_1 - a^*_2$​​​​​, $\Delta b^* =b^*_1 - b^*_2$​​​​, $S_L =1$​​​, $ S_C =1+K_1 C^*_1$​​, $S_H =1+K_2 C^*_1$​​​​​​​​
+[^CIELab]: CIE stands for _the **I**nternational **C**ommission on **I**llumination_. LAB for L\*a\*b witch is a color space used to representing colors. The L stands for perceived **L**ightness while the a\* and b\* for the four unique colors of human vision: red, green, blue, and yellow. Further in the $\Delta$​​​​​​​​E* part the greek letter delta commonly denotes difference and the E stands for *Empfindung*; German for "sensation". 94 means it was published in 1994. To compute the difference of two colors: the formula is given: $\Delta E_{94}^* = \sqrt{ \left(\frac{\Delta L^*}{k_L S_L}\right)^2 + \left(\frac{\Delta C^*_{ab}}{k_C S_C}\right)^2 + \left(\frac{\Delta H^*_{ab}}{k_H S_H}\right)^2 }$​​​​​​​​ where $\Delta L^* = L^*_1 - L^*_2$​​​​​​​, $ C^*_1 =\sqrt{ {a^*_1}^2 + {b^*_1}^2 }$​​​​​​, $C^*_2 =\sqrt{ {a^*_2}^2 + {b^*_2}^2 }$​​​​​,$\Delta C^*_{ab} =C^*_1 - C^*_2$​​​​​, $\Delta H^*_{ab} =\sqrt{ {\Delta E^*_{ab}}^2 - {\Delta L^*}^2 - {\Delta C^*_{ab}}^2 } =\sqrt{ {\Delta a^*}^2 + {\Delta b^*}^2 - {\Delta C^*_{ab}}^2 }$​​​​​, $\Delta a^* =a^*_1 - a^*_2$​​​​​, $\Delta b^* =b^*_1 - b^*_2$​​​​, $S_L =1$​​​, $ S_C =1+K_1 C^*_1$​​, $S_H =1+K_2 C^*_1$​​​​​​​​
 
 
 
@@ -330,9 +405,9 @@ The algorithm reduces the number of sequences until we have the desired number o
 * Ring
 * Internal Cylinder
 * Conveyor
-* X-Lines
+* X-Lines 
 * Y-Lines
-* XY-Grid
+* XY-Grid *Rectiliniear*
 * Interlaced grid
 * Just different color fields randomly positioned
 * Multiple palettes
@@ -369,23 +444,23 @@ The third option is to put the mirrors perpendicular to the disc between the spe
 
 `TODO: Write this section`
 
-##Selecting a picture
+## Selecting a picture
 
-Criteria I have set up for myself for the selections of pictures.
+When inventing new technology for displaying images or algorithms to modify them there is always the tension between what you show and how you show it. A lot of times the medium itself is more important than what is transmitted though it. When experimenting with a new technique the image subject can be completely arbitrary the features of that image might not be. Depending on what technique ones trying to show it might be important that the test image has soft shades or hard edges. Depending on the application the image needs to have concave shapes or contain big colour spectrums or high frequency details. Something like the equivalence of the publishers _Lorem Ipsum_[^loremipsum]. In academia this has traditionally been solved by using standard images. In 2D computer image research a picture called _Lenna_ is commonly used that depicts a woman with a hat but a common picture is also DaVincis Mona Lisa. In 3D modelling a few standard models exist for example the _Utah teapot_, the _Stanford Bunny_ and the _Cornell box_ (all named after their respective university where they were first used). All these examples have some particular thing that is makes it easy to see how the technology can be used. For example the Utah teapot features smooth surfaces and self occluding geometry something that was challenging to render in 1975 when it was first created.
 
-- Good looking color palette 
-- Good if the picture has high contrast since it might desaturate in the mirrors
-- Good if it's a recognisable object so its easier to see if its a bit noisy
-- Good if the pictures are high complexity so it gets more mind boggling 
-- Good if there are few colors to lower the number of sequences
-- Good if there are a lot of frames (also adding to number of sequences though) to heighten perceived complexity
-- Good if the pictures are different for greater effect between frames
-- Good if the pictures are unsimilar to color disc for mind boggelingness
-- Good if mixing words and pictures to show unsimilarity between pictures
-- Good if there is a concept to the pictures
-- Good if the pictures are a bit fun
-- Good if the colors sequences can be kept low but at the same time having a high complexity image by being smart with the colors.
-- Good if the sequences can be permutated since there are a lot of starting points that way
+I started going down the route of just using academias standard pictures but I quickly found them a bit dull. After a while of randomly image-googling words I found highly detailed and colourful images that was also optimised to be shown in low resolution in the Unicode emoji set. It contains images of common objects that has become icons like for example the smiley, the thumbs up or the egg plant. I have also just drawn pictures with the mouse in photoshop after getting bored of searching for images. 
+
+### Potato tomato
+
+### Tea, the sun and lager
+
+### Rooster
+
+### Volcano
+
+### Lines
+
+### Smiles
 
 
 
@@ -395,7 +470,11 @@ Criteria I have set up for myself for the selections of pictures.
 
 ## 3d-printing
 
+Non planar 3d printing could be further investigated
+
 ## Using 3-axis CNC
+
+Horizontal milling in 3 axis in the direction of the slope could be further investigated
 
 ## Using 5-axis CNC
 
