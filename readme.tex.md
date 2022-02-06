@@ -37,7 +37,9 @@ I have structured this paper to discuss all the elements of making an image with
 - Using Software to simulate the mirror setups for rapid iterations.
 - Fabricating the mirror array panel using a 6-axis Kuka robot arm, a 5-axis CNC milling machine, a 3-axis CNC milling machine or a 3d printer.
 
-##A brief history and background
+## A brief history and background
+
+
 
 > `TODO: talk about mosaics of course`
 
@@ -122,7 +124,9 @@ If we want to create an animation with multiple images the size of the problem s
 
  dithering and stippling, half toning or pointillism
 
-##Considerations of how to arrange the mirrors
+## Considerations of how to arrange the mirrors
+
+
 
 We want the image in the mirrors to be vibrant so we need to reflect as much light as possible trying to cover as much of the substrate that the mirrors are attached to. All the area not covered by a mirror will has its own colour and that colour affects the overall picture, basically mixing with the picture, so we want to reduce that area as much as possible. To do that we need to find a shape of mirrors and a pattern of tiling that covers the most amount of area and exposes as little as possible of the background surface. 
 
@@ -158,7 +162,9 @@ Of course, the objective might not be to optimise for area coverage but some sen
 [^hex-grid-convertion]: a great source of information on hexagonal grids can be found here https://www.redblobgames.com/grids/hexagons/
 [^han-2013]: see for example Dianyuan Han, 2013, Comparison of Commonly Used Image Interpolation Methods 
 
-##A very brief primer on light transport
+## A very brief primer on light transport
+
+
 
 Light rays travel in a straight line through a medium (like air). When striking a surface some of the light will be absorbed by the surface (converted to heat) and some will bounce back, reflected. The absorption is what makes object look colorised due to that the surface absorbing some frequencies of light more than others. On a perfectly flat, smooth surface, called a specular surface, the angle of incidence, the angle at witch the light ray hits the surface, is equal to the angle of reflection with regards to a projected line perpendicular to the surface, known as the normal. 
 
