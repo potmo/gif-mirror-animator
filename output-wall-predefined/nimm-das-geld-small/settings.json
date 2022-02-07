@@ -1,0 +1,248 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/nimm-das-geld-small.png",
+      "columns": 1,
+      "rows": 1
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "A": {
+          "color": -15524811,
+          "positions": [
+            {
+              "x": 875,
+              "y": 875
+            }
+          ]
+        },
+        "B": {
+          "color": -13349516,
+          "positions": [
+            {
+              "x": 625,
+              "y": 875
+            }
+          ]
+        },
+        "C": {
+          "color": -11499101,
+          "positions": [
+            {
+              "x": 375,
+              "y": 875
+            }
+          ]
+        },
+        "D": {
+          "color": -10966603,
+          "positions": [
+            {
+              "x": 125,
+              "y": 875
+            }
+          ]
+        },
+        "E": {
+          "color": -9499642,
+          "positions": [
+            {
+              "x": 875,
+              "y": 625
+            }
+          ]
+        },
+        "F": {
+          "color": -5159127,
+          "positions": [
+            {
+              "x": 625,
+              "y": 625
+            }
+          ]
+        },
+        "G": {
+          "color": -1803201,
+          "positions": [
+            {
+              "x": 375,
+              "y": 625
+            }
+          ]
+        },
+        "H": {
+          "color": -867735,
+          "positions": [
+            {
+              "x": 125,
+              "y": 625
+            }
+          ]
+        },
+        "I": {
+          "color": -6683383,
+          "positions": [
+            {
+              "x": 875,
+              "y": 375
+            }
+          ]
+        },
+        "J": {
+          "color": -3734266,
+          "positions": [
+            {
+              "x": 625,
+              "y": 375
+            }
+          ]
+        },
+        "K": {
+          "color": -2410718,
+          "positions": [
+            {
+              "x": 375,
+              "y": 375
+            }
+          ]
+        },
+        "L": {
+          "color": -303027,
+          "positions": [
+            {
+              "x": 125,
+              "y": 375
+            }
+          ]
+        },
+        "M": {
+          "color": -20509,
+          "positions": [
+            {
+              "x": 875,
+              "y": 125
+            }
+          ]
+        },
+        "N": {
+          "color": -12300,
+          "positions": [
+            {
+              "x": 625,
+              "y": 125
+            }
+          ]
+        },
+        "O": {
+          "color": -8709,
+          "positions": [
+            {
+              "x": 375,
+              "y": 125
+            }
+          ]
+        },
+        "P": {
+          "color": -2817,
+          "positions": [
+            {
+              "x": 125,
+              "y": 125
+            }
+          ]
+        }
+      },
+      "path": "./output-wall-single-picture/rooster/texture.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-wall-predefined/nimm-das-geld-small",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false,
+        "width": 400,
+        "height": 400,
+        "mirror_size": 10
+      },
+      "frames": true
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "image": {
+      "height": 1000,
+      "width": 1000,
+      "columns": 4
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 3,
+      "y": 0,
+      "z": 3
+    },
+    "wall_rotation_scalar": -0.25,
+    "wall_width": 3.5,
+    "wall_height": 3,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": -3,
+      "y": 0,
+      "z": 3
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": false
+    },
+    "prune": {
+      "max_sequences": 40,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": false,
+    "shift_sequences": {},
+    "fixed_sequence_key_order": [
+      "I",
+      "G",
+      "B",
+      "A",
+      "J",
+      "E",
+      "D",
+      "F",
+      "C",
+      "K",
+      "L",
+      "H",
+      "M",
+      "N",
+      "P",
+      "O"
+    ]
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}
