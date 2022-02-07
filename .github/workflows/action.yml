@@ -32,14 +32,14 @@ jobs:
           python -m pip install --upgrade pip
           pip3 install readme2tex
       - name: Build readmes
-        run: |
-          find . -type f -name '*.tex.md' -execdir python3 -m readme2tex --readme "{}" --nocdn --output "{}.temp" \;
+        run: python3 -m readme2tex --readme "readme.tex.md" --nocdn --output "readme.md.temp"
+          # find . -type f -name '*.tex.md' -execdir python3 -m readme2tex --readme "{}" --nocdn --output "{}.temp" \;
       - name: Copy built .md files
-        run: |
-          find . -type f -exec rename -f 's/.tex.md.temp/.md/' '{}' \;
+        run: mv ./readme.md.temp ./readme.md
+          #find . -type f -exec rename -f 's/.tex.md.temp/.md/' '{}' \;
       - name: Commit the built files
         run: |
           git config --global user.name '${{github.repository_owner}}'
           git config --global user.email '${{github.actor}}@users.noreply.github.com'
-          git add . && git commit -m "Built the .tex.md files"
+          git add readme.md && git commit -m "Built the .tex.md files"
           git push
