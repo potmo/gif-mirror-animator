@@ -1,7 +1,3 @@
----
-
----
-
 # Mirror animator
 
 ## Abstract
@@ -202,9 +198,9 @@ Since our idealised mirror reflects all light striking it, without absorbing any
 <center><i>Fig X. The same mirror can appear to be multiple colors by rotating the mirror. In the left picture the mirror will appear blue while in the right it will appear red.</i></center>
 
 To calculate what angle the mirror has to have to reflect the light from a point on the wall, <img src="svgs/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode" align=middle width=5.936097749999991pt height=20.221802699999984pt/>, to our eye, <img src="svgs/8cd34385ed61aca950a6b06d09fb50ac.svg?invert_in_darkmode" align=middle width=7.654137149999991pt height=14.15524440000002pt/>, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre <img src="svgs/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode" align=middle width=5.936097749999991pt height=20.221802699999984pt/>. We also have the position of the spectators eye <img src="svgs/8cd34385ed61aca950a6b06d09fb50ac.svg?invert_in_darkmode" align=middle width=7.654137149999991pt height=14.15524440000002pt/> and the center of the mirror <img src="svgs/0e51a2dede42189d77627c4d742822c3.svg?invert_in_darkmode" align=middle width=14.433101099999991pt height=14.15524440000002pt/>. This gives us equation 1:
-<p align="center"><img src="svgs/8c8abc5e7d40411394cb3ca6b0aad6ab.svg?invert_in_darkmode" align=middle width=149.85835425pt height=18.70453365pt/></p>
+<p align="center"><img src="svgs/9d15a093c86eee4df0d13d4372e086b5.svg?invert_in_darkmode" align=middle width=149.85835425pt height=18.70453365pt/></p>
 where <img src="svgs/d9c65cad43a410a68aca0f92b394e6fd.svg?invert_in_darkmode" align=middle width=10.74774195pt height=31.016366700000024pt/>​​​ denotes the vector of incidence and <img src="svgs/b32c2a51de7b6df016e08d3c668bdf29.svg?invert_in_darkmode" align=middle width=10.747741949999993pt height=23.488575000000026pt/>​​​ the vector of reflectance. The mirrors normal <img src="svgs/4245d1bebff5e7b914282120317e3848.svg?invert_in_darkmode" align=middle width=14.433101099999991pt height=22.831056599999986pt/>​​​ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance:
-<p align="center"><img src="svgs/bf0796e42155d1e226a57f79077485ed.svg?invert_in_darkmode" align=middle width=90.6855609pt height=37.57598295pt/></p>
+<p align="center"><img src="svgs/7a19c2e733247b4c77e192656bd5fdb7.svg?invert_in_darkmode" align=middle width=90.6855609pt height=37.57598295pt/></p>
 Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector.
 
 <img src="./readme/images/finding-normal.png" style="zoom:50%;" />
