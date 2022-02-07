@@ -197,10 +197,8 @@ Since our idealised mirror reflects all light striking it, without absorbing any
 
 <center><i>Fig X. The same mirror can appear to be multiple colors by rotating the mirror. In the left picture the mirror will appear blue while in the right it will appear red.</i></center>
 
-To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$, to our eye, $e$, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. This gives us equation 1:
-$$\vec{i}=e-m, \vec{r}=t-m$$
-where $\vec{i}$​​​ denotes the vector of incidence and $\vec{r}$​​​ the vector of reflectance. The mirrors normal $\hat{m}$​​​ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance:
-$$\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}$$
+To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$, to our eye, $e$, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. This gives us equation 1: $$\vec{i}=e-m, \vec{r}=t-m$$
+where $\vec{i}$ denotes the vector of incidence and $\vec{r}$ the vector of reflectance. The mirrors normal $\hat{m}$ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance:$$\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}$$
 Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector.
 
 <img src="./readme/images/finding-normal.png" style="zoom:50%;" />
@@ -213,7 +211,7 @@ We can now create a "color palette" that we then can "sample" colors from by adj
 
 If we want another colour for a mirror we can just realign the mirror to reflect another colour. Since realigning a mirror can be a bit fiddly we instead opt for moving the palette so the mirror reflects another colour field. Moving the spectator, the mirrors or the palette in relation to each other can all create the same result.
 
-[^normal-vector]: A normalised unit vector is denoted with a hat, e.g.  $\hat{r}=\frac{\vec{r}}{\|\vec{r}\|}$ where the magnitude of a vector is denoted with double bars. The magnitude can be computed, in 3d euclidian space, with *Pythagoras theorem*: $\|\vec{r}\| = \sqrt{r_x^2 + r_y^2 + r_z^2}$
+[^normal-vector]: A normalised unit vector is denoted with a hat, e.g. $\hat{r}=\frac{\vec{r}}{\|\vec{r}\|}$ where the magnitude of a vector is denoted with double bars. The magnitude can be computed, in 3d euclidian space, with *Pythagoras theorem*: $\|\vec{r}\| = \sqrt{r_x^2 + r_y^2 + r_z^2}$
 
 So far we have thought of the light as a single ray that strikes a point of the palette, a point of the mirror and the a point of the spectators eye but that is a too big of a simplification. If we think of the rays from the eye (so in reverse[^Reverse]) that strike the mirror they will form a cone with the apex in the eye and the base covering the mirrors surface. It is only the rays within that cone that we will be concerned with. This cone is usually called a *frustum*[^Frustum] and represents the region visible in the mirror reflection. When the rays reflect in the mirrors the frustum will continue extending with the same taper until it strikes the colour fields. The surface area that will be covered by the frustum on the colour fields is related to the surface area of the mirrors and the combined distances between the eye, mirror and colour subrfaces.
 
@@ -314,7 +312,7 @@ Below is the De Bruijn sequence, also containing all two letter subsequences but
 
 A <u>**A B**</u> A C A **D A** E B B C **B D** B E C C D C E **D D** E E A
 
-In the first example with the naïve implementation we needed to use $y*x^y = 50$​​​​ fields (where $x$​​ denotes the number of colours and $y$​ the length of the subsequence) while we with a De Bruijn sequence we only need $x^y = 25$​​​​ to fit all possible color sequences in the best case saving 50% space.
+In the first example with the naïve implementation we needed to use $y*x^y = 50$ fields (where $x$ denotes the number of colours and $y$ the length of the subsequence) while we with a De Bruijn sequence we only need $x^y = 25$ to fit all possible color sequences in the best case saving 50% space.
 
 <center><img src="./readme/images/two-image-debruijn-sequence.png" style="zoom:100%;" /></center>
 
@@ -322,7 +320,7 @@ In the first example with the naïve implementation we needed to use $y*x^y = 50
 
 Now, we might not actually need all the color fields in the De Bruijn sequence. There might not be any need for a transition from A to A (e.g. in the smiley animation there are no transition from red to red) and in that case we can prune away those subsequences and end up with an even shorter sequence.
 
-The only drawback with using a De Bruijn sequence is that it needs to be in one continues line which is not very space efficient. We'd like to have the ratio of the height and the width of the full color palette as close to $1.0$​​ as possible since we get less conic distortions by having the mirrors set at shallow angles.
+The only drawback with using a De Bruijn sequence is that it needs to be in one continues line which is not very space efficient. We'd like to have the ratio of the height and the width of the full color palette as close to $1.0$ as possible since we get less conic distortions by having the mirrors set at shallow angles.
 
 ##### Disc shaped palettes
 
