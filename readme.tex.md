@@ -1,7 +1,3 @@
----
-
----
-
 # Mirror animator
 
 ## Abstract
@@ -202,13 +198,9 @@ Since our idealised mirror reflects all light striking it, without absorbing any
 <center><i>Fig X. The same mirror can appear to be multiple colors by rotating the mirror. In the left picture the mirror will appear blue while in the right it will appear red.</i></center>
 
 To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$, to our eye, $e$, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. This gives us equation 1:
-$$
-\vec{i}=e-m, \vec{r}=t-m
-$$
+$$\vec{i}=e-m, \vec{r}=t-m$$
 where $\vec{i}$​​​ denotes the vector of incidence and $\vec{r}$​​​ the vector of reflectance. The mirrors normal $\hat{m}$​​​ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance:
-$$
-\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}
-$$
+$$\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}$$
 Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector.
 
 <img src="./readme/images/finding-normal.png" style="zoom:50%;" />
