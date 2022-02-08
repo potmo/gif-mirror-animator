@@ -83,22 +83,6 @@ The image one wants to create generally is going to be low resolution given the 
 
 If the image should contain multiple frames like an animation or a slideshow one also has to think about the sum of colors in all images. In that case it can be beneficial to pick images that contain the same colours to not expand the palette too much.
 
-
-
-###### Potato tomato
-
-###### Tea, the sun and lager
-
-###### Rooster
-
-###### Volcano
-
-###### Lines
-
-###### Smiles
-
-> `TODO: If there are multiple images then we need them to have the same colour`
-
 [^pixel-density]: An iPhone 13 has about 4.7 million pixels. With a density of 460 and a size of 146x71 mm it makes it to about 80.000 pixels per square centimeter. An emoji set with the standard font size is about 3x3 mm witch makes it contain about 25.000 pixels.
 [^early_computers]: For example the very popular _Nintendo Entertainment System_ (1984) could display a total of 25 different colours at a time. The original _Game Boy_ (1989) could only display four shades of green. The _Sega Master System_ (1985) could display 64 colours but only 31 on screen at the same time while the _Mega Drive_ (1988) increased that to 512 colours and 61 simultaneously on screen.
 [^high-frequency-details]: High frequency details are large changes in colours over a small distance. The classic example is pictures of stormy water. Low frequency details are the opposite. Putting a blur filter on low frequency details doesn't change much.
@@ -140,8 +124,6 @@ This is the same honeycomb packing bees use in their beehives [^circle-packing].
 Using a hexagonal grid does have the drawback that since out original digital image that we want to make a mirror-image of will most defiantly be a rectilinear grid we will have to convert the coordinates to hexagonal. This can be done in multiple ways [^hex-grid-conversion] just mapping the from a rectilinear to a hex grid will make the image shrink on one of its axes (depending on the hex arrangement). One can implement som kind of sub pixel sampling like a *bicubic interpolation*[^han-2013]or just account for the difference by pre-scaling the magnified axis by $\frac{3}{2}$ To compensate. 
 
 Of course, the objective might not be to optimise for area coverage but some sentimental quality.
-
-
 
 * Stippling
 * Hex lattice
@@ -270,8 +252,6 @@ In the example above the palette has been shifted slightly to the left while eve
 If we want to add more frames to our animation we could just add another column. One problem that will be apparent really quickly is that the more frames we add and the more sequences will be needed to cover all possible transitions. Adding another column usually also means adding multiple more rows[^Color-sequences]. Since the color fields needs to be a certain physical size the palette has to grow in size with longer animations and with a larger amount of colors. For longer or more colourful animations it will become a problem of fitting the palette into a room.
 
 [^Color-sequences]: The number of sequences that can be created with $x$ colors and $y$ frames is $y*x^y$. This means that having two colors and five frames will in the worst case (all combinations might not be used) make $2*5^2 = 50$ colour fields to be able to fit all possible combinations.
-
-
 
 ## Different shapes of colour palettes including discs, cylinders, rectangles and cones.
 
@@ -407,22 +387,6 @@ By comparing the sum of square means of the Delta-E values of the elements of th
 
 The algorithm reduces the number of sequences until we have the desired number of sequences. When reducing, some colours will be completely discarded since they might have very similar approximates already in the set of sequences. For example a light brown to red transition can maybe be replaced with a slightly darker brown to red transition without much of a visual difference overall. It can also be that a single mirror is assigned to a sequence and then we can assign that mirror to a sequence that looks quite similar without it being easy to even notice it. Though when the number of sequences gets too low ghosting artefacts starts to appear. Ghosting is when features of one image starts leaking into the other. In future work this algorithm could probably be improved to avoid ghosting by for example incorporating more advanced error diffusion techniques like *Floyd-Steinberg dithering* or *Atkinson dithering* adapted to work on sequences.
 
-> `TODO: This could also be interesting: Agglomerative hierarchical clustering (http://harthur.github.io/clusterfck/)`
->
-> `also RGB quantization: http://leeoniya.github.io/RgbQuant.js/demo/`
->
-> https://medium.com/@sitianliu_57680/how-to-pick-the-optimal-color-palette-from-any-image-ef1342da8b4f
->
-> https://github.com/okaneco/rscolorq
->
-> https://cmitja.files.wordpress.com/2015/01/hellandtanner_imagedithering11algorithms.pdf
->
-> https://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/dither/dither.pdf
->
-> https://surma.dev/things/ditherpunk/
->
-> https://bisqwit.iki.fi/story/howto/dither/jy/
-
 |  #   | Palette                                                      |                                            |                                            |
 | :--: | ------------------------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
 |  35  | <img src="./readme/images/reduction/35/disc.png" style="zoom: 35%;" /> | ![](./readme/images/reduction/35/sim0.png) | ![](./readme/images/reduction/35/sim1.png) |
@@ -437,31 +401,103 @@ The algorithm reduces the number of sequences until we have the desired number o
 <center><i>Table X. The first row shows the animation with 35 sequences. The palette disc is really struggling to fit all sequences but the resulting images are vivid with colours and contrast. After reducing to 30 sequences not much can be seen visually but it's possible to see some brown spots in the red line to the left of the hotdog from a strong reduction in sequences containing green. By 25 sequences all green colour has been removed and the hamburger lattice is ghosting in the hotdog. The reduction to 20 sequences doesn't change much but the hamburgers tomato and right side of the bun is starting to leak into adjacent areas. At 15 sequences all darker colours have disappeared and we are starting to loose contrast. The sausage also see significant ghosting from the hotdog. At 10 we are down to five colours from the original 8. The meat in the burger are clearly ghosting. At five sequences its still possible to guess the original images but it's getting hard. Finally at one sequence there is just a mess of brown left.</i></center>
 
 
-
 [^CIELab]: CIE stands for _the **I**nternational **C**ommission on **I**llumination_. LAB for L\*a\*b witch is a color space used to representing colors. The L stands for perceived **L**ightness while the a\* and b\* for the four unique colors of human vision: red, green, blue, and yellow. Further in the $\Delta$E* part the greek letter delta commonly denotes difference and the E stands for *Empfindung*; German for "sensation". 94 means it was published in 1994. To compute the difference of two colors: the formula is given: $\Delta E_{94}^* = \sqrt{ \left(\frac{\Delta L^*}{k_L S_L}\right)^2 + \left(\frac{\Delta C^*_{ab}}{k_C S_C}\right)^2 + \left(\frac{\Delta H^*_{ab}}{k_H S_H}\right)^2 }$ where $\Delta L^* = L^*_1 - L^*_2$, $ C^*_1 =\sqrt{ {a^*_1}^2 + {b^*_1}^2 }$, $C^*_2 =\sqrt{ {a^*_2}^2 + {b^*_2}^2 }$,$\Delta C^*_{ab} =C^*_1 - C^*_2$, $\Delta H^*_{ab} =\sqrt{ {\Delta E^*_{ab}}^2 - {\Delta L^*}^2 - {\Delta C^*_{ab}}^2 } =\sqrt{ {\Delta a^*}^2 + {\Delta b^*}^2 - {\Delta C^*_{ab}}^2 }$, $\Delta a^* =a^*_1 - a^*_2$, $\Delta b^* =b^*_1 - b^*_2$, $S_L =1$, $ S_C =1+K_1 C^*_1$, $S_H =1+K_2 C^*_1$
 
 ### Using Software to simulate the mirror setups for rapid iterations.
 
-*In silico* vs. *in situ*
+To be able to verify that all the calculation has been made right it is very helpful to first run a simulation *in silico*[^insilico]. This enables rapid iterations and verification. Building the mirrors and testing it out just to realise some calculations was wrong would be very costly.
+
+My pipeline consists of a custom software that takes as input a `.png` or `.jpeg` image. Then it converts the pixel position from a rectilinear coordinate system to a hexagonal using sub pixel sampling. Then the software assembles the palette. If that initial palette contains too many colours it is reduced using the methods described above. When the palette colours are computed it creates a colour field texture and exports it as a `.png` image as well as the coordinates for the colour field centers. Further it computes the angles of all the mirrors given the position, size and orientation of the colour fields, the mirror and the spectator. Then the software creates a `.obj` file with a 3d model of all mirrors and colour fields and some additional debug information. That 3d model can be imported into any 3d-rendering software (I use Blender) for light simulation. Blender is able to simulate the light rays emitted from a lamp and how they reflect on the colourfields and on the mirrors and then end up in a virtual camera.
+
+<img src="./readme/images/simulation/rooster.png" style="zoom:100%;" />
+<center><i>Fig X. Rendering Leonardo with light ray path tracing.</i></center>
+
+Having a 3d-model that can be rendered with in a plausable physics simulation makes it a lot easier to see what happens when there are any misalignments. 
+
+If one also wants to simulate caustics and volumetric materials I can highly recommend installing the LuxCore plugin for Blender that is using the Bidir rendering engine. See the *Calibration* section for details and figures.
+
+
+[^insilico]: *In silico* refers to doing something on the silicon i.e. on a computer (computer chips are made out of silicon). It is a term is pseudo-latin (the correct term would have been in *silicio*) and alludes to the latin terms *in vivo* (for experiments on living biological organisms in their habitat), *in vitro* (for experiments on organisms in test tubes) and *in situ* for experiments taken place on site.
 
 ### Fabricating the mirror array panel
+
+There are multiple ways to fabricate the mirror array panel. 
+
+##### Milling
+
+
 
 * Milling
   * 3-axis CNC
   * 5-axis CNC
   * 6-axis Kuka CNC
 * 3d-printing
-* Calibrating
+
+  
+
+##### Calibrating
+
+Collectively the mirrors act like a lens and hence has a focal plane (rather than a focal point that some lenses have). The objective of calibration is to position the colour fields aligned along the focal plane and at the correct position within that focal plane. If you imagine a a four by four, square, colour field and the targets of the mirrors are in the center of each separate colour field one can imagine that there will be multiple focal points where light rays from multiple mirrors converge. All those focal points will lie on a plane which is the focal plane. If the colour fields are positioned in that focal plane the mirrors light rays will converge to a point on the surface of it. If it is outside the focal plane there will be no convergence and some rays may miss the target field leaking into other colour fields.
+
+As we already have established optics are geometrically reversible. This opens for a simple way to visualise the light path to be able to accurately position the mirrors, spectator and colour palette in relation to each other. By placing a strong point light source at the position of the spectator shining on the mirrors a pattern of lit dots will appear on the colour fields. This way one can visually inspect exactly where the targets will be with the current positioning and it's easy to make small adjustments to fix any errors by either moving the color fields, the mirrors or the spectator. This can be done both in silico as well as in situ.
+
+<img src="./readme/images/simulation/calibration.png" style="zoom:100%;" />
+<center><i>Fig X. Simulation with a light beam hitting the mirrors in a smokey room to visualize the light paths. From the left, the first image depicts a correct calibration where all the focal points are positioned in the center of each color field. The second image shows the colour field moved in front of the focal plane. The third image shows what happens when the colour fields are positioned behind the focal plane making the rays converge and then diverge before it hits the colour fields. It best shown in the upper left corner where it is easy to see the focal point laying in front of the colour fields.</i></center>
+
+<img src="./readme/images/calibration-photo.jpg" style="zoom:100%;" />
+<center><i>Fig X. Ongoing calibration in the field. It looks very similar to the simulated version.</i></center>
 
 
+### Results
 
+So far I have fabricated five images using the techniques described in this paper. Im here going to present them in chronological order of fabrication.
 
+###### Nightshades
 
+The *Nightshades* was the first image I made. To me, the most interesting was to figure out if this would actually work in reality. I struggled for a very long time trying to figure out what images to use. After months of experimenting with different images someone said "It's tomato/tomato" so I figured a tomato and a potato would work (both flowering plants of the *Solanaceae* or the *Nightshades* botanical family). The sculpture is set up so that first a tomato is displayed and when the disc slowly rotates it will quickly switch over to a potato and then repeating the animation. Technically the trickiest thing was to reduce the palette enough to fit the resulting disc and while keeping enough colours to be able to see both images. I've used dithering shading on both images to create more perceived colours than actually exist. The light brown colour used for the highlight for the potato is also red-tinted enough to be used as highlight for the tomato. The tomatoes green leafs are actually made up of the green background plus a brown dithering pattern to make it look a dark green. I've also slightly edited the image to remove some color sequences. For example the highlight on the tomato is split with an stroke in two to avoid a light-brown/light-brown sequence that would also be used for those 10-ish mirrors.
 
+Something to note is that diagonal dithering does not translate well when changing the mirror pattern from rectilinear to hexagonal. There is a tendency to create streaks of colours when converting to hexagonal if the coordinate systems are mapped directly.
 
+| Frame 1                                                      | Frame 2                                                      | Colour palette                                               | Result |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------ |
+| <img src="./readme/images/potato-tomato/input_1.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/potato-tomato/input_0.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/potato-tomato/disc.png" alt="input_1" style="zoom:10%;" /> |        |
 
+###### We know how to live
 
+*We know how to live* is the title of a song on *Cock Sparres* 1994 album *Guilty as charged*. In the song they sing "Mugs of tea, the sun and lager - we know how to live". I found it quite amusing that the song, being a punk rock/oi song, was celebrating something mundane as mugs of tea. Sometimes when something feels fun you just have to do it quickly before you change your mind or start doubting the idea. 
 
+The texture is wrapped around a rotating cylinder so that at least three columns are visible to the mirrors at all times. Since all objects in the picture is set on a solid white background and none of them overlap I can exploit the fact that the resulting texture will contain as many sequences as there are unique colours. For example the yellow pixels will always be either yellow-white-white, white-yellow-white or white-white-yellow and since they can point on different starting positions it can be optimised down to only one sequence with three offsets. The solid white background all targets the top row that is always white. The other objects in the picture either target the first (that has all the colours), second (that starts all white) or the third (also all white). When the cylinder rotates the offset advances.
 
+| Frame 1                                                      | Frame 2                                                      | Frame 3                                                      | Colour palette                                               | Result |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------ |
+| <img src="./readme/images/tea-sun-lager/input_0.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/tea-sun-lager/input_1.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/tea-sun-lager/input_2.png" alt="input_2" style="zoom:200%;" /> | <img src="./readme/images/tea-sun-lager/texture.png" alt="input_1" style="zoom:15%;" /> |        |
 
+###### Leonardo
 
+*Leonardo* was the name of a rooster I bought from a friend for five SEK while at kindergarten. The name Leonardo referred to the *Teenage Mutant Ninja Turtle* "Leonardo"[^leonardo] that was all the rage in the late 80's and early 90's. After having made *Nightshades* and *We know how to live* I thought it was a little bit too difficult as a spectator to find the optimal position since the colour fields were relatively small. I wanted to do something that had some more colours and I was a little disappointed that it was possible to discern the mug, sun and beer glass in *We know how to live* without having the colour palette present. I thought of what had colours and a rooster sprung to mind. I tried to dither it quite hard and also added a gradient background to add noise to the image. From this came a palette of 16 colours. Four shades of pink, four of red, four of brown and four of blue. I sorted the colours by darkness and printed it on textile patches that a 3.5x3.0m large textile
+
+| Frame 1                                                      | Colour palette                                               | Result |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------ |
+| <img src="./readme/images/rooster/input_0.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/rooster/texture.png" alt="input_1" style="zoom:15%;" /> |        |
+
+[^Leonardo]: Leonardo was the Ninja Turtle wearing a blue bandana and had double Ninjatos as his signature weapon (commonly confused as Katanas). Of course the Ninja Turtles name Leonardo in turn referres to the renaissance painter and inventor Leonardo da Vinci. The other Ninja Turtles was called *Rafael* (red, twin sai), *Michelangelo* (orange, dual nunchaku) and *Donatello* (purple, bō staff).
+
+###### Brontide
+
+I realised after making the big textile used for *Leonardo* that I could reuse it to show other images. The only problem was that the colour palette was already set and it was not the most usable. Had I anticipated this I had maybe added some more base colours like green, orange or purple. But I had what I had so I started to look for images that could work with that palette. I had watched a documentary of volcanos squirting magma into the sea that I thought could fit. I also liked the idea of the very noisy and chaotic image since that would make it even more difficult to see what was depicted without the colour fields. After googling around for volcanos a couple of days I found a still from the 1940 Disney animated musical *Fantasia* with a very nice erupting volcano and also containing mostly bluish and redish tones.
+
+*Brontide* is a word for the low, muffled sound of thunder at a distance or the sound of seismic activity[^brontosaur].   
+
+| Frame 1                                                      | Colour palette                                               | Result |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------ |
+| <img src="./readme/images/volcano/input_0.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/volcano/texture.png" alt="input_1" style="zoom:15%;" /> |        |
+
+[^brontosaur]: The name of the long necked dinosaur *Brontosaur* has the same etymology stemming from *"bronte"* being greek for *"thunder"* and *"souros"* meaning *"lizard"*. The suffix *-id* means "offspring of" or "coming from" so *Brontide* is something that comes from thunder.
+
+###### Strokes
+
+The last in the textile palette series is *Strokes*. I thought it would be interesting to do something abstract where the "correct" position doesn't matter that much. I used photoshop but couldn't really make anything that I thought worked so I just made a lot of strokes like you would when striking out a misspelled word. I kept on adding more lines in different colours and there it was like a colourful pick-up sticks. 
+
+| Frame 1                                                      | Colour palette                                               | Result |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------ |
+| <img src="./readme/images/lines/input_0.png" alt="input_1" style="zoom:200%;" /> | <img src="./readme/images/lines/texture.png" alt="input_1" style="zoom:15%;" /> |        |
