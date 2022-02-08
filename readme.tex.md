@@ -447,6 +447,11 @@ As we already have established optics are geometrically reversible. This opens f
 <img src="./readme/images/calibration-photo.jpg" style="zoom:100%;" />
 <center><i>Fig X. Ongoing calibration in the field. It looks very similar to the simulated version.</i></center>
 
+Moving the position of the spectator could also have a very large effect. This of course depends on the relation of the distances between the  spectator and the mirrors and the mirrors and the colour fields. If the distance between the spectator and mirror is larger than the mirror and colour fields distance the spectator can move more without the targets on the colour field moving. It basically acts as an optical lever.
+
+<img src="./readme/images/simulation/animation/combined.gif" style="zoom:100%;" />
+
+<center><i>Fig X. Simulated animation of the effect of the coulour field targets as the spectator moves in relation to the mirrors.</i></center>
 
 ### Results
 
