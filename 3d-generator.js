@@ -16,46 +16,33 @@ export {
 
 async function generate(settings, mappings, wall_generator) {
 
-  let wall = wall_generator.getWall(settings)                                 
+  const world_objects = getWorld3DObjects(settings, wall_generator);
 
-  const mirror_board = {
-    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
-    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
-    center: vector(0,0,0),
-  }
-
-  const eye = {
-    pos: vector(0,0,0).add(settings.three_dee.eye_offset), 
-    size: 0.1
-  }
-
-  //const world_objects = getWorld3DObjects(settings, wall_generator);
-
-  await createSection(settings, wall, mirror_board, eye, mappings.mapping);
+  await createSection(settings, world_objects, mappings.mapping);
 }
 
-async function createSection(settings, wall, mirror_board, eye, mappings) {
+async function createSection(settings, world_objects, mappings) {
 
-  const reflections = createReflections(settings, wall, mappings);
+  const reflections = createReflections(settings, world_objects, mappings);
 
   //const rapidString = rapid.generate(reflections, wall, eye);
   //await saveFile(path.join(settings.output.path, `output.mod`), rapidString);
 
-  const gcodeString = gcode.generate(reflections, wall, eye);
+  const gcodeString = gcode.generate(reflections, world_objects.wall, world_objects.eye);
   await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
 
-  const objString = objcode.generate(reflections, wall, eye, settings.three_dee.wall_face_divisions);
+  const objString = objcode.generate(reflections, world_objects.wall, world_objects.eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
-  await reflection_visualizer.visualize(settings, reflections, wall);
+  await reflection_visualizer.visualize(settings, reflections, world_objects.wall);
 
-  await reflection_visualizer.visualizeArrangement(settings, reflections, mirror_board);
+  await reflection_visualizer.visualizeArrangement(settings, reflections, world_objects.mirror_board);
 
-  await reflection_visualizer.visualizeMirrorColorGroups(settings, reflections, mirror_board);
+  await reflection_visualizer.visualizeMirrorColorGroups(settings, reflections, world_objects.mirror_board);
 
-  await reflection_visualizer.visualizeMirrorAngleDeviations(settings, reflections, mirror_board);
+  await reflection_visualizer.visualizeMirrorAngleDeviations(settings, reflections, world_objects.mirror_board);
 
-  await reflection_visualizer.visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, mirror_board);
+  await reflection_visualizer.visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, world_objects.mirror_board);
 
   
 
@@ -64,37 +51,40 @@ async function createSection(settings, wall, mirror_board, eye, mappings) {
 
 }
 
-function createReflections(settings, wall, mappings) {
+function createReflections(settings, world_objects, mappings) {
 
   const reflections = mappings.map((mapping,id) => {
-    return createReflectionSetupForMirror(settings, id, mapping.mirror, mapping.palette, mapping.palette.colors, mapping.string, wall);
+    return createReflectionSetupForMirror(settings, world_objects, id, mapping.mirror, mapping.palette, mapping.palette.colors, mapping.string);
   })
   
   return reflections;
   
 }
 
-function createReflectionSetupForMirror(settings, id, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall) {
+function createReflectionSetupForMirror(settings, world_objects, id, mirror_pixel_pos, target_palette_pos, colors, color_keys) {
 
-  const three_dee = convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall);
+  const three_dee = convertTo3DWorldCoordinates(settings, world_objects, mirror_pixel_pos, target_palette_pos, colors, color_keys);
+
   const mirror = createMirrorLookingAt(id++, 
                                       three_dee.mirror.pos, 
-                                      three_dee.eye, 
+                                      world_objects.eye.pos, 
                                       three_dee.target.pos, 
                                       three_dee.mirror.width.mag(), 
                                       three_dee.mirror.thickness.mag());
 
-  const ellipse_points = createReflectanceEllipsePoints(mirror, three_dee.eye.pos, three_dee.target, three_dee.wall);
+  const ellipse_points = createReflectanceEllipsePoints(mirror, world_objects.eye.pos, three_dee.target, world_objects.wall);
+
 
   const reflection = {
     mirror: mirror, 
     target: three_dee.target.pos, 
     target_normal: three_dee.target.normal, 
-    eye: three_dee.eye, 
+    eye: world_objects.eye, 
     ellipse_points: ellipse_points, 
     colors: three_dee.mirror.colors.colors, 
-    color_keys: three_dee.mirror.color_keys
+    color_keys: three_dee.mirror.colors.key,
   };
+
 
   return reflection;
 
@@ -123,11 +113,11 @@ function getWorld3DObjects(settings, wall_generator) {
 
 }
 
-function convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall) {
+function convertTo3DWorldCoordinates(settings, world_objects, mirror_pixel_pos, target_palette_pos, colors, color_keys) {
 
   const mirror_board = {
-    widthVector: vector(settings.three_dee.mirror_diameter, 0, 0),
-    heightVector: vector(0, settings.three_dee.mirror_diameter, 0),
+    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
+    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
     center: vector(0,0,0),
   }
 
@@ -136,9 +126,11 @@ function convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_
     size: 0.1
   };
 
+
   const mirror_pos = vector(0,0,0).add(mirror_board.widthVector.scale(mirror_pixel_pos.x))
                                   .add(mirror_board.heightVector.scale(mirror_pixel_pos.y * -1))
                                   .add(vector(0, 0, -settings.three_dee.mirror_thickness))
+
 
   const mirror = {
     width: vector(settings.three_dee.mirror_diameter, 0, 0),
@@ -149,15 +141,13 @@ function convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_
   }
 
   const target = {
-    pos: wall.worldPosAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
-    normal: wall.worldNormalAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
+    pos: world_objects.wall.worldPosAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
+    normal: world_objects.wall.worldNormalAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
   }
 
   return {
     mirror,
     target,
-    eye,
-    wall,
   }
 
 }
@@ -198,9 +188,9 @@ function createReflectanceEllipsePoints(mirror, eye_pos, target, wall) {
   return ellipse_points;
 }
 
-function createMirrorLookingAt(id, mirrorPos, eye, target, size, thickness) {
+function createMirrorLookingAt(id, mirrorPos, eye_pos, target, size, thickness) {
 
-  const normal = mirrorPos.normalReflectingBetweenPoints(eye.pos, target);
+  const normal = mirrorPos.normalReflectingBetweenPoints(eye_pos, target);
 
   return {
     pos: mirrorPos,
