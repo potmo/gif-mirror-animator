@@ -181,14 +181,15 @@ Since our idealised mirror reflects all light striking it, without absorbing any
 <center><i>Fig X. The same mirror can appear to be multiple colors by rotating the mirror. In the left picture the mirror will appear blue while in the right it will appear red.</i></center>
 
 To calculate what angle the mirror has to have to reflect the light from a point on the wall, $t$, to our eye, $e$, is fairly trivial. We know that the face of the mirror needs to point in such a way that the angle of incidence and the angle of reflection should be equal in regards to the mirrors surface normal. The position of the mirror, the angle of incidence and reflection is known so we just have to compute the optimal mirror surface normal. Suppose we have a colour field with the centre $t$. We also have the position of the spectators eye $e$ and the center of the mirror $m$. This gives us equation 1: $$\vec{i}=e-m, \vec{r}=t-m$$
-where $\vec{i}$ denotes the vector of incidence and $\vec{r}$ the vector of reflectance. The mirrors normal $\hat{m}$ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance:$$\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}$$
-Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector.
+where $\vec{i}$ denotes the vector of incidence and $\vec{r}$ the vector of reflectance. The mirrors normal $\hat{m}$ (i.e. the vector that the face points in) is bisecting of the normalised[^normal-vector] vectors  of incidence and reflectance: $\hat{m}=\frac{\hat{i}^{-1}+\hat{r}}{2}$
+Bisecting the angle can be done by adding the two vectors and then splitting the sum in half making it a unit vector (called the *half vector*).
+By aligning the mirrors normal with the half vector we get a perfect reflection of the colour field in the mirror with respect to the spectators position.
 
 <img src="./readme/images/finding-normal.png" style="zoom:50%;" />
 
 <center><i>Fig 5. A visual representation of Equation 2. finding the normal (green). The blue represents the inverted vector of incidence and red the reflected. Adding blue and red and then scaling the sum by 0.5 gives green. From the eye´s point of view the mirror will appear red.</i></center>
 
-This gives us the basic tools to "set the colour" of our mirrors. In the figures above this has been shown to work in two dimensions (for clarity) but the math generalises to three dimensions (of course need to use all those three dimensions). 
+So this gives us the basic tools to "set the colour" of our mirrors. In the figures above this has been shown to work in two dimensions (for clarity) but the math generalises to three dimensions (of course need to use all those three dimensions). 
 
 We can now create a "color palette" that we then can "sample" colors from by adjusting the angle of our mirror. If this mirror is fairly small it can essentially work as a single pixel that can take any colour from the palette and reflect that into the spectators eye. 
 
@@ -410,6 +411,7 @@ To be able to verify that all the calculation has been made right it is very hel
 My pipeline consists of a custom software that takes as input a `.png` or `.jpeg` image. Then it converts the pixel position from a rectilinear coordinate system to a hexagonal using sub pixel sampling. Then the software assembles the palette. If that initial palette contains too many colours it is reduced using the methods described above. When the palette colours are computed it creates a colour field texture and exports it as a `.png` image as well as the coordinates for the colour field centers. Further it computes the angles of all the mirrors given the position, size and orientation of the colour fields, the mirror and the spectator. Then the software creates a `.obj` file with a 3d model of all mirrors and colour fields and some additional debug information. That 3d model can be imported into any 3d-rendering software (I use Blender) for light simulation. Blender is able to simulate the light rays emitted from a lamp and how they reflect on the colourfields and on the mirrors and then end up in a virtual camera.
 
 <img src="./readme/images/simulation/rooster.png" style="zoom:100%;" />
+
 <center><i>Fig X. Rendering Leonardo with light ray path tracing.</i></center>
 
 Having a 3d-model that can be rendered with in a plausable physics simulation makes it a lot easier to see what happens when there are any misalignments. 
@@ -421,19 +423,59 @@ If one also wants to simulate caustics and volumetric materials I can highly rec
 
 ### Fabricating the mirror array panel
 
-There are multiple ways to fabricate the mirror array panel. 
+While calculating the angles and positions of the mirrors in an idealised world is one thing, actually reproducing the same with high accuracy and precision[^accuracy_precision]. A small angle of error of the mirrors might multiply quickly over relatively long distances and make the mirror reflect a different position than was calculated for. It is therefore of paramount importance that, especially, the angles of the mirrors can be positioned as the calculated ones. 
+
+I have experimented with a few different techniques that I intend to describe in this chapter.
+
+[^accuracy_precision]: Accuracy is how close to a given set of measurements are to their true value while precision is how close or dispersed the measurements are to each other. BS ISO 5725-1, 1994, *Accuracy (trueness and precision) of measurement methods and results - Part 1: General principles and definitions.*
+
+##### 3D-printing
+
+The most common 3D-printer technology is called FDM[^fdm] and works by placing a string of melted plastic layer by layer until the entire desired volume is filled. Usually each layer is about 0.25 mm thick witch is thing enough to be noticeable both by looking at the finished part and by touch. Since the layers are relatively thick and each layer has the same thickness it can be hard to produce surfaces with very shallow slopes witch is exactly what we want to do. A slope with 1° incline only changes the height of 0.174 mm over 10 mm that would result in a reflection target change of ~17 mm at a mirror-to-colour-field distance of 1m. This means that it is physically impossible to print that on a regular FDM printer (since the minimum layer height is 0.25 mm, more than double the required height). 
+
+<center><img src="./readme/images/layer-lines-25mm.png" style="zoom:50%;" /></center>
+
+<center><i>Fig X. 3D-printing with a surface with a slope of 1° using layer height of 0.25mm results in the layers beeing too thick. The desired surface (red, dashed) would intersect one of the layers and also not being supported anywhere else.</i></center>
+
+Another type of 3D-printer is the SLA [^sla] printers. They work by selectively cure a photosensitive resin layer by layer. The same problems apply as with FDM but it is possible to achieve much higher resolutions (up to 0.01 mm). Even with this very high resolution it is still only about two layer steps over 10 mm supporting a 1° sloping surface. 
+
+<center><img src="./readme/images/layer-lines-01mm.png" style="zoom:50%;" /></center>
+
+<center><i>Fig X. 3D-printing with a surface with a slope of 1° using layer height of 0.1mm results in the desired surface (red, dashed) would not be supported on anything but one two points. The resolution is too low to have multiple step support the surface. To achieve good results the layer needs to be much thinner to be able to closely approximate the disired surface slope.</i></center>
+
+My testing confirms the thesis that it's difficult to produce substrates that a mirror can be glued to with high enough precision and accuracy.
+
+[^fdm]: Fused Deposition Modeling
+[^sla]: Stereolithography Apparatus, also called Photosolidification printers or more commonly Resin printers.
 
 ##### Milling
 
+The second option to create a surface for gluing mirrors is CNC[^cnc]-milling the surface. Milling does the opposite of 3d-printing by, instead of adding, removing material.  It is using something that looks like a drill but that is ground sharp not only at the tip but also at the sides to carve away material. I'm not going to go into depth on how a milling machine works but you can think of it as a rod that spinns very rapidly and everything it touches becomes dust.
 
+The most common type of milling machines are called 3-axis machines. As the name suggests the tool can move in three axes. The standard nomenclature is calling the left/right axis *X*, the towards/away axis *Y* and the up/down axis *Z*. Since the tool is always aligned to the Z-axis it can not produce overhangs[^overhangs]. It's usually said that a 3-axis machine can only mill 2.5 dimensions models. This also means that the tip of the tool can not be aligned perpendicular to the surface that we want to machine (as it is always aligned perpendicular ton the Z-axis) we are still confined to milling steps of some sort. This can of course be partially alleviated by milling in the direction of the slope, continually adjusting all axes simultaneously, but the geometry of the cutting tool will still either produce grooves or we will have to cut with an an infinitely small.
 
-* Milling
-  * 3-axis CNC
-  * 5-axis CNC
-  * 6-axis Kuka CNC
-* 3d-printing
+<center><img src="./readme/images/milling-z-aligned.png" style="zoom:25%;" /></center>
 
-  
+<center><i>Fig X. A 3-axis milling machine always alignes the tool with the Z-axis. This results, just as the 3D-printing, in steps. Even though a CNC-milling machine can achive higher resolution it is still going to produce steps.</i></center>
+
+In my experiments using a 3-axis CNC can produce working parts but it is not possible to create perfect sockets for the mirrors to sit in (since that would require machining overhangs). To achieve high enough resolution one have to take very small stopovers and machine the same surface multiple times in multiple directions witch leads to very long machining times. One experiment was 630x480 mm and took over nine continuous hours to machine.
+
+To achieve full 3 dimensional models one have to use a 5-axis mill. The two extra axes called roll and pitch (and usually denoted the B- and C-axis) allows the tool to align to the surface normal of the model. This means that making a very accurate round socket for the mirror is as easy as aligning a properly sized tool in the desired angle and then just plunging into the stock material. This makes this method very fast in comparison since it is basically only machining the geometry we want and nothing else. Professional machines can hold tolerances within one arc-second[^arc-second] witch is plenty accurate for what our application and many orders of magnitude more than what can be done with previously mentioned techniques. 
+
+<center><img src="./readme/images/milling-tool-aligned.png" style="zoom:25%;" /></center>
+
+<center><i>Fig X. A 5-axis milling machine can aligned the tool to the desired surface normal (red-dashed) and can therefore plunge into the material creating a pocket with the desired angle.</i></center>
+
+In my experiments the biggest issue with 5-axis machining is the warping of the material being machined. If there are stresses in the material from for example painting the surface it has a tendency to bend away from the surface being machined when the one side is partially removed. This would of course also happen with 3-axis machining.
+
+In my experiments I have mainly used dyed through HDF[^hdf] since it relatively cheap, slightly harder than MDF and therefore retains a sharp edge better and has mixed directional fibers so it warps less and is less effected by temperature and humidity changes than for example wood. I have also done some experiments with perspex boards that showed good results but had a tendency of producing a burr that had to be manually removed and is also quite a bit more expensive.  
+
+If one has access to a 5-axis milling machine I highly recommend using one. When the pockets have been milled the mirrors can be glued into the pockets. Since the pockets are perfectly flat bottomed and the sides of the pockets are normal to the bottom surface the mirror is very easy to align. Using super glue holds the mirrors firmly and dries fast. It might be possible to use other types of glue but I haven't tested that.
+
+[^cnc]: Computer Numerical Control
+[^overhangs]: This is technically not correct since it is possible to have a variable-radius tool with a thinner shank that reach in under an overhang.
+[^arc-second]: One arc-second equals 1/3600 ^th^ of a degree.
+[^hdf]: High Density Board
 
 ##### Calibrating
 
