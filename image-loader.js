@@ -59,7 +59,7 @@ async function readImageAndRotate(path, angle) {
 }
 
 export function getOutputImage(width, height, color) {
-	color = color || {r:255, g: 255, b: 255, a: 0};
+	color = color || {r:255, g: 255, b: 255, a: 0};
   const output = createCanvas(width, height)
   const context = output.getContext("2d")
   context.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a / 256})`;

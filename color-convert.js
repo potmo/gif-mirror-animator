@@ -96,6 +96,11 @@ function toConsoleForeground(color, string) {
   return "\x1B[38;2;"+obj.r+";"+obj.g+";"+obj.b+"m" + string + '\x1B[39m';
 }
 
+function toCssHeatmap(value) {
+  var h = (1.0 - value) * 240
+  return "hsl(" + h + ", 100%, 50%)";
+}
+
 export {
   imageDataToARGBObjectArray,
   toConsoleString,
@@ -109,5 +114,6 @@ export {
   paramsToHex,
   paramsToCss,
   objToARGB,
-  ARGBObjecToLab
+  ARGBObjecToLab,
+  toCssHeatmap,
 }

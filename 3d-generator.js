@@ -60,6 +60,7 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
     const target_pos = wall.worldPosAtTextureCoord(mapping.palette.x, mapping.palette.y * -1)
     const target_normal = wall.worldNormalAtTextureCoord(mapping.palette.x, mapping.palette.y * -1);
+
     const target = {pos: target_pos, normal: target_normal}
 
     const mirrorPos = vector(0,0,0).add(mirror_board.widthVector.scale(mapping.mirror.x))
@@ -74,7 +75,7 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
     const colors = mapping.palette.colors || [{r:255, g:255, b: 255, a: 255}];
 
-    reflections.push({mirror: mirrorObj, target: target.pos, eye, ellipse_points, colors});
+    reflections.push({mirror: mirrorObj, target: target.pos, target_normal, eye, ellipse_points, colors, color_keys: mapping.string});
   }
 
   const rapidString = rapid.generate(mirrors, reflections, wall, eye);
@@ -90,6 +91,13 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
   await reflection_visualizer.visualizeArrangement(settings, reflections, mirror_board);
 
+  await reflection_visualizer.visualizeMirrorColorGroups(settings, reflections, mirror_board);
+
+  await reflection_visualizer.visualizeMirrorAngleDeviations(settings, reflections, mirror_board);
+
+  await reflection_visualizer.visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, mirror_board);
+
+  
 
   printSize(reflections)
 
@@ -138,10 +146,10 @@ function createMirrorLookingAt(id, mirrorPos, eye, target, size, thickness) {
 
   return {
     pos: mirrorPos,
-    normal: normal,
+    normal,
     width: size,
     height: size,
-    thickness: thickness,
+    thickness,
     id: id,
   }
 }

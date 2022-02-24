@@ -40,7 +40,7 @@ Vector.prototype.reflect = function(normal) {
 Vector.prototype.instesectsPlane = function(lineDirection, planePoint, planeNormal) {
 	const linePoint = this;
  	if (planeNormal.dot(lineDirection.normalized()) == 0) {
- 		throw new Error(`dot is zero between ${planeNormal.string()} and ${lineDirection.string()}`);
+ 		throw new Error(`ray and plane is paralell so no intersection ${planeNormal.string()} and ${lineDirection.string()}`);
 		return null;
 	}
 	//const t = (planeNormal.dot(planePoint).sub(planeNormal.dot(linePoint))).div(planeNormal.dot(lineDirection.normalized()));
@@ -96,6 +96,15 @@ Vector.prototype.angleBetween = function(other) {
 	let angle = Math.acos(this.normalized().dot(other.normalized()));
 	let axis = this.normalized().cross(other.normalized()).normalized();
 	return {angle, axis};
+}
+
+Vector.prototype.angleTo = function(other) {
+
+	// returns a value of 0 when completely aligned to Math.PI when completely opposite
+
+	//angle = arccos[(xa * xb + ya * yb + za * zb) / (√(xa2 + ya2 + za2) * √(xb2 + yb2 + zb2))]
+	// from https://www.omnicalculator.com/math/angle-between-two-vectors
+	return Math.acos((this.x * other.x + this.y * other.y + this.z * other.z) / (Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z) * Math.sqrt(other.x * other.x + other.y * other.y + other.z * other.z)))
 }
 
 
