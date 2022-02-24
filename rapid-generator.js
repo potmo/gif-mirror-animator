@@ -25,13 +25,13 @@ const fromBottom = new Quaternion.fromBetweenVectors(referenceVector, [0, 0, 1])
 
 const middle = [1000, 1000, 1000];
 
-function generate(mirrors, reflections, photowall, eye) {
-	const program = Array.from(generateModule(mirrors)).join('\n');
+function generate(reflections, photowall, eye) {
+	const program = Array.from(generateModule(reflections)).join('\n');
 	console.log(colors.green(`created rapid (.mod) file`));
 	return program;
 }
 
-function* generateModule(mirrors) {
+function* generateModule(reflections) {
 	yield `MODULE MainModule`;
 	// heldObject, fixed user coord used, name?, user coords, user rot, object coord, object rot
 	yield `  PERS wobjdata platform := [ FALSE, TRUE, "", [ [800, 0, 600], [1, 0, 0 ,0] ], [ [0, 0, 0], [1, 0, 0 ,0] ] ];`
@@ -41,12 +41,12 @@ function* generateModule(mirrors) {
 	yield `    ConfL\\Off;`;
 	yield `    ConfJ\\Off;`;
 	yield `    SingArea\\Wrist;`;
-	yield *indent('    ', generatePositions(mirrors));
+	yield *indent('    ', generatePositions(reflections));
 	yield `  ENDPROC`;
 	yield `ENDMODULE`;
 }
 
-function* generatePositions(mirrors) {
+function* generatePositions(reflections) {
 	// robtarget
 	// position, quaternion, the quadrant to start (-4...4), some conf (9E9 == null)
 	// [x,y,z], [q1, q2, q3, q4], [n,n,n,n]
@@ -61,7 +61,7 @@ function* generatePositions(mirrors) {
 			y: Number.MIN_VALUE,
 		}
 	};
-	const min_max = mirrors.map( a => a.pos)
+	const min_max = reflections.map(r => r.mirror).map( a => a.pos)
 												 .reduce( (m, a) => {
 												 		m.min.x = Math.min(m.min.x, a.x);
 												 		m.min.y = Math.min(m.min.y, a.y);
@@ -78,7 +78,7 @@ function* generatePositions(mirrors) {
 	// offset everything for the robot to have easier to reach
 	const offset = vector(0, -size.y / 2, 0);
 
-	const adjusted_mirrors = mirrors.map(mirror => {
+	const adjusted_mirrors = reflections.map(r => r.mirror).map(mirror => {
 		//offset (in cm) ands cale from cm to to mm
 		const adjusted_pos = mirror.pos.add(offset).scale(10);
 		return {

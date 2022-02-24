@@ -3,13 +3,13 @@ import colors from 'colors';
 import vector from './vector.js';
 
 
-function generate(mirrors, reflections, photowall, eye) {
-	const program = Array.from(generateModule(mirrors)).join('\n');
+function generate(reflections, photowall, eye) {
+	const program = Array.from(generateModule(reflections)).join('\n');
 	console.log(colors.green(`created gcode (.nc) file`));
 	return program;
 }
 
-function* generateModule(mirrors) {
+function* generateModule(reflections) {
 
 	const tool = 20;
 	const tool_diameter = 6.0;
@@ -56,7 +56,7 @@ function* generateModule(mirrors) {
 	yield `G00 X0. Y0. Z300. B0. C0.;`;	
 
 	
-	yield *indent('', generatePositions(mirrors, tool, tool_diameter));
+	yield *indent('', generatePositions(reflections, tool, tool_diameter));
 
 	yield `(GO BACK TO STARTING POSITION)`;
 	yield `G00 X0. Y0. Z300. B0. C0.;`;	
@@ -88,14 +88,15 @@ function* generateModule(mirrors) {
 	
 }
 
-function* generatePositions(mirrors, tool, tool_diameter) {
+function* generatePositions(reflections, tool, tool_diameter) {
 	
 	const clearence_height = 30.0
 	// beware since this scale is depending on the scale that the 3d generator has 
 	// that come from the settings
 	const scale = 1000.0;
 
-	const adjusted_mirrors = mirrors
+	const adjusted_mirrors = reflections
+		.map(reflection => reflection.mirror)
 		.sort( (a,b) => {
 			if (a.pos.x != b.pos.y) {
 				return a.pos.x - b.pos.x;

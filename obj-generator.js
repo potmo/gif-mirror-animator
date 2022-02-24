@@ -7,14 +7,14 @@ export {
 	generate,
 }
 
-function generate(mirrors, reflections, wall, eye, wall_face_divisions) {
-	const program = Array.from(createObjFile(mirrors, reflections, wall, eye, wall_face_divisions)).join('\n');
+function generate(reflections, wall, eye, wall_face_divisions) {
+	const program = Array.from(createObjFile(reflections, wall, eye, wall_face_divisions)).join('\n');
 	return program;
 }
 
-function * createObjFile(mirrors, reflections, wall, eye, wall_face_divisions) {
+function * createObjFile(reflections, wall, eye, wall_face_divisions) {
 
-  console.log('mirrors', mirrors.length);
+  console.log('mirrors', reflections.length);
 
 	var vertex = {current: 1};
 
@@ -26,7 +26,7 @@ function * createObjFile(mirrors, reflections, wall, eye, wall_face_divisions) {
   
   yield * convertTexturesToObj(textures);
 
-  yield * convertMirrorsToObj(mirrors, vertex);
+  yield * convertMirrorsToObj(reflections, vertex);
 
   yield * convertWallToObj(wall, vertex, textures.wall_texture_ids);
 
@@ -36,7 +36,7 @@ function * createObjFile(mirrors, reflections, wall, eye, wall_face_divisions) {
 
   yield * convertReflectionEllipsesToObj(reflections, vertex);
 
-  yield * convertMirrorNormalsToObj(mirrors, vertex);
+  yield * convertMirrorNormalsToObj(reflections, vertex);
 
   console.log(colors.green(`created mesh (.obj) file`));
 }
@@ -78,10 +78,10 @@ function getWallTextureMap(wall_face_divisions) {
   return output;
 }
 
-function * convertMirrorsToObj(mirrors, vertex) {
+function * convertMirrorsToObj(reflections, vertex) {
   
   //#yield `usemtl mirror_face`;
-  const mirrorFaces = mirrors.map( mirror => getMirrorPolygons(mirror, vertex));
+  const mirrorFaces = reflections.map(r => r.mirror).map( mirror => getMirrorPolygons(mirror, vertex));
 
   // create vertices for the mirror
   for (const face of mirrorFaces) {
@@ -173,9 +173,10 @@ function vertice(vector) {
 }
 
 
-function * convertMirrorNormalsToObj(mirrors, vertex) {
+function * convertMirrorNormalsToObj(reflections, vertex) {
 
   yield `g debug_mirror_normals`;
+  const mirrors = reflections.map(r => r.mirror);
   for (let mirror of mirrors) {
     yield * convertMirrorNormalToObj(mirror, vertex);
   }

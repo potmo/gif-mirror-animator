@@ -17,74 +17,34 @@ export {
 async function generate(settings, mappings, wall_generator) {
 
   let wall = wall_generator.getWall(settings)                                 
-  
-  const eye_offset = settings.three_dee.eye_offset;
-
-
-
-  const mirror_diameter = settings.three_dee.mirror_diameter;
-  const mirror_padding = settings.three_dee.mirror_padding;
-  const mirror_thickness = settings.three_dee.mirror_thickness;
-  const mirror_board_diameter = settings.three_dee.mirror_board_diameter;
-
-  const mirror = {
-    widthVector: vector(mirror_diameter, 0, 0),
-    heightVector: vector(0, mirror_diameter, 0),
-    thicknessVector: vector(0, 0, -mirror_thickness)
-  }
 
   const mirror_board = {
-    widthVector: vector(mirror_board_diameter, 0, 0),
-    heightVector: vector(0, mirror_board_diameter, 0),
+    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
+    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
     center: vector(0,0,0),
   }
 
-  const eye_position = vector(0,0,0).add(eye_offset);
-
-  const eye = {pos: eye_position, size: 0.1};
-
-  await createSection(settings, wall, mirror, mirror_board, eye, mappings.mapping);
-}
-
-async function createSection(settings, wall, mirror, mirror_board, eye, mappings) {
-
-  // Note that all positions are sclars between -0.5 to 0.5
-
-  let mirrors = [];
-  let reflections = [];
-  let id = 0;
-
-  for (let mapping of mappings) {
-    /*const target = wall.center.add(wall.widthVector.scale(mapping.palette.x))
-                              .add(wall.heightVector.scale(mapping.palette.y * -1));*/
-
-    const target_pos = wall.worldPosAtTextureCoord(mapping.palette.x, mapping.palette.y * -1)
-    const target_normal = wall.worldNormalAtTextureCoord(mapping.palette.x, mapping.palette.y * -1);
-
-    const target = {pos: target_pos, normal: target_normal}
-
-    const mirrorPos = vector(0,0,0).add(mirror_board.widthVector.scale(mapping.mirror.x))
-                                   .add(mirror_board.heightVector.scale(mapping.mirror.y * -1))
-                                   .add(mirror.thicknessVector)
-
-    const mirrorObj = createMirrorLookingAt(id++, mirrorPos, eye, target.pos, mirror.widthVector.mag(), mirror.thicknessVector.mag());
-    mirrors.push(mirrorObj);
-
-    // TODO: This should be changed
-    const ellipse_points = createReflectanceEllipsePoints(mirrorObj, eye.pos, target, wall);
-
-    const colors = mapping.palette.colors || [{r:255, g:255, b: 255, a: 255}];
-
-    reflections.push({mirror: mirrorObj, target: target.pos, target_normal, eye, ellipse_points, colors, color_keys: mapping.string});
+  const eye = {
+    pos: vector(0,0,0).add(settings.three_dee.eye_offset), 
+    size: 0.1
   }
 
-  const rapidString = rapid.generate(mirrors, reflections, wall, eye);
-  await saveFile(path.join(settings.output.path, `output.mod`), rapidString);
+  //const world_objects = getWorld3DObjects(settings, wall_generator);
 
-  const gcodeString = gcode.generate(mirrors, reflections, wall, eye);
+  await createSection(settings, wall, mirror_board, eye, mappings.mapping);
+}
+
+async function createSection(settings, wall, mirror_board, eye, mappings) {
+
+  const reflections = createReflections(settings, wall, mappings);
+
+  //const rapidString = rapid.generate(reflections, wall, eye);
+  //await saveFile(path.join(settings.output.path, `output.mod`), rapidString);
+
+  const gcodeString = gcode.generate(reflections, wall, eye);
   await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
 
-  const objString = objcode.generate(mirrors, reflections, wall, eye, settings.three_dee.wall_face_divisions);
+  const objString = objcode.generate(reflections, wall, eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
   await reflection_visualizer.visualize(settings, reflections, wall);
@@ -101,6 +61,104 @@ async function createSection(settings, wall, mirror, mirror_board, eye, mappings
 
   printSize(reflections)
 
+
+}
+
+function createReflections(settings, wall, mappings) {
+
+  const reflections = mappings.map((mapping,id) => {
+    return createReflectionSetupForMirror(settings, id, mapping.mirror, mapping.palette, mapping.palette.colors, mapping.string, wall);
+  })
+  
+  return reflections;
+  
+}
+
+function createReflectionSetupForMirror(settings, id, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall) {
+
+  const three_dee = convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall);
+  const mirror = createMirrorLookingAt(id++, 
+                                      three_dee.mirror.pos, 
+                                      three_dee.eye, 
+                                      three_dee.target.pos, 
+                                      three_dee.mirror.width.mag(), 
+                                      three_dee.mirror.thickness.mag());
+
+  const ellipse_points = createReflectanceEllipsePoints(mirror, three_dee.eye.pos, three_dee.target, three_dee.wall);
+
+  const reflection = {
+    mirror: mirror, 
+    target: three_dee.target.pos, 
+    target_normal: three_dee.target.normal, 
+    eye: three_dee.eye, 
+    ellipse_points: ellipse_points, 
+    colors: three_dee.mirror.colors.colors, 
+    color_keys: three_dee.mirror.color_keys
+  };
+
+  return reflection;
+
+}
+
+function getWorld3DObjects(settings, wall_generator) {
+
+  let wall = wall_generator.getWall(settings)                                 
+
+  const mirror_board = {
+    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
+    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
+    center: vector(0,0,0),
+  }
+
+  const eye = {
+    pos: vector(0,0,0).add(settings.three_dee.eye_offset), 
+    size: 0.1
+  }
+
+  return {
+    eye, 
+    mirror_board,
+    wall
+  }
+
+}
+
+function convertTo3DWorldCoordinates(settings, mirror_pixel_pos, target_palette_pos, colors, color_keys, wall) {
+
+  const mirror_board = {
+    widthVector: vector(settings.three_dee.mirror_diameter, 0, 0),
+    heightVector: vector(0, settings.three_dee.mirror_diameter, 0),
+    center: vector(0,0,0),
+  }
+
+  const eye = {
+    pos: vector(0,0,0).add(settings.three_dee.eye_offset), 
+    size: 0.1
+  };
+
+  const mirror_pos = vector(0,0,0).add(mirror_board.widthVector.scale(mirror_pixel_pos.x))
+                                  .add(mirror_board.heightVector.scale(mirror_pixel_pos.y * -1))
+                                  .add(vector(0, 0, -settings.three_dee.mirror_thickness))
+
+  const mirror = {
+    width: vector(settings.three_dee.mirror_diameter, 0, 0),
+    height: vector(0, settings.three_dee.mirror_diameter, 0),
+    thickness: vector(0, 0, -settings.three_dee.mirror_thickness),
+    pos: mirror_pos,
+    colors: {key: color_keys, colors},
+  }
+
+  const target = {
+    pos: wall.worldPosAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
+    normal: wall.worldNormalAtTextureCoord(target_palette_pos.x, target_palette_pos.y * -1),
+  }
+
+  return {
+    mirror,
+    target,
+    eye,
+    wall,
+  }
 
 }
 
