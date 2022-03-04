@@ -50,7 +50,9 @@ async function run() {
   const reverse_color_map = color_extractor.extractReverseColorMap(settings);
 
   console.log('Extract size'.brightBlue);
-  let image_size = image_size_extractor.extractSize(images);
+  const image_size = image_size_extractor.extractSize(images);
+  const arrangement_size = Math.max(image_size.width, image_size.height);
+  settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
 
   console.log('Convert to colorized hex mirrors'.brightBlue);
   let colored_pixels = await hex_image_arranger.arrange(settings, images, reverse_color_map, image_size);
@@ -87,12 +89,11 @@ async function run() {
 
 
   console.log('Map to wall'.brightBlue);
-  let mapping_conf = await mapper.map(settings, colored_pixels, image_size);
+  let mapping_conf = await mapper.map(settings, wall_generator, colored_pixels, image_size);
 
-  var arrangement_size = Math.max(mapping_conf.mirror.width, mapping_conf.mirror.height);
+  
 
   console.log('Generate 3d files'.yellow);
-  settings.three_dee.mirror_board_diameter = arrangement_size * (settings.three_dee.mirror_diameter + settings.three_dee.mirror_padding);
   await three_dee_generator.generate(settings, mapping_conf, wall_generator);
   
 }
@@ -140,30 +141,62 @@ async function prepareOutputDir(settings) {
   console.log(colors.yellow(`saved settings.js`));
 }
 
+function makeAimPositionPattern(fixed_palette) {
+
+
+  const other_color_aims = Object.values(fixed_palette.aim_positions)
+    .map(a => a.positions)
+    .reduce((prev, curr) => prev.concat(curr), [])
+  
+  for(let x = 0; x < fixed_palette.size.width; x += fixed_palette.size.width / fixed_palette.additional_palette.rows) {
+    for(let y = 0; y < fixed_palette.size.height; y += fixed_palette.size.height / fixed_palette.additional_palette.columns) {
+      let too_close = other_color_aims.filter((aim) => {
+        const dist = Math.sqrt(Math.pow(x - aim.x, 2) + Math.pow(y - aim.y, 2), 2);
+        return dist < fixed_palette.additional_palette.min_distance;
+      });
+      if (too_close.length === 0) {
+        fixed_palette.aim_positions['GY'].positions.push({x,y});  
+      }
+    }
+  }
+  return fixed_palette;
+}
+
 
 function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/optim/wave-guy.png', 
+        path: './images/optim/party.png', 
         columns: 2, 
         rows: 1,
       },
 
-      fixed_palette: 
+      fixed_palette: makeAimPositionPattern(
       {
         aim_positions: {
-          'AA': {colors: [0x00152e | 0xFF000000, 0x00152e | 0xFF000000], positions: [{x: 100, y: 100}, {x: 100, y: 200}]},
-          'BB': {colors: [0x63a1db | 0xFF000000, 0x63a1db | 0xFF000000], positions: [{x: 200, y: 100}, {x: 200, y: 200}]},
-          'DD': {colors: [0xaedce6 | 0xFF000000, 0xaedce6 | 0xFF000000], positions: [{x: 300, y: 100}, {x: 300, y: 200}]},
-          'EE': {colors: [0xeeedea | 0xFF000000, 0xeeedea | 0xFF000000], positions: [{x: 400, y: 100}, {x: 400, y: 200}]},
-          'DA': {colors: [0xaedce6 | 0xFF000000, 0x00152e | 0xFF000000], positions: [{x: 500, y: 100}, {x: 500, y: 200}]},
-          'BA': {colors: [0x63a1db | 0xFF000000, 0x00152e | 0xFF000000], positions: [{x: 600, y: 100}, {x: 500, y: 200}]},
-          'EA': {colors: [0xeeedea | 0xFF000000, 0x00152e | 0xFF000000], positions: [{x: 700, y: 100}, {x: 700, y: 200}]},
-          'FF': {colors: [0x0077dc | 0xFF000000, 0x0077dc | 0xFF000000], positions: [{x: 800, y: 100}, {x: 800, y: 200}]},
+
+          'YW': {colors: [0xfff000 | 0xFF000000, 0xfff000 | 0xFF000000], positions: [{x: 961, y: 332}, {x: 460, y: 310}, {x: 1250, y: 844}]},
+          'GN': {colors: [0x09c900 | 0xFF000000, 0x09c900 | 0xFF000000], positions: [{x: 333, y: 666}, {x: 600 ,y:432}, {x: 1354, y: 506}]},
+          'BK': {colors: [0x000000 | 0xFF000000, 0x000000 | 0xFF000000], positions: [{x: 1273, y: 389}, {x: 288, y: 500}, {x: 700, y: 791}, {x: 1560, y: 600}]},
+          'RD': {colors: [0xdc0000 | 0xFF000000, 0xdc0000 | 0xFF000000], positions: [{x: 400, y: 430}, {x: 472, y: 724}, {x: 612, y: 574}, {x: 1498, y: 298}, {x: 946, y: 842}, {x: 1250, y: 700}]},
+          'WT': {colors: [0xffffff | 0xFF000000, 0xffffff | 0xFF000000], positions: [{x: 500, y: 430}, {x: 812, y: 574}]},
+          'BE': {colors: [0x003f89 | 0xFF000000, 0x003f89 | 0xFF000000], positions: [{x: 1055, y: 645}, {x: 800, y: 858}, {x:1352,y:881}]},
+          'GY': {colors: [0x000000 | 0x00000000, 0x000000 | 0x00000000], positions: [] },
         },
-        path: './output-wall-single-picture/rooster/texture.png',
+        circle_diameter: 100,
+        size: {
+          width: 1760, 
+          height: 1014,
+        },
+        additional_palette: {
+          rows: 17,
+          columns: 10,
+          min_distance: 50,
+        }
+        //path: './images/optim/wave-guy-palette.png',
       },
+      ),
       
       /*
       image: {
@@ -216,7 +249,7 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(0.0, 0.0, 0.2), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(0.0, 0.0, 0.20), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.0, // scalar of full circle around up axis
       //wall_diameter: 4.0,
       wall_width: 1.76,

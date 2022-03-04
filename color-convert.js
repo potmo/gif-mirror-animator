@@ -86,6 +86,10 @@ function toCSS(argb) {
 	return `rgba(${color.r},${color.g},${color.b},${color.a / 255})`;
 }
 
+function ARGBObjectToCSS(color) {
+  return `rgba(${color.r},${color.g},${color.b},${color.a / 255})`;
+}
+
 function toConsoleString(color, string) {
   let obj = toARGBObject(color);
   return "\x1B[48;2;"+obj.r+";"+obj.g+";"+obj.b+"m" + string + '\x1B[49m';
@@ -115,5 +119,6 @@ export {
   paramsToCss,
   objToARGB,
   ARGBObjecToLab,
+  ARGBObjectToCSS,
   toCssHeatmap,
 }

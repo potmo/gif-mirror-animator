@@ -18,31 +18,33 @@ export {
   visualizeMirrorColorGroupsCenterAndOptimal,
 }
 
-async function visualize(settings, reflections, wall) {
+async function visualize(settings, reflections, wall, mirror_board) {
 
-  const size = settings.output.simulation.ellipse_image_size;
+  //const size = settings.output.simulation.ellipse_image_size;
+  const size = settings.output.simulation.mirror_image_size;
+  const padding = {vertical: 150, horizontal: 150}
 
   const ellipses = reflections
     .map(a => a.ellipse_points)
     .map( reflection_points => {
       const scaled_points = reflection_points
-        .map( p => {
-          return wall.textureCoordAtWorldPos(p);
-        })
-        .map(p => {
-          return {x: size.width / 2 + p.x * size.width , y: size.height - (size.height / 2 + p.y * size.height)}
+        //.map( p => {
+        //  return wall.textureCoordAtWorldPos(p);
+        //})
+        .map(pos => {
+          return scaleFromVectorSpaceToPrintSpace(pos, mirror_board, padding, size);
+          //return {x: size.width / 2 + p.x * size.width , y: size.height - (size.height / 2 + p.y * size.height)}
         });
       return scaled_points;
     });
 
 
-  
-  let output = await image_loader.getOutputImage(size.width, size.height, {r:0, g:0, b: 0, a: 255});
+  let output = await image_loader.getOutputImage(size.width + padding.horizontal * 2, size.height + padding.vertical * 2, {r:0, g:0, b: 0, a: 255});  
 
   const context = output.getContext("2d");
 
-  context.fillStyle = `rgba(255,255,255,1.0)`;
-  context.strokeStyle = `rgba(255,255,255,0.5)`;
+  context.fillStyle = `rgba(255,255,255,0.05)`;
+  context.strokeStyle = `rgba(255,255,255,0.0)`;
 
   ellipses.forEach(points => {
     drawDot(context, points);                 
@@ -185,24 +187,49 @@ async function visualizeMirrorAngleDeviations(settings, reflections, mirror_boar
   drawSquare(all_context, padding.horizontal, padding.vertical, size.width, size.height)
 
   const ellipses = getMirrorEllipses(settings, reflections, mirror_board)
+
+  const max_angle = Math.PI / 4;
   
   for (let i = 0; i < ellipses.length; i++) {
     const color_key = reflections[i].color_keys;
     const context = outputs[color_key].getContext('2d');
-    const board_normal = vector(0,0,1); //TODO: maybe not hardcode this?
+    const board_normal = mirror_board.normal;
     const mirror_normal = reflections[i].mirror.normal;
 
     const deviation = board_normal.angleTo(mirror_normal);
-    const deviation_scale = Math.abs(deviation / (Math.PI / 4)); // maximum here would be 90 degrees
+    const deviation_scale = Math.min(1.0, Math.abs(deviation / max_angle)); // maximum here would be 90 degrees
+    const heatmap_color = color_convert.toCssHeatmap(deviation_scale);
 
     let points = ellipses[i];
-    context.fillStyle = color_convert.toCssHeatmap(deviation_scale)//`rgba(${Math.round(255 * deviation_scale)},${0},${0},1)`;
+    context.fillStyle = heatmap_color;
     context.strokeStyle = `rgba(0,0,0,0.6)`;
     drawDot(context, points);
 
-    all_context.fillStyle = color_convert.toCssHeatmap(deviation_scale)//`rgba(${Math.round(255 * deviation_scale)},${0},${0},1)`;
+    all_context.fillStyle = heatmap_color;
     all_context.strokeStyle = `rgba(0,0,0,0.6)`;
     drawDot(all_context, points);
+
+  }
+
+  const legend_squares = 10;
+  for (var i = 0; i < legend_squares; i++) {
+
+    for (let context of Object.values(outputs).map(c => c.getContext('2d'))) {
+      context.fillStyle = color_convert.toCssHeatmap(i / legend_squares);
+      drawSquare(context, 0, 20 + 20 * i, 20, 20);
+      context.fill() 
+      context.font = '12px serif';
+      context.fillStyle = 'rgba(0,0,0,1)'
+      context.fillText(`${((i/legend_squares)*max_angle*180/Math.PI).toFixed(2)}°`, 30, 20 + 20 * i);
+    }
+     
+    all_context.fillStyle = color_convert.toCssHeatmap(i / legend_squares);
+    drawSquare(all_context, 0, 20 + 20 * i, 20, 20);
+    all_context.fill()
+    all_context.font = '12px serif';
+    all_context.fillStyle = 'rgba(0,0,0,1)'
+    all_context.fillText(`${((i/legend_squares)*max_angle*180/Math.PI).toFixed(2)}°`, 30, 20 + 20 * i);
+
 
   }
 
@@ -216,19 +243,32 @@ async function visualizeMirrorAngleDeviations(settings, reflections, mirror_boar
 }
 
 async function visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, mirror_board) {
+  const unique_color_sequences = reflections.map(reflection => reflection.color_keys)
+                                            .filter((value, index, self) => self.indexOf(value) === index);
   const size = settings.output.simulation.mirror_image_size;
   const padding = {vertical: 150, horizontal: 150}
-  const ellipses = getMirrorEllipses(settings, reflections, mirror_board)
 
-  const unique_color_sequences = reflections.map(reflection => reflection.color_keys)
-                                            .filter((value, index, self) => self.indexOf(value) === index)
+  const eye_offsets = [
+    vector(-0.8, 0, 0),
+    vector(-0.7, 0, 0),
+    vector(-0.6, 0, 0),
+    vector(-0.5, 0, 0),
+    vector(-0.4, 0, 0),
+    vector(-0.3, 0, 0),
+    vector(-0.2, 0, 0),
+    vector(-0.1, 0, 0),
+    vector(0.0, 0, 0),
+    vector(0.1, 0, 0),
+    vector(0.2, 0, 0),
+    vector(0.3, 0, 0),
+    vector(0.4, 0, 0),
+    vector(0.5, 0, 0),
+    vector(0.6, 0, 0),
+    vector(0.7, 0, 0),
+    vector(0.8, 0, 0),
+  ]
 
-  
-  let outputs = {};
-  let ellipses_by_group = {};
-  let non_rotated_mirror_targets = {};
-  let non_rotated_mirror_targets_means = {};
-
+  let outputs = {};       
   for (let i = 0; i < unique_color_sequences.length; i++) {
     const key = unique_color_sequences[i];
     let output = await image_loader.getOutputImage(size.width + padding.horizontal * 2, size.height + padding.vertical * 2, {r:255, g:255, b: 255, a: 0});  
@@ -236,28 +276,101 @@ async function visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections,
     const context = output.getContext("2d");
     context.strokeStyle = `rgba(255,0,0, 0.5)`;
     drawSquare(context, padding.horizontal, padding.vertical, size.width, size.height)
+  }     
 
-    ellipses_by_group[key] = [];
+  const mirror_targets = eye_offsets.map(eye_offset => {
+    return getNonRotatedMirrorTargetsFromEyePosition(settings, reflections, mirror_board, padding, size, eye_offset);
+  })
+
+
+  for (let key of unique_color_sequences) {
+
+    const targets = mirror_targets.map( mirror_target => {
+      return {
+        position: mirror_target.non_rotated_mirror_targets[key],
+        mean: mirror_target.non_rotated_mirror_targets_means[key],
+      }
+    })
+
+    const context = outputs[key].getContext('2d');
+
+    // Note that this is a bit of a strange loop.
+    // targets contains all eye positions
+    // that in turn contains all the target positions per sequence_color
+    context.strokeStyle = `rgba(${100},${100},${255},1)`;
+    for (let j = 0; j < targets[0].position.length; j++){
+      context.beginPath();
+      context.moveTo(targets[0].position[j].x, targets[0].position[j].y);
+
+      for (let i = 0; i < targets.length; i++) {
+        const pos = targets[i].position[j];
+        context.lineTo(pos.x, pos.y);  
+      }
+
+      context.stroke()  
+    }
+
+    for (let j = 0; j < targets[0].position.length; j++){
+      for (let i = 0; i < targets.length; i++) {
+        const pos = targets[i].position[j];
+        drawCross(context, pos.x, pos.y, 3, 3);
+      }
+    }
+    
+
+    
+    context.strokeStyle = `rgba(${0},${255},${0},1)`;
+    const normal_position = Math.round(targets.length/2) - 1;
+    targets[normal_position].position.forEach(pos => {
+      drawCross(context, pos.x, pos.y, 10, 10);
+    })
+
+    const mean = targets[normal_position].mean;
+    context.strokeStyle = `rgba(${255},${0},${255},1)`;
+    drawCross(context, mean.x, mean.y, 10, 10);
+
+  }
+
+
+  for(let key of Object.keys(outputs)) {
+    const output = outputs[key];
+    await image_loader.writeImage(path.join(settings.output.path, settings.output.mirror_angle_deviations.path, `non_rotated_mirror_targets_${key}.png`), output);  
+  }                                                                            
+
+}
+
+function getNonRotatedMirrorTargetsFromEyePosition(settings, reflections, mirror_board, padding, size, eye_offset) {
+  
+
+  const unique_color_sequences = reflections.map(reflection => reflection.color_keys)
+                                            .filter((value, index, self) => self.indexOf(value) === index)
+
+  
+  let reflections_by_group = {};
+  let non_rotated_mirror_targets = {};
+  let non_rotated_mirror_targets_means = {};
+
+  for (let i = 0; i < unique_color_sequences.length; i++) {
+    const key = unique_color_sequences[i];
+    reflections_by_group[key] = [];
     non_rotated_mirror_targets[key] = []
     non_rotated_mirror_targets_means[key] = vector(0,0,0);
 
     // Write the colors in the top
   }
 
-
-  for (let i = 0; i < ellipses.length; i++) {
+  for (let i = 0; i < reflections.length; i++) {
     const color_key = reflections[i].color_keys;
-    ellipses_by_group[color_key].push({reflection: reflections[i], ellipse: ellipses[i]});
+    reflections_by_group[color_key].push(reflections[i]);
   }
 
 
   // calculate where the reflection would hit the colors if they were not angled
-  for (let key of Object.keys(ellipses_by_group)) {
-    let group_reflections = ellipses_by_group[key].map(g => g.reflection);
-    for (let reflection of group_reflections) {
+  for (let key of Object.keys(reflections_by_group)) {
+    for (let reflection of reflections_by_group[key]) {
       let pos = reflection.mirror.pos;
-      let eye = reflection.eye.pos;
-      let normal = vector(0,0,1); // TODO: maybe not hardcode here
+      let eye = reflection.eye.pos.add(eye_offset);
+      let normal = mirror_board.normal; 
       let target_normal = reflection.target_normal;
 
       if (target_normal.mag() <= 0) throw new Error('The normal of the color field is all 0')
@@ -289,25 +402,9 @@ async function visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections,
                                           
   }
 
-  for (let key of Object.keys(non_rotated_mirror_targets)) {
-    const context = outputs[key].getContext('2d');
-    context.strokeStyle = `rgba(${0},${255},${0},1)`;
-    non_rotated_mirror_targets[key].forEach(pos => {
-      drawCross(context, pos.x, pos.y, 10, 10);
-    })
+  return {non_rotated_mirror_targets, non_rotated_mirror_targets_means};
 
-    const mean = non_rotated_mirror_targets_means[key];
-    context.strokeStyle = `rgba(${255},${0},${255},1)`;
-    drawCross(context, mean.x, mean.y, 10, 10);
-    
-  }
-
-
-  for(let key of Object.keys(outputs)) {
-    const output = outputs[key];
-    await image_loader.writeImage(path.join(settings.output.path, settings.output.mirror_angle_deviations.path, `non_rotated_mirror_targets_${key}.png`), output);  
-  }
-
+  
 }
 
 

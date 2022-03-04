@@ -12,6 +12,10 @@ import * as reflection_visualizer from './reflection-simulation-visualizer.js'
 
 export {
   generate,
+  createReflectionSetupForMirror,
+  getWorld3DObjects,
+  convertTo3DWorldCoordinates,
+  createMirrorLookingAt,
 }
 
 async function generate(settings, mappings, wall_generator) {
@@ -34,7 +38,7 @@ async function createSection(settings, world_objects, mappings) {
   const objString = objcode.generate(reflections, world_objects.wall, world_objects.eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
-  await reflection_visualizer.visualize(settings, reflections, world_objects.wall);
+  await reflection_visualizer.visualize(settings, reflections, world_objects.wall, world_objects.mirror_board);
 
   await reflection_visualizer.visualizeArrangement(settings, reflections, world_objects.mirror_board);
 
@@ -44,7 +48,6 @@ async function createSection(settings, world_objects, mappings) {
 
   await reflection_visualizer.visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, world_objects.mirror_board);
 
-  
 
   printSize(reflections)
 
@@ -98,6 +101,7 @@ function getWorld3DObjects(settings, wall_generator) {
     widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
     heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
     center: vector(0,0,0),
+    normal: vector(0,0,1),
   }
 
   const eye = {

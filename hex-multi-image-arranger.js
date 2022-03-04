@@ -34,6 +34,8 @@ async function arrange(settings, images, reverse_color_map, image_size) {
 
   var output = [];
 
+  let missing_color_sequences = [];
+
   for (let x = 0; x < image_size.width; x++) {
     for (let y = 0; y < image_size.height; y++) {
 
@@ -61,10 +63,11 @@ async function arrange(settings, images, reverse_color_map, image_size) {
             });
 
       if (color_keys.length == 0) {
-        throw new Error(`Image contains a color sequence not present in the color map ${colors.map(color_convert.toHexString).join(', ')}`);
+        // keep on going but fail later
+        missing_color_sequences.push(colors);
       }
 
-      const color_key = color_keys[0];
+      const color_key = color_keys[0] || 'NOT_FOUND';
       
       const hex_pos = {
         x: size * Math.sqrt(3) * (x + 0.5 * (y & 1)),
@@ -88,6 +91,15 @@ async function arrange(settings, images, reverse_color_map, image_size) {
       })
 
     }
+  }
+
+  if (missing_color_sequences.length !== 0) {
+    // make unique
+    const missing_color_sequences_string = missing_color_sequences.map( e => e.map(color_convert.toHexString).join(', '))
+        .filter( (e,i,a) => a.indexOf(e) === i)
+        .join('\n')
+
+    throw new Error(`Image contains color sequences not present in the color map:\n${missing_color_sequences_string}`);
   }
 
   return output;
