@@ -19,6 +19,11 @@ import * as image_size_extractor from './image-size-extractor.js';
 import * as color_convert from './color-convert.js';
 import vector from './vector.js';
 
+import FastPoissonDiskSampling from 'fast-2d-poisson-disk-sampling';
+
+import seedrandom  from 'seedrandom';
+const rnd = seedrandom('This is the seed');
+
 run()
   .then(()=>{
     console.log('done'.green);
@@ -163,36 +168,92 @@ function makeAimPositionPattern(fixed_palette) {
 }
 
 
+function randomizePositions(run, fixed_palette) {
+
+  if (!run) return fixed_palette;
+
+  const padding = fixed_palette.circle_diameter * 0.9;
+
+  const p = new FastPoissonDiskSampling({
+    shape: [fixed_palette.size.width - padding * 2, fixed_palette.size.height - padding * 2] ,
+    radius: fixed_palette.random.min_distance,
+    tries: 30,
+  },rnd);
+  let points = p.fill()
+    .map(p => ({x: p[0] + padding, y: p[1] + padding}))
+    .map(value => ({ value, sort: rnd() })) // shuffle below
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+
+  const dot_area = Math.pow(fixed_palette.circle_diameter / 2 / 1000, 2) * Math.PI * points.length;
+  const palette_area = (fixed_palette.size.width / 1000) * (fixed_palette.size.height / 1000);
+  const percent_covered = dot_area / palette_area;
+
+  console.log(`Number of generated color field points is ${points.length}`.brightBlue)
+  console.log(`Total area of dots is ${dot_area.toFixed(3)} and total area of palette is ${palette_area.toFixed(3)} (${(percent_covered*100).toFixed(3)}%)`.brightBlue)
+
+
+  const color_keys = Object.keys(fixed_palette.aim_positions);
+  const points_per_color = Math.ceil(points.length / color_keys.length);
+
+  for (let key of color_keys) {
+    for (let i = 0; i < points_per_color && points.length > 0; i++){
+      const point = points.pop();
+      fixed_palette.aim_positions[key].positions.push(point);
+    }  
+  }
+  
+  return fixed_palette;
+}
+
+function makeGrid(rows, columns, size, padding) {
+
+  let output = []
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < columns; c++) {
+      output.push({
+        x: padding.x + r * (size.x - padding.x * 2) / (rows - 1),
+        y: padding.y + c * (size.y - padding.y * 2) / (columns - 1),
+      })
+    }
+  }
+
+  return output;
+
+}
+
+
 function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/optim/party.png', 
-        columns: 2, 
+        path: './images/optim/small_blue.png', 
+        columns: 1, 
         rows: 1,
       },
 
-      fixed_palette: makeAimPositionPattern(
+      fixed_palette: randomizePositions(true,
       {
         aim_positions: {
 
-          'YW': {colors: [0xfff000 | 0xFF000000, 0xfff000 | 0xFF000000], positions: [{x: 961, y: 332}, {x: 460, y: 310}, {x: 1250, y: 844}]},
-          'GN': {colors: [0x09c900 | 0xFF000000, 0x09c900 | 0xFF000000], positions: [{x: 333, y: 666}, {x: 600 ,y:432}, {x: 1354, y: 506}]},
-          'BK': {colors: [0x000000 | 0xFF000000, 0x000000 | 0xFF000000], positions: [{x: 1273, y: 389}, {x: 288, y: 500}, {x: 700, y: 791}, {x: 1560, y: 600}]},
-          'RD': {colors: [0xdc0000 | 0xFF000000, 0xdc0000 | 0xFF000000], positions: [{x: 400, y: 430}, {x: 472, y: 724}, {x: 612, y: 574}, {x: 1498, y: 298}, {x: 946, y: 842}, {x: 1250, y: 700}]},
-          'WT': {colors: [0xffffff | 0xFF000000, 0xffffff | 0xFF000000], positions: [{x: 500, y: 430}, {x: 812, y: 574}]},
-          'BE': {colors: [0x003f89 | 0xFF000000, 0x003f89 | 0xFF000000], positions: [{x: 1055, y: 645}, {x: 800, y: 858}, {x:1352,y:881}]},
-          'GY': {colors: [0x000000 | 0x00000000, 0x000000 | 0x00000000], positions: [] },
+          'BL': {colors: [0x006aff | 0xFF000000], positions: []/*makeGrid(17,10, {x: 1760, y: 1010}, {x: 40, y: 40})*/ },
+          //'GN': {colors: [0x09c900 | 0xFF000000], positions: [] },
+          //'RD': {colors: [0xdc0000 | 0xFF000000], positions: [] },
+          //'YW': {colors: [0xfff200 | 0xFF000000], positions: [] },
+          //'WT': {colors: [0xffffff | 0xFF000000], positions: [] },
         },
-        circle_diameter: 100,
+        circle_diameter: 50,
         size: {
-          width: 1760, 
-          height: 1014,
+          width: 500, //1760
+          height: 500, //1010
+        },
+        random: {
+          min_distance: 80,
         },
         additional_palette: {
           rows: 17,
           columns: 10,
-          min_distance: 50,
+          min_distance: 40,
         }
         //path: './images/optim/wave-guy-palette.png',
       },
@@ -249,13 +310,13 @@ function getSettings() {
       mirror_diameter: 0.0105, // this is the diameter of the mirror
       mirror_padding: 0.0025, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
-      wall_offset: vector(0.0, 0.0, 0.20), //vector(2.00, 0.0, 2.00),
+      wall_offset: vector(0.0, 0.0, 0.15), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.0, // scalar of full circle around up axis
       //wall_diameter: 4.0,
-      wall_width: 1.76,
-      wall_height: 1.01,
+      wall_width: 0.5, //1.76
+      wall_height: 0.5, //1.01
       wall_face_divisions: 50,
-      eye_offset: vector(0.0, 0.0, 2.00),
+      eye_offset: vector(0.0, 0.0, 2.0),
 
     },
     optimization: {
