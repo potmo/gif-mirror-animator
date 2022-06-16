@@ -107,3 +107,8 @@ async function toBuffer(canvas) {
     });
   });
 }
+
+export async function writeText(file, string) {
+  await fs.writeFile(path.join(path.resolve(), file), string);
+  console.log(`saved ${file}`.yellow);
+}

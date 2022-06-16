@@ -43,12 +43,29 @@ async function visualize(settings, reflections, wall, mirror_board) {
 
   const context = output.getContext("2d");
 
+
   context.fillStyle = `rgba(255,255,255,0.05)`;
   context.strokeStyle = `rgba(255,255,255,0.0)`;
 
   ellipses.forEach(points => {
     drawDot(context, points);                 
   });
+
+
+  const board = {
+    upper_left: scaleFromVectorSpaceToPrintSpace(vector(-settings.three_dee.wall_width/2, settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+    upper_right: scaleFromVectorSpaceToPrintSpace(vector(settings.three_dee.wall_width/2, settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+    lower_left: scaleFromVectorSpaceToPrintSpace(vector(-settings.three_dee.wall_width/2, -settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+    lower_right: scaleFromVectorSpaceToPrintSpace(vector(settings.three_dee.wall_width/2, -settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+  }
+  context.strokeStyle = `rgba(255,0,255,1.0)`;
+  context.beginPath()
+  context.moveTo(board.upper_left.x, board.upper_left.y);
+  context.lineTo(board.upper_right.x, board.upper_right.y);
+  context.lineTo(board.lower_right.x, board.lower_right.y);
+  context.lineTo(board.lower_left.x, board.lower_left.y);
+  context.lineTo(board.upper_left.x, board.upper_left.y);
+  context.stroke();
   
 
   await image_loader.writeImage(path.join(settings.output.path, 'simulation', 'simulated_reflection.png'), output);
@@ -83,6 +100,22 @@ async function visualizeArrangement(settings, reflections, mirror_board) {
 
     context.strokeStyle = `rgba(255,0,0, 0.5)`;
     drawSquare(context, padding.horizontal, padding.vertical, size.width, size.height)
+
+    const board = {
+      upper_left: scaleFromVectorSpaceToPrintSpace(vector(-settings.three_dee.wall_width/2, settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+      upper_right: scaleFromVectorSpaceToPrintSpace(vector(settings.three_dee.wall_width/2, settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+      lower_left: scaleFromVectorSpaceToPrintSpace(vector(-settings.three_dee.wall_width/2, -settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+      lower_right: scaleFromVectorSpaceToPrintSpace(vector(settings.three_dee.wall_width/2, -settings.three_dee.wall_height/2, 0), mirror_board, padding, size),
+    }
+    context.strokeStyle = `rgba(255,0,255,1.0)`;
+    context.beginPath()
+    context.moveTo(board.upper_left.x, board.upper_left.y);
+    context.lineTo(board.upper_right.x, board.upper_right.y);
+    context.lineTo(board.lower_right.x, board.lower_right.y);
+    context.lineTo(board.lower_left.x, board.lower_left.y);
+    context.lineTo(board.upper_left.x, board.upper_left.y);
+    context.stroke();
+
   }
   
   for(let frame = 0; frame < frames; frame++) {

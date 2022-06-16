@@ -12,7 +12,7 @@ import * as image_loader from './image-loader.js';
 import * as three_dee_generator from './3d-generator.js';
 
 import * as color_convert from  './color-convert.js';
-import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
+import {writeImage, writeImageSilent, getOutputImage, writeText} from './image-loader.js';
 
 const rnd = seedrandom('This is the seed');
 
@@ -130,6 +130,9 @@ async function printPalette(settings) {
   const context = output.getContext("2d");
   context.font = '12px serif';
 
+  let svg =  `<svg width="${settings.input.fixed_palette.size.width}" height="${settings.input.fixed_palette.size.height}" xmlns="http://www.w3.org/2000/svg" version="1.1">`;
+
+   svg += `<rect x="0" y="0" width="${settings.input.fixed_palette.size.width}" height="${settings.input.fixed_palette.size.height}" stroke="red" fill-opacity="0.0" stroke-opacity="1.0"/>`;
 
   for (const color_key of Object.keys(settings.input.fixed_palette.aim_positions)) {
 
@@ -151,6 +154,8 @@ async function printPalette(settings) {
         context.fill();
         context.stroke();
 
+        svg +=  `<circle cx="${aim_position.x}" cy="${aim_position.y}" r="${settings.input.fixed_palette.circle_diameter/2}" fill-opacity="0.0" stroke="black"/>`;
+
         //context.fillStyle = `rgba(0,0,0, 1.0})`;
         //context.fillText(color_key, aim_position.x + 30, aim_position.y);
       }
@@ -158,7 +163,13 @@ async function printPalette(settings) {
     }
   }
 
+  svg += `</svg>`
+
   if (settings.output.texture) {  
-      await writeImage(path.join(settings.output.path,'texture.png'), output);
-    }
+    await writeImage(path.join(settings.output.path,'texture.png'), output);
+  }
+
+  if (settings.output.svg) {  
+    await writeText(path.join(settings.output.path,'texture.svg'), svg, {encoding: 'utf8'});  
+  }
 }

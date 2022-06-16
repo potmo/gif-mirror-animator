@@ -3,11 +3,10 @@
 import path from 'path';
 import colors from 'colors';
 import fs from 'fs-extra';
+import util from 'util';
 import * as mapper from './predifened-multi-color-position-mapper.js';
 import * as image_loader from './image-loader.js';
 import * as three_dee_generator from './3d-generator.js';
-import * as hex_converter from './hex-converter.js';
-import * as mirror_arranger from './mirror-square-arranger.js';
 import * as arrangement_color_sampler from './mirror-arrangement-color-sampler.js';
 
 import * as hex_image_arranger from './hex-multi-image-arranger.js'
@@ -23,6 +22,23 @@ import FastPoissonDiskSampling from 'fast-2d-poisson-disk-sampling';
 
 import seedrandom  from 'seedrandom';
 const rnd = seedrandom('This is the seed');
+
+
+function overloadConsole(settings) {
+  const org_console = console;
+  const log_file = fs.createWriteStream(path.join(settings.output.path, `log.txt`), { flags: 'a' });
+  const log_stdout = process.stdout;
+
+  console.log = () => {
+    log_file.write(util.format.apply(null, arguments) + '\n');
+    log_stdout.write(util.format.apply(null, arguments) + '\n');
+  }
+
+  console.error = console.log;
+  console.info = console.log;
+  console.warn = console.log;
+
+}
 
 run()
   .then(()=>{
@@ -42,6 +58,8 @@ function alertTerminal(){
 
 async function run() {
   const settings = getSettings();
+  //overloadConsole(settings);
+
   await prepareOutputDir(settings);
 
   console.log('Load images'.brightBlue);
@@ -227,7 +245,7 @@ function getSettings() {
   let settings =  {
     input: {
       atlas: {
-        path: './images/optim/small_blue.png', 
+        path: './images/optim/blue_150x100.png', 
         columns: 1, 
         rows: 1,
       },
@@ -244,8 +262,8 @@ function getSettings() {
         },
         circle_diameter: 50,
         size: {
-          width: 500, //1760
-          height: 500, //1010
+          width: 1500, //1760
+          height: 1000, //1010
         },
         random: {
           min_distance: 80,
@@ -295,6 +313,7 @@ function getSettings() {
       mirror_angle_deviations: {
         path: 'mirror_angle_deviations'
       },
+      svg: true,
       texture: true,
       obj: true,
       mod: true,
@@ -313,8 +332,8 @@ function getSettings() {
       wall_offset: vector(0.0, 0.0, 0.15), //vector(2.00, 0.0, 2.00),
       wall_rotation_scalar: -0.0, // scalar of full circle around up axis
       //wall_diameter: 4.0,
-      wall_width: 0.5, //1.76
-      wall_height: 0.5, //1.01
+      wall_width: 1.5, //1.76
+      wall_height: 1.0, //1.01
       wall_face_divisions: 50,
       eye_offset: vector(0.0, 0.0, 2.0),
 

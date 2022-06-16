@@ -1,0 +1,61 @@
+\babel@toc {english}{}
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {english}{}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2}A brief history and background}{3}{section.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3}Picking a suitable image or images for reproduction}{4}{section.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4}Selecting an optimized color palette, or \emph {color quantisation}}{4}{section.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5}Ways of refining the reduced palette to create perceived gradients and shades}{5}{section.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6}Considerations of how to arrange the mirrors}{7}{section.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {7}A very brief primer on light transport}{8}{section.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {8}How to compute the orientation of each individual mirror}{9}{section.8}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {9}Some tricks used to optimize and reduce the physical space occupied by the color fields}{13}{section.9}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.1}De Bruijn sequences}{13}{subsection.9.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.2}Disc shaped palettes}{14}{subsection.9.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.3}Loopability and better space utilization}{14}{subsection.9.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.4}Sorting the sequence rings with Shannon entropy}{15}{subsection.9.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.5}Increasing frame-rate by multiplication}{15}{subsection.9.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.6}Prune redundancies}{15}{subsection.9.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.7}Ring staggering}{16}{subsection.9.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.8}Not overlapping pictures}{16}{subsection.9.8}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {9.9}Pruning when having too many sequences}{17}{subsection.9.9}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {10}Using Software to simulate the mirror setups for rapid iterations.}{18}{section.10}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {11}Fabricating the mirror array panel}{19}{section.11}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {11.1}3D-printing}{19}{subsection.11.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {11.2}Milling}{20}{subsection.11.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {12}Calibrating}{22}{section.12}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {13}Results}{24}{section.13}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {13.1}Nightshades}{24}{subsection.13.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {13.2}We know how to live}{25}{subsection.13.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {13.3}Leonardo}{26}{subsection.13.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {13.4}Brontide}{27}{subsection.13.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {13.5}Strokes}{28}{subsection.13.5}%

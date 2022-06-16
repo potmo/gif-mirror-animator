@@ -75,8 +75,8 @@ async function arrange(settings, images, reverse_color_map, image_size) {
       }
 
       const scaled_hex_pos = {
-        x: hex_pos.x / max_image_size,
-        y: hex_pos.y / max_image_size,
+        x: (0.5 + hex_pos.x) / max_image_size,
+        y: (0.5 + hex_pos.y) / max_image_size,
       };
 
       const scaled_hex_pos_with_padding = {
