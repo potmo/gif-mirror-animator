@@ -16,6 +16,8 @@ export {
   getWorld3DObjects,
   convertTo3DWorldCoordinates,
   createMirrorLookingAt,
+  createSection,
+  createSectionWithReflections,
 }
 
 async function generate(settings, mappings, wall_generator) {
@@ -28,12 +30,18 @@ async function generate(settings, mappings, wall_generator) {
 async function createSection(settings, world_objects, mappings) {
 
   const reflections = createReflections(settings, world_objects, mappings);
+  return await createSectionWithReflections(settings, world_objects, reflections);
 
+}
+
+async function createSectionWithReflections(settings, world_objects, reflections) {
   //const rapidString = rapid.generate(reflections, wall, eye);
   //await saveFile(path.join(settings.output.path, `output.mod`), rapidString);
 
-  const gcodeString = gcode.generate(reflections, world_objects.wall, world_objects.eye);
-  await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
+  //const gcodeString = gcode.generate(reflections, world_objects.wall, world_objects.eye);
+  //await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
+
+  console.log(JSON.stringify(reflections[0], null, 2));
 
   const objString = objcode.generate(reflections, world_objects.wall, world_objects.eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);

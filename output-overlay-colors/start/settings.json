@@ -1,0 +1,136 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./readme/images/walkthrough/start.png",
+      "columns": 1,
+      "rows": 1
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "A": {
+          "colors": [
+            -13824
+          ],
+          "positions": [
+            {
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "B": {
+          "colors": [
+            -1190322
+          ],
+          "positions": [
+            {
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "circle_diameter": 100,
+      "size": {
+        "width": 1760,
+        "height": 1014
+      }
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-overlay-colors/start",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false,
+        "width": 400,
+        "height": 400,
+        "mirror_size": 10
+      },
+      "frames": true
+    },
+    "heatmaps": {
+      "path": "heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "mirror_angle_deviations"
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "image": {
+      "height": 1000,
+      "width": 1000,
+      "columns": 4
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 0.2
+    },
+    "wall_rotation_scalar": 0,
+    "wall_width": 1.76,
+    "wall_height": 1.01,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 2
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": false
+    },
+    "prune": {
+      "max_sequences": 40,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": false,
+    "shift_sequences": {},
+    "fixed_sequence_key_order": [
+      "I",
+      "G",
+      "B",
+      "A",
+      "J",
+      "E",
+      "D",
+      "F",
+      "C",
+      "K",
+      "L",
+      "H",
+      "M",
+      "N",
+      "P",
+      "O"
+    ]
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

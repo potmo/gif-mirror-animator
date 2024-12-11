@@ -43,6 +43,16 @@ function ARGBtoABGR(argb) {
 	return (alpha << 24 | blue << 16 | green << 8 | red) >>> 0;
 }
 
+function RGBAtoARGB(rgba) {
+  // first shift zero to the right to get unsigned int
+  const red = ((rgba >>> 0) & 0xFF000000) >>> 24;
+  const green = ((rgba >>> 0) & 0x00FF0000) >>> 16;
+  const blue = ((rgba  >>> 0) & 0x0000FF00) >>> 8;
+  const alpha = ((rgba  >>> 0) & 0x000000FF) >>> 0;
+  
+  return (alpha << 24 | red << 16 | green << 8 | blue) >>> 0;
+}
+
 function toARGBObject(argb) {
 	const a = ((argb  >>> 0) & 0xFF000000) >>> 24;
 	const r = ((argb >>> 0) & 0x00FF0000) >>> 16;
@@ -112,6 +122,7 @@ export {
   toHexString,
   ABGRtoARGB,
   ARGBtoABGR,
+  RGBAtoARGB,
   toARGBObject,
   toCSS,
   ARGBObjectToHexString,

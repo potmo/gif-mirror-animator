@@ -1,0 +1,370 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/optim/solid.png",
+      "columns": 2,
+      "rows": 1
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "AA": {
+          "colors": [
+            -16771794,
+            -16771794
+          ],
+          "positions": [
+            {
+              "x": 100,
+              "y": 100
+            },
+            {
+              "x": 100,
+              "y": 914
+            },
+            {
+              "x": 100,
+              "y": 507
+            },
+            {
+              "x": 900,
+              "y": 100
+            },
+            {
+              "x": 900,
+              "y": 914
+            },
+            {
+              "x": 900,
+              "y": 507
+            }
+          ]
+        },
+        "BB": {
+          "colors": [
+            -16746532,
+            -16746532
+          ],
+          "positions": [
+            {
+              "x": 200,
+              "y": 100
+            },
+            {
+              "x": 200,
+              "y": 914
+            },
+            {
+              "x": 200,
+              "y": 507
+            },
+            {
+              "x": 1000,
+              "y": 100
+            },
+            {
+              "x": 1000,
+              "y": 914
+            },
+            {
+              "x": 1000,
+              "y": 507
+            }
+          ]
+        },
+        "DD": {
+          "colors": [
+            -10247717,
+            -10247717
+          ],
+          "positions": [
+            {
+              "x": 300,
+              "y": 100
+            },
+            {
+              "x": 300,
+              "y": 914
+            },
+            {
+              "x": 300,
+              "y": 507
+            },
+            {
+              "x": 1100,
+              "y": 100
+            },
+            {
+              "x": 1100,
+              "y": 914
+            },
+            {
+              "x": 1100,
+              "y": 507
+            }
+          ]
+        },
+        "EE": {
+          "colors": [
+            -5317402,
+            -5317402
+          ],
+          "positions": [
+            {
+              "x": 400,
+              "y": 100
+            },
+            {
+              "x": 400,
+              "y": 914
+            },
+            {
+              "x": 400,
+              "y": 507
+            },
+            {
+              "x": 1200,
+              "y": 100
+            },
+            {
+              "x": 1200,
+              "y": 914
+            },
+            {
+              "x": 1200,
+              "y": 507
+            }
+          ]
+        },
+        "DA": {
+          "colors": [
+            -1118742,
+            -1118742
+          ],
+          "positions": [
+            {
+              "x": 500,
+              "y": 100
+            },
+            {
+              "x": 500,
+              "y": 914
+            },
+            {
+              "x": 500,
+              "y": 507
+            },
+            {
+              "x": 1300,
+              "y": 100
+            },
+            {
+              "x": 1300,
+              "y": 914
+            },
+            {
+              "x": 1300,
+              "y": 507
+            }
+          ]
+        },
+        "BA": {
+          "colors": [
+            -10247717,
+            -16771794
+          ],
+          "positions": [
+            {
+              "x": 600,
+              "y": 100
+            },
+            {
+              "x": 600,
+              "y": 914
+            },
+            {
+              "x": 600,
+              "y": 507
+            },
+            {
+              "x": 1400,
+              "y": 100
+            },
+            {
+              "x": 1400,
+              "y": 914
+            },
+            {
+              "x": 1400,
+              "y": 507
+            }
+          ]
+        },
+        "EA": {
+          "colors": [
+            -1118742,
+            -16771794
+          ],
+          "positions": [
+            {
+              "x": 700,
+              "y": 100
+            },
+            {
+              "x": 700,
+              "y": 914
+            },
+            {
+              "x": 700,
+              "y": 507
+            },
+            {
+              "x": 1500,
+              "y": 100
+            },
+            {
+              "x": 1500,
+              "y": 914
+            },
+            {
+              "x": 1500,
+              "y": 507
+            }
+          ]
+        },
+        "FF": {
+          "colors": [
+            -5317402,
+            -16771794
+          ],
+          "positions": [
+            {
+              "x": 800,
+              "y": 100
+            },
+            {
+              "x": 800,
+              "y": 914
+            },
+            {
+              "x": 800,
+              "y": 507
+            },
+            {
+              "x": 1600,
+              "y": 100
+            },
+            {
+              "x": 1600,
+              "y": 914
+            },
+            {
+              "x": 1600,
+              "y": 507
+            }
+          ]
+        }
+      },
+      "circle_diameter": 100,
+      "size": {
+        "width": 1760,
+        "height": 1014
+      }
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-overlay-colors/solid",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false,
+        "width": 400,
+        "height": 400,
+        "mirror_size": 10
+      },
+      "frames": true
+    },
+    "heatmaps": {
+      "path": "heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "mirror_angle_deviations"
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "image": {
+      "height": 1000,
+      "width": 1000,
+      "columns": 4
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 0.2
+    },
+    "wall_rotation_scalar": 0,
+    "wall_width": 1.76,
+    "wall_height": 1.01,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 2
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": false
+    },
+    "prune": {
+      "max_sequences": 40,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": false,
+    "shift_sequences": {},
+    "fixed_sequence_key_order": [
+      "I",
+      "G",
+      "B",
+      "A",
+      "J",
+      "E",
+      "D",
+      "F",
+      "C",
+      "K",
+      "L",
+      "H",
+      "M",
+      "N",
+      "P",
+      "O"
+    ]
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

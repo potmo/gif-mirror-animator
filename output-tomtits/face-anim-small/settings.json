@@ -1,0 +1,162 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/face-anim-small.png",
+      "columns": 5,
+      "rows": 1
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "A": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 700,
+              "y": 100,
+              "close": {
+                "x": 0,
+                "y": 1
+              }
+            },
+            {
+              "x": 1500,
+              "y": 100,
+              "close": {
+                "x": 1,
+                "y": 0
+              }
+            }
+          ]
+        },
+        "B": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 300,
+              "y": 100,
+              "close": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "x": 1100,
+              "y": 100,
+              "close": {
+                "x": 1,
+                "y": 1
+              }
+            }
+          ]
+        },
+        "C": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 100,
+              "y": 100
+            }
+          ]
+        },
+        "D": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 900,
+              "y": 100
+            }
+          ]
+        },
+        "E": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 500,
+              "y": 100
+            }
+          ]
+        },
+        "F": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 1300,
+              "y": 100
+            }
+          ]
+        }
+      },
+      "path": "./images/texture-for-up-down-cone.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-tomtits/face-anim-small",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false
+      }
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "cylinder_image": {
+      "height": 1000,
+      "diameter_scalar": 3
+    },
+    "heatmaps": {
+      "path": "./heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "./image-deviations"
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 0.05
+    },
+    "wall_rotation_scalar": 0,
+    "wall_roll_scalar": -0.3125,
+    "wall_top_diameter": 0.45,
+    "wall_diameter": 0.8,
+    "wall_height": 0.27,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 2
+    }
+  },
+  "optimization": {
+    "reuse_permutations": false,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": true
+    },
+    "pick_any_cycle": false
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

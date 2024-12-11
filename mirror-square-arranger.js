@@ -9,12 +9,29 @@ import {writeImage, getOutputImage} from './image-loader.js';
 
 export {
   arrange,
+  arrangeInSquarePattern
+}
+
+async function arrangeInSquarePattern(settings, images, color_map, image_size) {
+  let pixels = [];
+  for (let y = 0; y < image_size.height; y++) {
+    for (let x = 0; x < image_size.width; x++) {
+      const pos = {
+        x: x / image_size.width,
+        y: y / image_size.height,
+      }
+      pixels.push(pos);
+    }
+  }
+
+
+  // duplicate arrangement for each frame since they are all the same
+  let image_pixels = Array.from({length: images.length}).map( _=> pixels);
+
+  return {frames: images.length, pixels: image_pixels}; 
 }
 
 async function arrange(settings, images, color_map, image_size) {
-
-
-
   let pixels = [];
   let x = 0;
   let y = 0;

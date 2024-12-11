@@ -1,0 +1,221 @@
+{
+  "input": {
+    "atlas": {
+      "path": "./images/optim/beach.png",
+      "columns": 1,
+      "rows": 1
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "K": {
+          "colors": [
+            -16777216
+          ],
+          "positions": [
+            {
+              "x": 961,
+              "y": 332
+            },
+            {
+              "x": 460,
+              "y": 310
+            },
+            {
+              "x": 1250,
+              "y": 844
+            }
+          ]
+        },
+        "W": {
+          "colors": [
+            -1
+          ],
+          "positions": [
+            {
+              "x": 333,
+              "y": 666
+            },
+            {
+              "x": 600,
+              "y": 432
+            },
+            {
+              "x": 1354,
+              "y": 506
+            }
+          ]
+        },
+        "C": {
+          "colors": [
+            -16711681
+          ],
+          "positions": [
+            {
+              "x": 1273,
+              "y": 389
+            },
+            {
+              "x": 288,
+              "y": 500
+            },
+            {
+              "x": 700,
+              "y": 791
+            },
+            {
+              "x": 1560,
+              "y": 600
+            }
+          ]
+        },
+        "M": {
+          "colors": [
+            -65281
+          ],
+          "positions": [
+            {
+              "x": 400,
+              "y": 430
+            },
+            {
+              "x": 472,
+              "y": 724
+            },
+            {
+              "x": 612,
+              "y": 574
+            },
+            {
+              "x": 1498,
+              "y": 298
+            },
+            {
+              "x": 946,
+              "y": 842
+            },
+            {
+              "x": 1250,
+              "y": 700
+            }
+          ]
+        },
+        "Y": {
+          "colors": [
+            -256
+          ],
+          "positions": [
+            {
+              "x": 500,
+              "y": 430
+            },
+            {
+              "x": 812,
+              "y": 574
+            }
+          ]
+        }
+      },
+      "circle_diameter": 100,
+      "size": {
+        "width": 1760,
+        "height": 1014
+      }
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output-overlay-colors/beach",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false,
+        "width": 400,
+        "height": 400,
+        "mirror_size": 10
+      },
+      "frames": true
+    },
+    "heatmaps": {
+      "path": "heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "mirror_angle_deviations"
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "image": {
+      "height": 1000,
+      "width": 1000,
+      "columns": 4
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.0105,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 0.2
+    },
+    "wall_rotation_scalar": 0,
+    "wall_width": 1.76,
+    "wall_height": 1.01,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 2
+    }
+  },
+  "optimization": {
+    "reuse_permutations": true,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": false
+    },
+    "prune": {
+      "max_sequences": 40,
+      "comparator": "color_distance"
+    },
+    "pick_any_cycle": false,
+    "shift_sequences": {},
+    "fixed_sequence_key_order": [
+      "I",
+      "G",
+      "B",
+      "A",
+      "J",
+      "E",
+      "D",
+      "F",
+      "C",
+      "K",
+      "L",
+      "H",
+      "M",
+      "N",
+      "P",
+      "O"
+    ]
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

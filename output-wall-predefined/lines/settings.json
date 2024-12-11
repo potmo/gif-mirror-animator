@@ -191,7 +191,7 @@
     "mirror_diameter": 0.0105,
     "mirror_padding": 0.0025,
     "wall_offset": {
-      "x": 3,
+      "x": -3,
       "y": 0,
       "z": 3
     },
@@ -200,7 +200,7 @@
     "wall_height": 3,
     "wall_face_divisions": 50,
     "eye_offset": {
-      "x": -3,
+      "x": 3,
       "y": 0,
       "z": 3
     }

@@ -15,7 +15,7 @@ import {writeImage, writeImageSilent, getOutputImage} from './image-loader.js';
 
 const rnd = seedrandom('This is the seed');
 
-export async function map(settings, pixels, image_size) {
+export async function map(settings, pixels, image_size, key_with_combination = false) {
 
   const palette = await image_loader.readImage(settings.input.fixed_palette.path);
 
@@ -28,7 +28,17 @@ export async function map(settings, pixels, image_size) {
 
   var mapping = pixels.map((pixel, i) => {
 
-    const color_key = pixel.pixel_colors[0]; // just use first
+    let color_key;
+    if (key_with_combination) {
+      color_key = pixel.pixel_colors.join("");
+    } else {
+      color_key = pixel.pixel_colors[0]; // just use first
+    }
+
+    if (!Object.hasOwn(settings.input.fixed_palette.aim_positions, color_key ) ) {
+      throw new Error(`no color key specified for color key ${color_key}`);
+    }
+
     const num_pos = settings.input.fixed_palette.aim_positions[color_key].positions.length;
     let pos_index = 0;
 

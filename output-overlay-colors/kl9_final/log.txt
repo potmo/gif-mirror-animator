@@ -1,0 +1,70 @@
+
+Nisses-MacBook-Pro:gif-mirror-animator nissebergman$ node index-overlay-colors.js
+Number of generated color field points is 182
+Total area of dots is 0.357 and total area of palette is 1.500 (23.824%)
+adding blue_150x100 to ./output-overlay-colors
+modified output to output-overlay-colors/blue_150x100
+refreshed /Users/nissebergman/Projekt/art/projects/gif-mirror-animator/output-overlay-colors/blue_150x100
+saved settings.js
+Load images
+loading atlas: ./images/optim/blue_150x100.png
+loading image: ./images/optim/blue_150x100.png
+Looping frames 1 times
+write output-overlay-colors/blue_150x100/input_0.png
+Extract palette
+Extract size
+Convert to colorized hex mirrors
+Color sequences
+0 BL   0xff006aff 12446
+Map to wall
+write output-overlay-colors/blue_150x100/texture.png
+saved output-overlay-colors/blue_150x100/texture.svg
+Generate 3d files
+created gcode (.nc) file
+saved output-overlay-colors/blue_150x100/output.cnc
+mirrors 12446
+created mesh (.obj) file
+saved output-overlay-colors/blue_150x100/output.obj
+write output-overlay-colors/blue_150x100/simulation/simulated_reflection.png
+write output-overlay-colors/blue_150x100/simulation/simulated_mirrors_0.png
+write output-overlay-colors/blue_150x100/heatmaps/heatmap_BL.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/angle_deviations_BL.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/angle_deviations_all.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/non_rotated_mirror_targets_BL.png
+Mirrors width: 1.49164592758445, height: 0.9940800000000001
+done
+
+Nisses-MacBook-Pro:gif-mirror-animator nissebergman$ node index-overlay-colors.js
+Number of generated color field points is 182
+Total area of dots is 0.357 and total area of palette is 1.500 (23.824%)
+adding blue_150x100 to ./output-overlay-colors
+modified output to output-overlay-colors/blue_150x100
+refreshed /Users/nissebergman/Projekt/art/projects/gif-mirror-animator/output-overlay-colors/blue_150x100
+saved settings.js
+Load images
+loading atlas: ./images/optim/blue_150x100.png
+loading image: ./images/optim/blue_150x100.png
+Looping frames 1 times
+write output-overlay-colors/blue_150x100/input_0.png
+Extract palette
+Extract size
+Convert to colorized hex mirrors
+Color sequences
+0 BL   0xff006aff 12446
+Map to wall
+write output-overlay-colors/blue_150x100/texture.png
+saved output-overlay-colors/blue_150x100/texture.svg
+Generate 3d files
+created gcode (.nc) file
+saved output-overlay-colors/blue_150x100/output.cnc
+mirrors 12446
+created mesh (.obj) file
+saved output-overlay-colors/blue_150x100/output.obj
+write output-overlay-colors/blue_150x100/simulation/simulated_reflection.png
+write output-overlay-colors/blue_150x100/simulation/simulated_mirrors_0.png
+write output-overlay-colors/blue_150x100/heatmaps/heatmap_BL.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/angle_deviations_BL.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/angle_deviations_all.png
+write output-overlay-colors/blue_150x100/mirror_angle_deviations/non_rotated_mirror_targets_BL.png
+Mirrors width: 1.49164592758445, height: 0.9940800000000001
+done

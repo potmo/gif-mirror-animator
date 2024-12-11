@@ -92,6 +92,7 @@ export async function writeImage(file, canvas) {
 }
 
 export async function writeImageSilent(file, canvas) {
+	await fs.ensureFile(file);
   const buffer = await toBuffer(canvas);
   await fs.writeFile(path.join(path.resolve(), file), buffer);
 }

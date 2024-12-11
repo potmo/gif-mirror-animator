@@ -120,7 +120,7 @@ function getSettings() {
         rows: 1,
       },
 
-       fixed_palette: 
+      fixed_palette: 
       {
         aim_positions: {        // HEAD DETERMINES DIR
           'A': {color: updown_merger.getColors().always_on, positions: [{x: 100 + 200 * 3, y: 100, close: {x:0, y:1}}, {x: 100 + 200 * 7, y: 100, close: {x:1, y:0}}]}, // always on
@@ -164,7 +164,13 @@ function getSettings() {
       cylinder_image: {
         height: 1000,
         diameter_scalar: 3.0, // this is multiplied with three_dee.wall_diameter or output.cylinder_image.height to get width
-      }
+      },
+      heatmaps: {
+        path: './heatmaps'
+      },
+      mirror_angle_deviations: {
+        path: './image-deviations'
+      },
     },
     three_dee: { // units in meters
       mirror_thickness: 0.001, 
