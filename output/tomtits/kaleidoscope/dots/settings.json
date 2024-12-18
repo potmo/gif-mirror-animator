@@ -1,0 +1,187 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/tomtits_002/dots.png"
+      ]
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "AA": {
+          "color": 4278190080,
+          "positions": [
+            {
+              "x": 300,
+              "y": 50
+            }
+          ]
+        },
+        "BA": {
+          "color": 4294967295,
+          "positions": [
+            {
+              "x": 300,
+              "y": 150
+            }
+          ]
+        },
+        "AB": {
+          "color": 4294901760,
+          "positions": [
+            {
+              "x": 300,
+              "y": 250
+            }
+          ]
+        },
+        "BB": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 300,
+              "y": 350
+            }
+          ]
+        },
+        "A": {
+          "color": 4294901760,
+          "positions": [
+            {
+              "x": 100,
+              "y": 100
+            }
+          ]
+        },
+        "B": {
+          "color": 4294902015,
+          "positions": [
+            {
+              "x": 300,
+              "y": 100
+            }
+          ]
+        },
+        "C": {
+          "color": 4294967040,
+          "positions": [
+            {
+              "x": 500,
+              "y": 100
+            }
+          ]
+        },
+        "D": {
+          "color": 4278255360,
+          "positions": [
+            {
+              "x": 100,
+              "y": 300
+            }
+          ]
+        },
+        "E": {
+          "color": 4278190335,
+          "positions": [
+            {
+              "x": 300,
+              "y": 300
+            }
+          ]
+        },
+        "F": {
+          "color": 4278255615,
+          "positions": [
+            {
+              "x": 500,
+              "y": 300
+            }
+          ]
+        }
+      },
+      "path": "./images/tomtits_002/gradients.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output/tomtits/kaleidoscope/dots",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false
+      }
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "palette": {
+      "path": "./palette",
+      "width": 600,
+      "height": 400,
+      "columns": 4,
+      "rows": 3
+    },
+    "heatmaps": {
+      "path": "./heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "./image-deviations"
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.03,
+    "mirror_padding": 0.0025,
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 4
+    },
+    "wall_rotation_scalar": 0,
+    "wall_vector": {
+      "up": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "right": {
+        "x": 1,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "wall_width": 6,
+    "wall_height": 4,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 3
+    }
+  },
+  "optimization": {
+    "reuse_permutations": false,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": true
+    },
+    "pick_any_cycle": false
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true
+  }
+}

@@ -20,6 +20,11 @@ export {
 
 async function visualize(settings, reflections, wall, mirror_board) {
 
+  if (!reflections.reflection_points) {
+    console.log('no reflection_points skipping visualization of that'.gray);
+    return;
+  }
+
   //const size = settings.output.simulation.ellipse_image_size;
   const size = settings.output.simulation.mirror_image_size;
   const padding = {vertical: 150, horizontal: 150}

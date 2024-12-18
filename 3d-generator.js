@@ -41,19 +41,30 @@ async function createSectionWithReflections(settings, world_objects, reflections
   //const gcodeString = gcode.generate(reflections, world_objects.wall, world_objects.eye);
   //await saveFile(path.join(settings.output.path, `output.cnc`), gcodeString);
 
-  console.log(JSON.stringify(reflections[0], null, 2));
 
+
+  console.log(' Create obj file'.brightBlue)
   const objString = objcode.generate(reflections, world_objects.wall, world_objects.eye, settings.three_dee.wall_face_divisions);
   await saveFile(path.join(settings.output.path, `output.obj`), objString);
 
+  if (settings.print.reflection_visualizations != true) {
+    console.log(' Skip printing visualizations'.yellow)
+    return
+  }
+
+  console.log(' Visualize reflections'.brightBlue)
   await reflection_visualizer.visualize(settings, reflections, world_objects.wall, world_objects.mirror_board);
 
+  console.log(' Visualize arrangements'.brightBlue)
   await reflection_visualizer.visualizeArrangement(settings, reflections, world_objects.mirror_board);
 
+  console.log(' Visualize mirror color groups'.brightBlue)
   await reflection_visualizer.visualizeMirrorColorGroups(settings, reflections, world_objects.mirror_board);
 
+  console.log(' Visualize mirror angle deviations'.brightBlue)
   await reflection_visualizer.visualizeMirrorAngleDeviations(settings, reflections, world_objects.mirror_board);
 
+  console.log(' Visualize mirror color groups center and optimal'.brightBlue)
   await reflection_visualizer.visualizeMirrorColorGroupsCenterAndOptimal(settings, reflections, world_objects.mirror_board);
 
 

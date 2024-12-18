@@ -301,9 +301,11 @@ function * convertEyeReflectionToObj(reflection, vertex) {
 }
 
 function * convertEyeReflectionEllipseToObj(reflection, vertex) {
+  
   if (!reflection.ellipse_points) {
-    throw new Error('The ellipse points are missing so they need to be implemented. Probably for the disc version');
+    return;
   }
+
   for (var point of reflection.ellipse_points) {
     yield vertice(point);
   }
