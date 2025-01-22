@@ -133,21 +133,21 @@ function getSettings() {
           'BB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.5, 3.0, 5.0)}, 
 
           // three color palette
-          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector( 0.5 * (1.00 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.75 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.50 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.25 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(-0.5 * (0.25 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (0.50 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (0.75 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
-          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (1.00 - 1.0/4/2) * 3.0, 2.0, 3.3)}, 
+          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-2.312, 1.4, 3.3)}, 
+          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.937, 1.4, 3.3)}, 
+          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.562, 1.4, 3.3)}, 
+          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.187, 1.4, 3.3)}, 
+          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector( 1.187, 1.4, 3.3)}, 
+          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.562, 1.4, 3.3)}, 
+          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.937, 1.4, 3.3)}, 
+          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 2.312, 1.4, 3.3)}, 
         },
         path: './images/tomtits_kaleidoscope/rainbow.png',
       },
       duplicate_frames: 1, 
     },
     output: {
-      path: './output/tomtits/3d-palette-bw-smiley-jan-14', // this is modified and the input name is added
+      path: './output/tomtits/3d-palette-bw-smiley-jan-22', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
@@ -186,7 +186,7 @@ function getSettings() {
       wall_width: 4,
       wall_height: 4,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 1.0),
+      eye_offset: vector(0, 0, 3.3),
 
     },
     optimization: {
