@@ -117,9 +117,9 @@ function getWorld3DObjects(settings, wall_generator) {
   let wall = wall_generator.getWall(settings)                                 
 
   const mirror_board = {
-    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
-    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
-    center: vector(0,0,0),
+    widthVector: vector(settings.three_dee.mirror_board_width, 0, 0),
+    heightVector: vector(0, settings.three_dee.mirror_board_height, 0),
+    center: settings.three_dee.mirror_board_offset ?? vector(0,0,0),
     normal: vector(0,0,1),
   }
 
@@ -138,19 +138,12 @@ function getWorld3DObjects(settings, wall_generator) {
 
 function convertTo3DWorldCoordinates(settings, world_objects, mirror_pixel_pos, target_palette_pos, colors, color_keys) {
 
-  const mirror_board = {
-    widthVector: vector(settings.three_dee.mirror_board_diameter, 0, 0),
-    heightVector: vector(0, settings.three_dee.mirror_board_diameter, 0),
-    center: vector(0,0,0),
-  }
+  const mirror_board = world_objects.mirror_board;
 
-  const eye = {
-    pos: vector(0,0,0).add(settings.three_dee.eye_offset), 
-    size: 0.1
-  };
+  const eye = world_objects.eye;
 
-
-  const mirror_pos = vector(0,0,0).add(mirror_board.widthVector.scale(mirror_pixel_pos.x))
+  const mirror_pos = vector(0,0,0).add(mirror_board.center)
+                                  .add(mirror_board.widthVector.scale(mirror_pixel_pos.x))
                                   .add(mirror_board.heightVector.scale(mirror_pixel_pos.y * -1))
                                   .add(vector(0, 0, -settings.three_dee.mirror_thickness))
 

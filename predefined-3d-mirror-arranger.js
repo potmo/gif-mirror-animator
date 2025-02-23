@@ -5,7 +5,8 @@ import vector from './vector.js';
 
 export function* createReflectionsArrangement(settings, world_objects, pairs) {
 
-    let upperLeft = world_objects.mirror_board.widthVector
+    let upperLeft = world_objects.mirror_board.center
+                    .add(world_objects.mirror_board.widthVector)
                     .add(world_objects.mirror_board.heightVector)
                     .scale(0.5)
                     .mult(-1);
@@ -16,7 +17,19 @@ export function* createReflectionsArrangement(settings, world_objects, pairs) {
             let id = x + y * settings.input.mirrors.width;
 
             let color_pair = pairs[id];
-            let target = settings.input.fixed_palette.aim_positions[color_pair].world_position;
+
+            if (color_pair == '___') {
+                continue;
+            }
+
+            let aim_position = settings.input.fixed_palette.aim_positions[color_pair];
+
+
+            if (!aim_position) {
+                throw new Error(`no aim position for ${color_pair}`);
+            }
+            let target = aim_position.world_position;
+            
 
 
             let midOffset = vector(x,y,0).sub(vector(settings.input.mirrors.width, settings.input.mirrors.height, 0).scale(0.5))
@@ -33,7 +46,8 @@ export function* createReflectionsArrangement(settings, world_objects, pairs) {
                         .add(world_objects.mirror_board.heightVector.scale(1 - y / settings.input.mirrors.height))
                         .add(vector(0,0,-settings.three_dee.mirror_thickness));
 
-            let mirror_to_eye = world_objects.eye.pos.sub(pos).normalized();
+            let eye_position = world_objects.eye.pos.add( aim_position.eye_offset ?? vector(0,0,0) );
+            let mirror_to_eye = eye_position.sub(pos).normalized();
             let mirror_to_target = target.sub(pos).normalized();
 
             let normal = mirror_to_eye.add(mirror_to_target).normalized()
@@ -54,7 +68,7 @@ export function* createReflectionsArrangement(settings, world_objects, pairs) {
                 },
                 target: target,
                 target_normal: vector(0, 0, 1),
-                eye: world_objects.eye,
+                eye: {size: world_objects.eye.size, pos: eye_position},
                 colors: [],
                 color_keys: [],
             }

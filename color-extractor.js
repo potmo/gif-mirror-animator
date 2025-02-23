@@ -5,21 +5,24 @@ import * as color_convert from './color-convert.js';
 
 export function extractColorMap(images) {
 
-  var colors = [];
+  var colors = [color_convert.objToARGB({a:0,r:0,g:0,b:0})];
   for (var image of images) {
     let context = image.getContext('2d');
     var p = context.getImageData(0, 0, image.width, image.height).data; 
     for (i = 0; i < p.length; i += 4) {
-      let color = color_convert.objToARGB({r: p[i+0],  g: p[i+1], b: p[i+2], a: p[i+3]}); 
+      let argb = {r: p[i+0],  g: p[i+1], b: p[i+2], a: p[i+3]};
+
+      let color = color_convert.objToARGB(argb); 
       if (!colors.includes(color)) {
           colors.push(color);
       }
+      
     }
 
   }
 
   var color_map = {};
-  var color_names = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ1234567890".split('');
+  var color_names = "_ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ1234567890".split('');
 
   if (color_names.length < colors.length) {
     throw new Error('Too frew color names for all the colors');
@@ -42,9 +45,11 @@ export function extractColorMapPairs(images) {
     var p = context.getImageData(0, 0, image.width, image.height).data; 
     let pixels = [];
     for (let i = 0; i < p.length; i += 4) {
-      let color = color_convert.objToARGB({r: p[i+0],  g: p[i+1], b: p[i+2], a: p[i+3]}); 
+      let argb = {r: p[i+0],  g: p[i+1], b: p[i+2], a: p[i+3]};
+      let color = color_convert.objToARGB(argb); 
       let color_key = color_map[color];
       pixels.push(color_key);
+      
     }
     return pixels;
   }); 

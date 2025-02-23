@@ -44,6 +44,8 @@ async function run() {
   console.log('Extract palette'.brightBlue);
   const {color_map, pairs} = color_extractor.extractColorMapPairs(images);
 
+  console.log(color_map);
+
   console.log('Palette colors'.yellow);
   for (let color in color_map) {
     let key = color_map[color];
@@ -75,36 +77,31 @@ async function run() {
   await three_dee_generator.createSectionWithReflections(settings, world_objects, reflections);
 
 
-
+/*
   //compute the angles
-  
   const wall_normal = vector(0,0,1);
   let angles = reflections.map( (reflection) => {
     //console.log(reflection);
-    
-    let x_angle = Math.acos(wall_normal.dot(reflection.mirror.normal.withY(0).normalized())) * 180 / Math.PI;
-    let y_angle = Math.acos(wall_normal.dot(reflection.mirror.normal.withX(0).normalized())) * 180 / Math.PI;
-    console.log(`x: ${x_angle}°, y: ${y_angle}°`);
-    return {x_angle, y_angle};
+    let normal = reflection.mirror.normal//.withX(0).normalized();
+    let angle = Math.acos(wall_normal.dot(normal)) * 180 / Math.PI;
+    console.log(`${angle}° ${normal} ${wall_normal}`);
+    return angle;
   })
-  /*
-  //.sort(function(a, b){return a - b});
+  .sort(function(a, b){return a - b});
 
   for (let angle of angles) {
-    console.log(angle.xangle, angle.y_angle);
+    console.log(angle);
   }
   */
-  
 
   let normalStrings = reflections.map( (reflection) => {
     let fixed = reflection.mirror.normal.toFixed(4);
     let grid = reflection.mirror.grid;
-    return `(${grid.x}, ${grid.y}, Vector(${fixed.x}, ${fixed.y}, ${fixed.z}))`
+    return `{"mirror": 2, "x": ${grid.x}, "y": ${grid.y}, "normal": {"x": ${fixed.x}, "y": ${fixed.y}, "z": ${fixed.z}}}`
   })
-  .join(',\n')
+  .join(',')
 
   console.log(`[\n${normalStrings}\n]`);
-  
   
 
 }
@@ -130,7 +127,6 @@ function getSettings() {
         paths: [
           './images/tomtits_002/mini_001.png',
           './images/tomtits_002/mini_002.png',
-          './images/tomtits_002/mini_003.png'
         ], 
       },
       mirrors: {
@@ -141,27 +137,29 @@ function getSettings() {
       {
         aim_positions: {        // HEAD DETERMINES DIR
           // for one color palette
-          'AA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-1.5, 3.0, 5.0)}, 
-          'AB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-0.5, 3.0, 5.0)}, 
-          'BA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector( 0.5, 3.0, 5.0)}, 
-          'BB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.5, 3.0, 5.0)}, 
+          'BB': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3)}, 
+          'BA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3)}, 
+          'AB': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3)}, 
+          'AA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3)}, 
 
           // three color palette
-          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector( 0.5 * (1.00 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.75 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.50 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector( 0.5 * (0.25 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(-0.5 * (0.25 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (0.50 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (0.75 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
-          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(-0.5 * (1.00 - 1.0/4/2) * 1.0, 0.5, 1.0)}, 
+          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 0, 3.3)}, 
+          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 1, 3.3)}, 
+          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 2, 3.3)}, 
+          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 3, 3.3)}, 
+          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 0, 3.3)}, 
+          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 1, 3.3)}, 
+          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 2, 3.3)}, 
+          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 3, 3.3)}, 
+
+        
         },
         path: './images/tomtits_kaleidoscope/rainbow.png',
       },
       duplicate_frames: 1, 
     },
     output: {
-      path: './output/tomtits/3d-palette-bw-smiley-jan-14-mini', // this is modified and the input name is added
+      path: './output/tomtits/3d-palette-smiley-feb-5', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
@@ -188,9 +186,10 @@ function getSettings() {
     },
     three_dee: { // units in meters
       mirror_thickness: 0.001, 
-      mirror_diameter: 0.03, // this is the diameter of the mirror
-      mirror_padding: 0.0025, // the padding between mirrors
+      mirror_diameter: 0.024, // this is the diameter of the mirror
+      mirror_padding: 0.000, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
+      mirror_board_offset: vector(0, 0, 0),
       wall_offset: vector(0.0, 0.0, 4.0),
       wall_rotation_scalar: 0.0, // scalar of full circle around up axis
       wall_vector: {
@@ -200,7 +199,7 @@ function getSettings() {
       wall_width: 4,
       wall_height: 4,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 1.0),
+      eye_offset: vector(0, -0.34, 2.9),
 
     },
     optimization: {

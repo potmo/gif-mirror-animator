@@ -44,6 +44,8 @@ async function run() {
   console.log('Extract palette'.brightBlue);
   const {color_map, pairs} = color_extractor.extractColorMapPairs(images);
 
+  console.log(color_map);
+
   console.log('Palette colors'.yellow);
   for (let color in color_map) {
     let key = color_map[color];
@@ -91,6 +93,15 @@ async function run() {
     console.log(angle);
   }
   */
+
+  let normalStrings = reflections.map( (reflection) => {
+    let fixed = reflection.mirror.normal.toFixed(4);
+    let grid = reflection.mirror.grid;
+    return `{"mirror": 2, "x": ${grid.x}, "y": ${grid.y}, "normal": {"x": ${fixed.x}, "y": ${fixed.y}, "z": ${fixed.z}}}`
+  })
+  .join(',')
+
+  console.log(`[\n${normalStrings}\n]`);
   
 
 }
@@ -114,40 +125,41 @@ function getSettings() {
     input: {
       image: {
         paths: [
-          './images/tomtits_002/bw-smiley01.png',
-          './images/tomtits_002/bw-smiley02.png',
-          './images/tomtits_002/bw-smiley03.png'
+          './images/tomtits_002/small-bw-smiley01.png',
+          './images/tomtits_002/small-bw-smiley02.png',
         ], 
       },
       mirrors: {
-        width: 80,
-        height: 80,
+        width: 55,
+        height: 55,
       },
       fixed_palette: 
       {
         aim_positions: {        // HEAD DETERMINES DIR
           // for one color palette
-          'AA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-1.5, 3.0, 5.0)}, 
-          'AB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-0.5, 3.0, 5.0)}, 
-          'BA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector( 0.5, 3.0, 5.0)}, 
-          'BB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.5, 3.0, 5.0)}, 
+          'BB': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3)}, 
+          'BA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3)}, 
+          'AB': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3)}, 
+          'AA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3)}, 
 
           // three color palette
-          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-2.312, 1.4, 3.3)}, 
-          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.937, 1.4, 3.3)}, 
-          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.562, 1.4, 3.3)}, 
-          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.187, 1.4, 3.3)}, 
-          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector( 1.187, 1.4, 3.3)}, 
-          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.562, 1.4, 3.3)}, 
-          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 1.937, 1.4, 3.3)}, 
-          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector( 2.312, 1.4, 3.3)}, 
+          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 0, 3.3)}, 
+          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 1, 3.3)}, 
+          'ABA': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 2, 3.3)}, 
+          'ABB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(-1.479, -2.0 + 1.0 + 1.0 * 3, 3.3)}, 
+          'BAA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 0, 3.3)}, 
+          'BAB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 1, 3.3)}, 
+          'BBA': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 2, 3.3)}, 
+          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(+1.479, -2.0 + 1.0 + 1.0 * 3, 3.3)}, 
+
+        
         },
         path: './images/tomtits_kaleidoscope/rainbow.png',
       },
       duplicate_frames: 1, 
     },
     output: {
-      path: './output/tomtits/3d-palette-bw-smiley-jan-22', // this is modified and the input name is added
+      path: './output/tomtits/3d-palette-smiley-feb-5', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
@@ -174,9 +186,10 @@ function getSettings() {
     },
     three_dee: { // units in meters
       mirror_thickness: 0.001, 
-      mirror_diameter: 0.03, // this is the diameter of the mirror
-      mirror_padding: 0.0025, // the padding between mirrors
+      mirror_diameter: 0.024, // this is the diameter of the mirror
+      mirror_padding: 0.000, // the padding between mirrors
       mirror_board_diameter: undefined, // declared later programmatically
+      mirror_board_offset: vector(-1.9, 0, 0),
       wall_offset: vector(0.0, 0.0, 4.0),
       wall_rotation_scalar: 0.0, // scalar of full circle around up axis
       wall_vector: {
@@ -186,7 +199,7 @@ function getSettings() {
       wall_width: 4,
       wall_height: 4,
       wall_face_divisions: 50,
-      eye_offset: vector(0, 0, 3.3),
+      eye_offset: vector(1.0, -0.34, 2.9),
 
     },
     optimization: {
