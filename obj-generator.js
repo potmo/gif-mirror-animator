@@ -24,19 +24,21 @@ function * createObjFile(reflections, wall, eye, wall_face_divisions) {
 
   var textures = getWallTextureMap(wall_face_divisions) 
   
-  yield * convertTexturesToObj(textures);
+  //yield * convertTexturesToObj(textures);
 
   yield * convertMirrorsToObj(reflections, vertex);
 
-  yield * convertWallToObj(wall, vertex, textures.wall_texture_ids);
+  //yield * convertWallToObj(wall, vertex, textures.wall_texture_ids);
 
-  yield * convertEyeToObj(eye, vertex);
+  //yield * convertEyeToObj(eye, vertex);
 
-  yield * convertReflectionsToObj(reflections, vertex);
+  //yield * convertReflectionsToObj(reflections, vertex);
 
-  yield * convertReflectionEllipsesToObj(reflections, vertex);
+  //yield * convertReflectionEllipsesToObj(reflections, vertex);
 
-  yield * convertMirrorNormalsToObj(reflections, vertex);
+  //yield * convertMirrorNormalsToObj(reflections, vertex);
+
+  yield * convertMirrorIds(reflections, vertex);
 
   console.log(colors.green(`created mesh (.obj) file`));
 }
@@ -81,22 +83,61 @@ function getWallTextureMap(wall_face_divisions) {
 function * convertMirrorsToObj(reflections, vertex) {
   
   //#yield `usemtl mirror_face`;
-  const mirrorFaces = reflections.map(r => r.mirror).map( mirror => getMirrorPolygons(mirror, vertex));
+  const mirrorFaces = reflections.map(r => r.mirror).map( mirror => getMirrorPolygonSquares(mirror, vertex));
 
   // create vertices for the mirror
   for (const face of mirrorFaces) {
     yield * createMirrorVertices(face);
   }
   
+  /*
   yield `g mirror_glass`;
   for (const face of mirrorFaces) {
     yield * createMirrorGlassFaces(face);
   }
+  */
 
   yield `g mirror_reflector`;
   for (const face of mirrorFaces) {
     yield * createMirrorReflectorFace(face);
   }
+
+  yield `g mirror_sides`;
+  for (const face of mirrorFaces) {
+    yield * createMirrorSideFaces(face);
+  }
+}
+
+function getMirrorPolygonSquares(mirror, vertex) {
+
+  const globalUp = vector().globalUp;
+  const globalRight = vector().globalRight;
+  const globalDown = vector().globalDown;
+  const right = globalUp.cross(mirror.normal).normalized().scale(mirror.width/2);
+  const down = right.cross(mirror.normal).normalized().scale(mirror.height/2);
+
+  let bottom_vertices = [
+    {id: vertex.current++, pos: mirror.pos.add(right.scale(-1)).add(down.scale(-1))},
+    {id: vertex.current++, pos: mirror.pos.add(right.scale(+1)).add(down.scale(-1))},
+    {id: vertex.current++, pos: mirror.pos.add(right.scale(+1)).add(down.scale(+1))},
+    {id: vertex.current++, pos: mirror.pos.add(right.scale(-1)).add(down.scale(+1))},
+  ];
+
+  let top_vertices = bottom_vertices.map(vertice => ({id: vertex.current++, pos: vertice.pos.add(mirror.normal.scale(mirror.thickness))}));
+
+  let base_vertices = [
+    {id: vertex.current++, pos: mirror.pos.add(globalRight.scale(-1).scale(mirror.width/2)).add(globalUp.scale(-1).scale(mirror.height/2)).withZ(-0.02)},
+    {id: vertex.current++, pos: mirror.pos.add(globalRight.scale(+1).scale(mirror.width/2)).add(globalUp.scale(-1).scale(mirror.height/2)).withZ(-0.02)},
+    {id: vertex.current++, pos: mirror.pos.add(globalRight.scale(+1).scale(mirror.width/2)).add(globalUp.scale(+1).scale(mirror.height/2)).withZ(-0.02)},
+    {id: vertex.current++, pos: mirror.pos.add(globalRight.scale(-1).scale(mirror.width/2)).add(globalUp.scale(+1).scale(mirror.height/2)).withZ(-0.02)},
+  ];
+
+  return {
+      id: mirror.id,
+      top_vertices,
+      bottom_vertices,
+      base_vertices,
+  };
 }
 
 function getMirrorPolygons(mirror, vertex) {
@@ -140,6 +181,10 @@ function * createMirrorVertices(face) {
   for (let vertex of face.top_vertices) {
     yield vertice(vertex.pos);
   }
+
+  for (let vertex of face.base_vertices) {
+    yield vertice(vertex.pos);
+  }
 }
 
 function * createMirrorGlassFaces(mirror) {
@@ -164,6 +209,50 @@ function * createMirrorGlassFaces(mirror) {
 function * createMirrorReflectorFace(mirror) {
   const bottom_verts = mirror.bottom_vertices.reverse().map((vert, i) => `${vert.id}/${i+1}`).join(' ');
   yield `f ${bottom_verts}`;
+}
+
+function * createMirrorSideFaces(mirror) {
+  const bot_verts = mirror.base_vertices.reverse()
+  const top_verts = mirror.bottom_vertices.reverse()
+
+  const east = [
+    bot_verts[1],
+    top_verts[1],
+    top_verts[2],
+    bot_verts[2],
+  ]
+  .map((vert, i) => `${vert.id}/${i+1}`).join(' ');
+
+  const south = [
+    bot_verts[2],
+    top_verts[2],
+    top_verts[3],
+    bot_verts[3],
+  ]
+  .map((vert, i) => `${vert.id}/${i+1}`).join(' ');
+
+  const west = [
+    bot_verts[3],
+    top_verts[3],
+    top_verts[0],
+    bot_verts[0],
+  ]
+  .map((vert, i) => `${vert.id}/${i+1}`).join(' ');
+
+
+  const north = [
+    bot_verts[0],
+    top_verts[0],
+    top_verts[1],
+    bot_verts[1],
+  ]
+  .map((vert, i) => `${vert.id}/${i+1}`).join(' ');
+
+  yield `f ${east}`;
+  yield `f ${south}`;
+  yield `f ${west}`;
+  yield `f ${north}`;
+
 }
 
 
@@ -210,6 +299,91 @@ function * convertMirrorNormalToObj(mirror, vertex) {
 
 
 }
+
+function * convertMirrorIds(reflections, vertex) {
+
+  yield `g debug_mirror_ids`;
+  const mirrors = reflections.map(r => r.mirror);
+  for (let mirror of mirrors) {
+    yield * convertMirrorId(mirror, vertex);
+  }
+}
+
+function * convertMirrorId(mirror, vertex) {
+  const normal = mirror.normal.scale(0.001);
+
+  const globalUp = vector().globalUp;
+  const globalRight = vector().globalRight;
+  const right = globalUp.cross(mirror.normal).normalized().scale(0.001);
+  const up = globalRight.cross(mirror.normal).normalized().scale(0.001).negated();
+
+  const id = mirror.grid.x.toString().padStart(2, '0') + ' ' + mirror.grid.y.toString().padStart(2, '0');
+  
+
+  let offset = vector();
+  for (let char_index in id) {
+
+    let char = id[char_index];
+
+    let cords = getDigitCoords(char);
+
+    if (cords.length == 0) {
+      continue;
+    }
+
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)));
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)).add(right));
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)).add(up));
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)).add(up).add(right));
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)).add(up).add(up));
+    yield vertice(mirror.pos.add(normal).add(right.scale(1.3 * char_index)).add(up).add(up).add(right));
+
+    let verts = [
+      vertex.current++,
+      vertex.current++,
+      vertex.current++,
+      vertex.current++,
+      vertex.current++,
+      vertex.current++,
+    ];
+
+    let vert_strings = cords.map( point => {
+      let vert_index = point[0] + point[1] * 2;
+      return `${verts[vert_index]}`;
+    })
+
+    yield `l ${vert_strings.join(' ')}`;
+    
+  
+  }
+
+}
+
+function getDigitCoords(digit) {
+    
+    // Define the basic structure of the digits (7-segment style in 3D space)
+    const digits = {
+        "0": [[0, 0], [1, 0], [1, 2], [0, 2], [0, 0]],
+        "1": [[1, 0], [1, 2]],
+        "2": [[0, 2], [1, 2], [1, 1], [0, 1], [0, 0], [1, 0]],
+        "3": [[0, 2], [1, 2], [1, 0], [0, 0], [1, 1], [0, 1]],
+        "4": [[0, 2], [0, 1], [1, 1], [1, 2], [1, 0]],
+        "5": [[1, 2], [0, 2], [0, 1], [1, 1], [1, 0], [0, 0]],
+        "6": [[1, 2], [0, 2], [0, 0], [1, 0], [1, 1], [0, 1]],
+        "7": [[0, 2], [1, 2], [1, 0]],
+        "8": [[0, 0], [1, 0], [1, 2], [0, 2], [0, 0], [1, 1], [0, 1]],
+        "9": [[1, 0], [1, 2], [0, 2], [0, 1], [1, 1]],
+    };
+    
+    if (!(digit in digits)) return [];
+    
+    return digits[digit];
+}
+
+
+
+
+
 
 function * convertWallToObj(wall, vertex, wall_texture_ids) {
 

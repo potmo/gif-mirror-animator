@@ -1,0 +1,213 @@
+{
+  "input": {
+    "image": {
+      "paths": [
+        "./images/tomtits_002/two-bw-smiley-noto-01.png",
+        "./images/tomtits_002/two-bw-smiley-noto-02.png",
+        "./images/tomtits_002/two-bw-smiley-noto-03.png"
+      ]
+    },
+    "mirrors": {
+      "width": 115,
+      "height": 55
+    },
+    "fixed_palette": {
+      "aim_positions": {
+        "AAA": {
+          "color": 4294901760,
+          "world_position": {
+            "x": 1.8872,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "AAB": {
+          "color": 4294902015,
+          "world_position": {
+            "x": 0.9436,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "ABA": {
+          "color": 4294967040,
+          "world_position": {
+            "x": -0.9436,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "ABB": {
+          "color": 4278255360,
+          "world_position": {
+            "x": 0,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": 1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "BAA": {
+          "color": 4294901760,
+          "world_position": {
+            "x": 1.8872,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": -1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "BAB": {
+          "color": 4294902015,
+          "world_position": {
+            "x": 0.9436,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": -1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "BBA": {
+          "color": 4294967040,
+          "world_position": {
+            "x": -0.9436,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": -1,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "BBB": {
+          "color": 4278255360,
+          "world_position": {
+            "x": 0,
+            "y": 1.5,
+            "z": 3.3
+          },
+          "eye_offset": {
+            "x": -1,
+            "y": 0,
+            "z": 0
+          }
+        }
+      },
+      "path": "./images/tomtits_kaleidoscope/rainbow.png"
+    },
+    "duplicate_frames": 1
+  },
+  "output": {
+    "path": "output/tomtits/3d-palette-smiley-mar-19/two-bw-smiley-noto-01",
+    "simulation": {
+      "path": "simulation",
+      "ellipse_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "mirror_image_size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "hex": {
+        "enabled": false
+      }
+    },
+    "texture": true,
+    "obj": true,
+    "mod": true,
+    "cnc": true,
+    "palette": {
+      "path": "./palette",
+      "width": 1024,
+      "height": 1024,
+      "columns": 4,
+      "rows": 3
+    },
+    "heatmaps": {
+      "path": "./heatmaps"
+    },
+    "mirror_angle_deviations": {
+      "path": "./image-deviations"
+    }
+  },
+  "three_dee": {
+    "mirror_thickness": 0.001,
+    "mirror_diameter": 0.026,
+    "mirror_padding": 0,
+    "mirror_board_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "wall_offset": {
+      "x": 0,
+      "y": 0,
+      "z": 4
+    },
+    "wall_rotation_scalar": 0,
+    "wall_vector": {
+      "up": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "right": {
+        "x": 1,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "wall_width": 4,
+    "wall_height": 4,
+    "wall_face_divisions": 50,
+    "eye_offset": {
+      "x": 0,
+      "y": -0.34,
+      "z": 2.9
+    }
+  },
+  "optimization": {
+    "reuse_permutations": false,
+    "sort_sequnece": {
+      "algo": "none",
+      "acending": true
+    },
+    "pick_any_cycle": false
+  },
+  "print": {
+    "palette": true,
+    "color_map": true,
+    "reverse_color_map": true,
+    "sequence_count": false,
+    "sequence_occurencies": true,
+    "number_of_pixels": false,
+    "section_angles": true,
+    "reflection_visualizations": false
+  }
+}

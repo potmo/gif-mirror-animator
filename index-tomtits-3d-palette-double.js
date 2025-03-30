@@ -70,33 +70,43 @@ async function run() {
 
 
   console.log('Create reflections'.brightBlue);
-  const reflections = Array.from(mirror_arranger.createReflectionsArrangement(settings, world_objects, pairs));
+  const reflections = Array.from(mirror_arranger.createReflectionsArrangement(settings, world_objects, pairs)).map(reflection => {
+    // flip the grid coordinates so that it starts in bottom lower corner  
 
+    let grid = reflection.mirror.grid;
+
+    let mirror_num = 1
+    if (grid.x > settings.input.mirrors.height) {
+      grid.x = grid.x - (settings.input.mirrors.width - settings.input.mirrors.height);
+      mirror_num = 2;
+    }
+
+    grid.y = settings.input.mirrors.height - 1 - grid.y;
+
+    reflection.mirror.grid = grid;
+    reflection.mirror.mirror_num = mirror_num;
+    return reflection;
+  });
+
+  
 
   //console.log(`Mirror diameter is ${settings.three_dee.mirror_board_diameter}`.blue);
   console.log('Generate 3d files'.brightBlue);
   await three_dee_generator.createSectionWithReflections(settings, world_objects, reflections);
 
 
-
-
-
   let normalStrings = reflections.map( (reflection) => {
     let fixed = reflection.mirror.normal.toFixed(4);
     let grid = reflection.mirror.grid;
+    let mirror_num = reflection.mirror.mirror_num;
 
-    let mirrorNum = 1
-    if (grid.x > settings.input.mirrors.height) {
-      grid.x = grid.x - (settings.input.mirrors.width - settings.input.mirrors.height);
-      mirrorNum = 2;
-    }
-
-    return `{"mirror": ${mirrorNum}, "x": ${grid.x}, "y": ${grid.y}, "normal": {"x": ${fixed.x}, "y": ${fixed.y}, "z": ${fixed.z}}}`
+    return `{"mirror": ${mirror_num}, "x": ${grid.x}, "y": ${grid.y}, "normal": {"x": ${fixed.x}, "y": ${fixed.y}, "z": ${fixed.z}}}`
   })
   .join(',')
 
   console.log(`[\n${normalStrings}\n]`);
 
+/*
    //compute the angles
   const wall_normal = vector(0,0,1);
   let angles = reflections.map( (reflection) => {
@@ -110,9 +120,8 @@ async function run() {
 
   
   console.log(`max angel: ${angles[angles.length - 1]}°`);
-  
+  */
 
-  
 
 }
 
@@ -135,9 +144,9 @@ function getSettings() {
     input: {
       image: {
         paths: [
-          './images/tomtits_002/two-bw-smiley01.png',
-          './images/tomtits_002/two-bw-smiley02.png',
-          './images/tomtits_002/two-bw-smiley03.png',
+          './images/tomtits_002/two-bw-smiley-noto-01.png',
+          './images/tomtits_002/two-bw-smiley-noto-2-02.png',
+          './images/tomtits_002/two-bw-smiley-noto-2-03.png',
         ], 
       },
       mirrors: {
@@ -148,15 +157,17 @@ function getSettings() {
       {
         aim_positions: {        // HEAD DETERMINES DIR
           // for one color palette
-          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3), eye_offset: vector(-1.0,0,0)}, 
-          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector(-1.0,0,0)}, 
-          'ABA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector(-1.0,0,0)}, 
-          'ABB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector(-1.0,0,0)}, 
+          
+          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 5, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
+          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
+          'ABA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
+          'ABB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
 
-          'BAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3), eye_offset: vector( 1.0,0,0)}, 
-          'BAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector( 1.0,0,0)}, 
-          'BBA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector( 1.0,0,0)}, 
-          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector( 1.0,0,0)}, 
+          'BAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
+          'BAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
+          'BBA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
+          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
+          
 
         },
         path: './images/tomtits_kaleidoscope/rainbow.png',
@@ -164,7 +175,7 @@ function getSettings() {
       duplicate_frames: 1, 
     },
     output: {
-      path: './output/tomtits/3d-palette-smiley-feb-20', // this is modified and the input name is added
+      path: './output/tomtits/3d-palette-smiley-mar-26', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},

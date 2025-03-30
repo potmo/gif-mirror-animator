@@ -39,12 +39,28 @@ export function* createReflectionsArrangement(settings, world_objects, pairs) {
             let dist = midOffset.mag();
             let scaledDist = (dist / maxDist);
             let depth = 1.0 - scaledDist;
+
+            /*
+            let parabola_center1 = vector(settings.input.mirrors.width * 0.25, settings.input.mirrors.height / 2, 0);
+            let parabola_center2 = vector(settings.input.mirrors.width * 0.75, settings.input.mirrors.height / 2, 0);
+            let parabola_center = null;
+            if (parabola_center1.dist(vector(x,y,0)) < parabola_center2.dist(vector(x,y,0))) {
+                parabola_center = parabola_center1;
+            } else {
+                parabola_center = parabola_center2;
+            }
+            
+            let parabola_max_depth = 0.01; 
+            let dist_to_middle = parabola_center.dist(vector(x,y,0));
+            let dish_shape_pos = (Math.pow(dist_to_middle, 2) / 4.0 * parabola_max_depth) * 0.01;
+            */
             
 
             let pos = upperLeft
                         .add(world_objects.mirror_board.widthVector.scale(x / settings.input.mirrors.width))
                         .add(world_objects.mirror_board.heightVector.scale(1 - y / settings.input.mirrors.height))
-                        .add(vector(0,0,-settings.three_dee.mirror_thickness));
+                        .add(vector(0,0,-settings.three_dee.mirror_thickness))
+              //          .add(vector(0,0, dish_shape_pos));
 
             let eye_position = world_objects.eye.pos.add( aim_position.eye_offset ?? vector(0,0,0) );
             let mirror_to_eye = eye_position.sub(pos).normalized();
