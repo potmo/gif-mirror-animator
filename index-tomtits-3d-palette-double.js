@@ -145,8 +145,8 @@ function getSettings() {
       image: {
         paths: [
           './images/tomtits_002/two-bw-smiley-noto-01.png',
-          './images/tomtits_002/two-bw-smiley-noto-2-02.png',
-          './images/tomtits_002/two-bw-smiley-noto-2-03.png',
+          './images/tomtits_002/two-bw-smiley-noto-03-02.png',
+          './images/tomtits_002/two-bw-smiley-noto-03-03.png',
         ], 
       },
       mirrors: {
@@ -158,15 +158,15 @@ function getSettings() {
         aim_positions: {        // HEAD DETERMINES DIR
           // for one color palette
           
-          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 5, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
-          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
-          'ABA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
-          'ABB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector(-0.8,0,0)}, 
+          'AAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 5, 1.5, 3.233), eye_offset: vector(-1.1,0,0)}, 
+          'AAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.233), eye_offset: vector(-1.1,0,0)}, 
+          'ABA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.233), eye_offset: vector(-1.1,0,0)}, 
+          'ABB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.233), eye_offset: vector(-1.1,0,0)}, 
 
-          'BAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
-          'BAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
-          'BBA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
-          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.3), eye_offset: vector( 0.8,0,0)}, 
+          'BAA': {color: color_convert.RGBAtoARGB(0xFF0000FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 1, 1.5, 3.233), eye_offset: vector( 1.1,0,0)}, 
+          'BAB': {color: color_convert.RGBAtoARGB(0xFF00FFFF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 2, 1.5, 3.233), eye_offset: vector( 1.1,0,0)}, 
+          'BBA': {color: color_convert.RGBAtoARGB(0xFFFF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 4, 1.5, 3.233), eye_offset: vector( 1.1,0,0)}, 
+          'BBB': {color: color_convert.RGBAtoARGB(0x00FF00FF), world_position: vector(4.718/2 + 4.718 / 10 - 4.718 / 5 * 3, 1.5, 3.233), eye_offset: vector( 1.1,0,0)}, 
           
 
         },
@@ -175,7 +175,7 @@ function getSettings() {
       duplicate_frames: 1, 
     },
     output: {
-      path: './output/tomtits/3d-palette-smiley-mar-26', // this is modified and the input name is added
+      path: './output/tomtits/3d-palette-smiley-mar-31', // this is modified and the input name is added
       simulation: {
         path: 'simulation',
         ellipse_image_size: {width: 1000, height: 1000},
@@ -217,7 +217,7 @@ function getSettings() {
       wall_width: 4,
       wall_height: 4,
       wall_face_divisions: 50,
-      eye_offset: vector(0.0, -0.34, 2.9),
+      eye_offset: vector(0.0, -0.34, 2.7),
 
     },
     optimization: {
